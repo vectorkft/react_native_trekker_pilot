@@ -20,6 +20,29 @@ export const tokenhandlingService = () => {
         Alert.alert(refreshToken)
     }
 
+    const isTokenExpired = (token: string | null): boolean => {
+        if (!token) {
+            return true;
+        }
+
+        try{
+            const decoded: DecodedToken = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+
+            if (decoded.exp < currentTime) {
+                console.log('A token lejárt.');
+                return false;
+            } else {
+                console.log('A token érvényes.');
+                return true;
+            }
+        } catch (error) {
+            console.log('Hiba a token dekódolása közben:', error.message);
+            return false;
+        }
+    };
+
+
     const checkAccessToken = async () => {
         const { accessToken, setIsLoggedIn } = useStore.getState();
 
@@ -33,21 +56,7 @@ export const tokenhandlingService = () => {
             return false;
         }
 
-        try {
-            const decoded: DecodedToken = jwtDecode(accessToken);
-            const currentTime = Date.now() / 1000;
-
-            if (decoded.exp < currentTime) {
-                console.log('Az accessToken lejárt.');
-                return false;
-            } else {
-                console.log('Az accessToken érvényes.');
-                return true;
-            }
-        } catch (error) {
-            console.log('Hiba a token dekódolása közben:', error.message);
-            return false;
-        }
+        return isTokenExpired(accessToken);
     };
 
     const checkRefreshToken = async () => {
@@ -63,20 +72,7 @@ export const tokenhandlingService = () => {
             return false;
         }
 
-        const decodedRefreshToken: DecodedToken = jwtDecode(refreshToken);
-        const currentTime = Date.now() / 1000;
-
-        if (decodedRefreshToken.exp < currentTime) {
-            console.log('A refreshToken is lejárt.');
-            setIsLoggedIn(false);
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'login' }],
-            });
-            return false;
-        }
-
-        return true;
+        return isTokenExpired(refreshToken);
     };
 
     const refreshAccessToken = async () => {
@@ -118,7 +114,7 @@ export const tokenhandlingService = () => {
         }
     };
 
-    const getNewToken = async () => {
+    const isTokenValid = async () => {
         const isAccessTokenValid = await checkAccessToken();
         let success = false;
 
@@ -137,7 +133,7 @@ export const tokenhandlingService = () => {
     };
 
     return {
-        getNewToken,
+        isTokenValid,
         refreshAccessToken,
         checkRefreshToken,
         getAccessToken,

@@ -7,8 +7,8 @@ interface Store {
     setAccessToken: (value: string | null) => void;
     refreshToken: string | null;
     setRefreshToken: (value: string | null) => void;
-    id: string | null;
-    setId: (value: string | null) => void;
+    id: number | null;
+    setId: (value: number | null) => void;
 }
 
 export const useStore = create<Store>(set => ({
