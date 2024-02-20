@@ -1,0 +1,65 @@
+{
+  "name": "VectorNativeDev",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "timeout 30 && react-native run-android",
+    "studio": "studio64 D:\\ReactNativeDev\\frontend\\VectorNativeDev",
+    "start-project": "start npm run studio && start npm run android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^10.0.0",
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@react-native-masked-view/masked-view": "^0.3.1",
+    "@react-navigation/native": "^5.5.1",
+    "@react-navigation/stack": "^5.14.5",
+    "dotenv": "^10.0.0",
+    "expo": "^37.0.0",
+    "expo-file-system": "~8.1.0",
+    "jwt-decode": "^3.1.2",
+    "react": "16.9.0",
+    "react-devtools": "^3.6.3",
+    "react-native": "0.61.5",
+    "react-native-appearance": "^0.3.4",
+    "react-native-gesture-handler": "~1.6.0",
+    "react-native-ionicons": "^4.6.5",
+    "react-native-reanimated": "~1.7.0",
+    "react-native-safe-area-context": "0.7.3",
+    "react-native-screens": "~2.2.0",
+    "react-native-vector-icons": "^10.0.3",
+    "ts-node": "^10.9.2",
+    "zustand": "^4.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.16.5",
+    "@babel/preset-flow": "7.16.5",
+    "@babel/runtime": "7.16.5",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "@types/node": "^20.11.19",
+    "@types/react": "^16.9.11",
+    "@types/react-native": "^0.60.22",
+    "@types/react-native-vector-icons": "^6.4.18",
+    "@typescript-eslint/eslint-plugin": "^5.1.6",
+    "@typescript-eslint/parser": "^5.1.6",
+    "babel-jest": "^24.9.0",
+    "eslint": "^8.47.0",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-native": "^4.1.0",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "0.59.0",
+    "react-test-renderer": "16.9.0",
+    "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "@babel/traverse": "7.16.5"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

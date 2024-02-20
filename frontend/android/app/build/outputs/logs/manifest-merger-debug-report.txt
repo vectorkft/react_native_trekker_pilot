@@ -1,0 +1,220 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+MERGED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+MERGED from [com.facebook.react:react-native:0.61.5] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c08f5744e9710cd93f6ccc8a5a67f3ad\AndroidManifest.xml:2:1-13:12
+MERGED from [androidx.appcompat:appcompat:1.0.2] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4f1204afafaf0e298e53344980f0a57b\AndroidManifest.xml:17:1-22:12
+MERGED from [org.webkit:android-jsc:r245459] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\65d02622eaddb4395aa78653996d6bee\AndroidManifest.xml:2:1-11:12
+MERGED from [com.facebook.fresco:fresco:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\83cb95aca65c6c21cc06164b20e0016c\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3fc95a4f8e7a0b94ceafe3d2b7665c39\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:drawee:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4382bd89b1245561cc59ebc0e2d89836\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:nativeimagefilters:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8af2c4805f144e612235fd82c0cfe621\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c13f9d25a7ba1f874f086376c09f35b4\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:nativeimagetranscoder:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b394ef92d6d2e621321a7dfaa8f11ce5\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline-base:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8afc4eacd60582bf126ca48189630e74\AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.soloader:soloader:0.6.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0ca4adb4cded0719a4380626893ff99c\AndroidManifest.xml:2:1-13:12
+MERGED from [androidx.fragment:fragment:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b6ee6acd3f413bc277083b5589f69d65\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c374175f3b0d00a4de075aa913f41b75\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\7be4e3dd4513b226a3f4b0f5ab4d4d75\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\adbb3c809603afa3fa446944537f1299\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\484979a0fac490033bfe4e20e870a33f\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b8ce464bdacad96e09c2a4ac0104aace\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\d19a6130877d8a0c86d1bb93fd7949c2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\bebc29af6afab2cc2bec2ed01d95cccb\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3838904b1c30ea92853647a6e1d25071\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\cb3a7f41b197bc5c3a3202a64547b4af\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c99500c75f2e4c77885b04954bbf6982\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\99fec95eb1d766e513046263efa70b33\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\d6bfab0ddc01e68a5f3f07dfb71fcdb3\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0b56e49940c57c6205f2b04eabb2aea5\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4ed95f8b149a165b64ada55163abd74c\AndroidManifest.xml:17:1-25:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\5473011d8b228374317c2b0ae94404e9\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\16322a1a7f148ef172ef2077db242035\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\408e3526c45f9f0c0489a1746a32bc1f\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\222ffd5a82015ebe2633a148d468193e\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\a6cdc39e1ab3339b79572ed3990cea5c\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\96f86a1804568725060085562404dac5\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\7a1048d8c3969c3683767a51b6f7ef26\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3b4f1a87b40f257cbc74b7ab20e21bf0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\030cca401f0999685a1f749620940632\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\02b0cfb049dfa3800e63921382f90383\AndroidManifest.xml:17:1-22:12
+MERGED from [com.facebook.fresco:fbcore:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8cc946cce0f39cb2a0d5e86aa72c7926\AndroidManifest.xml:2:1-9:12
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:2:1-8:12
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:2:1-8:12
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:2:1-8:12
+	package
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:2:3-32
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:2:3-32
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+	android:versionName
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+	xmlns:tools
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:1-26:12
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:4:5-67
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:4:22-64
+application
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:6:5-24:19
+MERGED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:6:5-24:19
+MERGED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:6:5-24:19
+MERGED from [com.facebook.react:react-native:0.61.5] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c08f5744e9710cd93f6ccc8a5a67f3ad\AndroidManifest.xml:11:5-20
+MERGED from [com.facebook.react:react-native:0.61.5] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c08f5744e9710cd93f6ccc8a5a67f3ad\AndroidManifest.xml:11:5-20
+MERGED from [com.facebook.soloader:soloader:0.6.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0ca4adb4cded0719a4380626893ff99c\AndroidManifest.xml:11:5-20
+MERGED from [com.facebook.soloader:soloader:0.6.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0ca4adb4cded0719a4380626893ff99c\AndroidManifest.xml:11:5-20
+MERGED from [androidx.core:core:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0b56e49940c57c6205f2b04eabb2aea5\AndroidManifest.xml:22:5-89
+MERGED from [androidx.core:core:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0b56e49940c57c6205f2b04eabb2aea5\AndroidManifest.xml:22:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4ed95f8b149a165b64ada55163abd74c\AndroidManifest.xml:22:5-23:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4ed95f8b149a165b64ada55163abd74c\AndroidManifest.xml:22:5-23:19
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0b56e49940c57c6205f2b04eabb2aea5\AndroidManifest.xml:22:18-86
+	android:label
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:8:7-39
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:8:7-39
+	tools:ignore
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:7:75-114
+	android:roundIcon
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:10:7-52
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:10:7-52
+	tools:targetApi
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:7:54-74
+	android:icon
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:9:7-41
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:9:7-41
+	android:allowBackup
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:11:7-34
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:11:7-34
+	android:theme
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:12:7-38
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:12:7-38
+	android:usesCleartextTraffic
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:7:18-53
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:7:7-38
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:7:7-38
+activity#com.vectornativedev.MainActivity
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:13:7-22:18
+	android:label
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:15:9-41
+	android:windowSoftInputMode
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:17:9-51
+	android:configChanges
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:16:9-79
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:14:9-37
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:18:9-21:25
+action#android.intent.action.MAIN
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:19:13-65
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:19:21-62
+category#android.intent.category.LAUNCHER
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:20:13-73
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:20:23-70
+activity#com.facebook.react.devsupport.DevSettingsActivity
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:23:7-84
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml:23:17-81
+uses-sdk
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+MERGED from [com.facebook.react:react-native:0.61.5] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c08f5744e9710cd93f6ccc8a5a67f3ad\AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.react:react-native:0.61.5] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c08f5744e9710cd93f6ccc8a5a67f3ad\AndroidManifest.xml:7:5-9:41
+MERGED from [androidx.appcompat:appcompat:1.0.2] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4f1204afafaf0e298e53344980f0a57b\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat:1.0.2] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4f1204afafaf0e298e53344980f0a57b\AndroidManifest.xml:20:5-44
+MERGED from [org.webkit:android-jsc:r245459] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\65d02622eaddb4395aa78653996d6bee\AndroidManifest.xml:7:5-9:41
+MERGED from [org.webkit:android-jsc:r245459] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\65d02622eaddb4395aa78653996d6bee\AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.fresco:fresco:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\83cb95aca65c6c21cc06164b20e0016c\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fresco:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\83cb95aca65c6c21cc06164b20e0016c\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3fc95a4f8e7a0b94ceafe3d2b7665c39\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3fc95a4f8e7a0b94ceafe3d2b7665c39\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:drawee:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4382bd89b1245561cc59ebc0e2d89836\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:drawee:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4382bd89b1245561cc59ebc0e2d89836\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagefilters:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8af2c4805f144e612235fd82c0cfe621\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagefilters:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8af2c4805f144e612235fd82c0cfe621\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c13f9d25a7ba1f874f086376c09f35b4\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c13f9d25a7ba1f874f086376c09f35b4\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagetranscoder:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b394ef92d6d2e621321a7dfaa8f11ce5\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:nativeimagetranscoder:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b394ef92d6d2e621321a7dfaa8f11ce5\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-base:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8afc4eacd60582bf126ca48189630e74\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-base:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8afc4eacd60582bf126ca48189630e74\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.soloader:soloader:0.6.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0ca4adb4cded0719a4380626893ff99c\AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.soloader:soloader:0.6.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0ca4adb4cded0719a4380626893ff99c\AndroidManifest.xml:7:5-9:41
+MERGED from [androidx.fragment:fragment:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b6ee6acd3f413bc277083b5589f69d65\AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b6ee6acd3f413bc277083b5589f69d65\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c374175f3b0d00a4de075aa913f41b75\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c374175f3b0d00a4de075aa913f41b75\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\7be4e3dd4513b226a3f4b0f5ab4d4d75\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\7be4e3dd4513b226a3f4b0f5ab4d4d75\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\adbb3c809603afa3fa446944537f1299\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\adbb3c809603afa3fa446944537f1299\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\484979a0fac490033bfe4e20e870a33f\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\484979a0fac490033bfe4e20e870a33f\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b8ce464bdacad96e09c2a4ac0104aace\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\b8ce464bdacad96e09c2a4ac0104aace\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\d19a6130877d8a0c86d1bb93fd7949c2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\d19a6130877d8a0c86d1bb93fd7949c2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\bebc29af6afab2cc2bec2ed01d95cccb\AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\bebc29af6afab2cc2bec2ed01d95cccb\AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3838904b1c30ea92853647a6e1d25071\AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3838904b1c30ea92853647a6e1d25071\AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\cb3a7f41b197bc5c3a3202a64547b4af\AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\cb3a7f41b197bc5c3a3202a64547b4af\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c99500c75f2e4c77885b04954bbf6982\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\c99500c75f2e4c77885b04954bbf6982\AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\99fec95eb1d766e513046263efa70b33\AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\99fec95eb1d766e513046263efa70b33\AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\d6bfab0ddc01e68a5f3f07dfb71fcdb3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\d6bfab0ddc01e68a5f3f07dfb71fcdb3\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0b56e49940c57c6205f2b04eabb2aea5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.0.1] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\0b56e49940c57c6205f2b04eabb2aea5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4ed95f8b149a165b64ada55163abd74c\AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\4ed95f8b149a165b64ada55163abd74c\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\5473011d8b228374317c2b0ae94404e9\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\5473011d8b228374317c2b0ae94404e9\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\16322a1a7f148ef172ef2077db242035\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\16322a1a7f148ef172ef2077db242035\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\408e3526c45f9f0c0489a1746a32bc1f\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\408e3526c45f9f0c0489a1746a32bc1f\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\222ffd5a82015ebe2633a148d468193e\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\222ffd5a82015ebe2633a148d468193e\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\a6cdc39e1ab3339b79572ed3990cea5c\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\a6cdc39e1ab3339b79572ed3990cea5c\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\96f86a1804568725060085562404dac5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\96f86a1804568725060085562404dac5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\7a1048d8c3969c3683767a51b6f7ef26\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\7a1048d8c3969c3683767a51b6f7ef26\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3b4f1a87b40f257cbc74b7ab20e21bf0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\3b4f1a87b40f257cbc74b7ab20e21bf0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\030cca401f0999685a1f749620940632\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\030cca401f0999685a1f749620940632\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\02b0cfb049dfa3800e63921382f90383\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\02b0cfb049dfa3800e63921382f90383\AndroidManifest.xml:20:5-44
+MERGED from [com.facebook.fresco:fbcore:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8cc946cce0f39cb2a0d5e86aa72c7926\AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fbcore:2.0.0] C:\Users\kovacss\.gradle\caches\transforms-2\files-2.1\8cc946cce0f39cb2a0d5e86aa72c7926\AndroidManifest.xml:5:5-7:41
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\main\AndroidManifest.xml
+		INJECTED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:5:5-77
+	android:name
+		ADDED from D:\ReactNativeDev\VectorNativeDev\android\app\src\debug\AndroidManifest.xml:5:22-75

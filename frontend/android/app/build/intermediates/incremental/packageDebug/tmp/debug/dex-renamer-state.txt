@@ -1,0 +1,7 @@
+#Wed Feb 14 11:12:23 CET 2024
+base.0=D\:\\ReactNativeDev\\VectorNativeDev\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+path.1=classes.dex
+renamed.1=classes2.dex
+path.0=classes.dex
+renamed.0=classes.dex
+base.1=D\:\\ReactNativeDev\\VectorNativeDev\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\1
