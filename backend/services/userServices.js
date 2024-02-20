@@ -50,6 +50,7 @@ const UserSchema = zod_1.z.object({
     pw: zod_1.z.string().min(6, { message: "Password must be 6 or more characters long" }),
 });
 //Read all users
+// TODO RESPOONSOKAT KISZEDNI, SZÉPEN VISSZA ADNI A BODY JSONT
 function readAll(res) {
     return __awaiter(this, void 0, void 0, function* () {
         const allUsers = yield prisma.tokens.findMany();
@@ -73,9 +74,9 @@ function loginUser(name, password, res) {
                 const now = Math.floor(new Date().getTime() / 1000);
                 const token = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30s" });
                 const refreshToken = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1d" });
-                console.log('Sikeres bejelentkezes ' + name);
-                yield tokenService.addToken(refreshToken, userId, res, now, 'refreshToken');
-                yield tokenService.addToken(token, userId, res, now, 'accessToken');
+                // await tokenService.addToken(refreshToken, userId,res, now, 'refreshToken');
+                // await tokenService.addToken(token, userId,res, now, 'accessToken');
+                yield tokenService.addTokenAtLogin(token, refreshToken, userId);
                 const body = new loginDTO_1.loginDTO('Login Succes, token added succesfully', token, refreshToken, userId, now);
                 return res.status(200).json(body);
             }

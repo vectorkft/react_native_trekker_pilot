@@ -52,7 +52,7 @@ app.use(body_parser_1.default.json(), LogMiddleWare_1.Logger);
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
-app.get('/', (res) => {
+app.get('/', (req, res) => {
     const data = {
         vegpont: '/login',
         amitker: {
@@ -76,9 +76,10 @@ app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 app.post('/protected', TokenMiddleware_1.verifyToken, (req, res) => {
     return res.status(200).json({ message: 'Protected route accessed' });
 });
-app.post('/refresh', (req, res) => {
-    tokenserv.refreshToken(req.body.refreshToken, res);
-});
+// app.post('/refresh', async (req : Request, res : Response) => {
+//     tokenserv.refreshToken(req.body.refreshToken,res)
+//
+// })
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield userserv.registerUser(req.body.name, req.body.pw, res);
@@ -97,7 +98,7 @@ app.post('/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function
         return res.status(500).send('An error occurred during deletion.');
     }
 }));
-cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens);
+cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
 app.get('/version', (res) => {
     return res.status(200).json({
@@ -136,17 +137,24 @@ app.post('/profile', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void
         return res.status(500).send('Something went wrong: ' + err);
     }
 }));
-app.post('/logout', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const body = yield tokenserv.refreshToken_new(req.body.refreshToken);
+        return res.status(200).json(body);
+    }
+    catch (e) {
+        return res.status(403).json(e);
+    }
+}));
+app.get('/logout', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
     const accesToken = authHeader.split(' ')[1];
-    const refreshToken = req.body.refreshToken;
     try {
-        yield tokenserv.deleteTokensByLogOut(accesToken, refreshToken);
+        yield tokenserv.deleteTokensByLogout_new(accesToken);
         return res.status(200).json('Sikeres kijelentkezes');
     }
-    catch (err) {
-        console.error(err);
-        return res.status(500).send('Something went wrong:' + err);
+    catch (e) {
+        return res.status(403).json('err' + e);
     }
 }));

@@ -19,6 +19,7 @@ const UserSchema = z.object({
 });
 
 //Read all users
+// TODO RESPOONSOKAT KISZEDNI, SZÉPEN VISSZA ADNI A BODY JSONT
 
 export async function readAll(res:Response) {
     const allUsers =await prisma.tokens.findMany();
@@ -43,9 +44,9 @@ export async function loginUser(name: string, password: string, res : Response) 
                 process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "30s"});
             const refreshToken=jwt.sign({name: name, pw: password, id: userId, tokenType:'refreshToken'},
                 process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "1d"});
-            console.log('Sikeres bejelentkezes ' + name);
-            await tokenService.addToken(refreshToken, userId,res, now, 'refreshToken');
-            await tokenService.addToken(token, userId,res, now, 'accessToken');
+            // await tokenService.addToken(refreshToken, userId,res, now, 'refreshToken');
+            // await tokenService.addToken(token, userId,res, now, 'accessToken');
+            await tokenService.addTokenAtLogin(token,refreshToken,userId);
             const body = new loginDTO('Login Succes, token added succesfully', token,refreshToken, userId,now)
             return res.status(200).json(body)
         }

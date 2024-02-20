@@ -1,11 +1,11 @@
 
-import express, {NextFunction, Request, Response} from 'express';
+import express, {Express,NextFunction, Request, Response} from 'express';
 import * as userserv  from './services/userServices';
 import * as cikkserv from './services/cikkService';
 import bodyParser, {Options} from "body-parser";
 import * as tokenserv from './services/tokenServices';
 import * as cron from 'node-cron';
-import {deleteExpiredTokens} from './services/tokenServices';
+import {deleteExpiredTokens_new} from './services/tokenServices';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
 
@@ -25,8 +25,7 @@ app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
 
-app.get('/', (res: Response) => {
-
+app.get('/', ( req: Request, res: Response,) => {
     const data = {
         vegpont: '/login',
         amitker: {
@@ -59,11 +58,11 @@ app.post('/protected',verifyToken, (req,res) => {
 
     return res.status(200).json({ message: 'Protected route accessed' });
 })
+// app.post('/refresh', async (req : Request, res : Response) => {
+//     tokenserv.refreshToken(req.body.refreshToken,res)
+//
+// })
 
-
-app.post('/refresh', (req : Request, res : Response) => {
-    tokenserv.refreshToken(req.body.refreshToken,res)
-})
 
 app.post('/register', async (req: Request, res: Response) => {
     try {
@@ -87,7 +86,7 @@ app.post('/deleteUser', async(req: Request, res: Response) => {
 
 })
 
-cron.schedule("* * * * *", deleteExpiredTokens);
+cron.schedule("* * * * *", deleteExpiredTokens_new);
 
 
 // Státusz ellenőrzések, nem fontos
@@ -131,15 +130,24 @@ app.post('/profile',verifyToken ,async (req: Request, res: Response)=>{
 
 })
 
-app.post('/logout',verifyToken, async (req : Request, res : Response) =>{
+
+
+app.post('/refresh', async (req : Request, res : Response) => {
+    try {
+        const body = await tokenserv.refreshToken_new(req.body.refreshToken);
+        return res.status(200).json(body);
+    } catch (e) {
+        return res.status(403).json(e);
+    }
+})
+
+app.get('/logout',verifyToken, async (req: Request, res : Response) =>{
     const authHeader = req.headers.authorization??'';
     const accesToken = authHeader.split(' ')[1];
-    const refreshToken=req.body.refreshToken;
     try {
-        await tokenserv.deleteTokensByLogOut(accesToken,refreshToken);
+        await tokenserv.deleteTokensByLogout_new(accesToken);
         return res.status(200).json('Sikeres kijelentkezes');
-    }catch (err){
-        console.error(err);
-        return res.status(500).send('Something went wrong:'+ err);
+    }catch (e) {
+        return res.status(403).json('err' + e);
     }
 })
