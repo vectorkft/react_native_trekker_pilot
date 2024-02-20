@@ -4,12 +4,17 @@ import {tokenhandlingService} from "./tokenhandling.service";
 import {API_URL} from "../config";
 
 export const profileService = () => {
-    const { id } = useStore.getState();
+    const { id, accessToken } = useStore.getState();
     const tokenService = tokenhandlingService();
+
+    const checkId = () => {
+        Alert.alert(`${id}`);
+    }
 
     const checkToken = async () => {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", `Bearer ${accessToken}`);
 
         const raw = JSON.stringify({
             "id": id
@@ -26,7 +31,7 @@ export const profileService = () => {
             const response = await fetch(`${API_URL}/profile`, requestOptions);
             const result = await response.text();
 
-            if(await tokenService.getNewToken()){
+            if(await tokenService.isTokenValid()){
                 Alert.alert('Az accessToken frissítve.');
             } else if (await tokenService.checkAccessToken()){
                 Alert.alert('Az accessToken még érvényes.')
@@ -40,7 +45,8 @@ export const profileService = () => {
     }
 
     return {
-        checkToken
+        checkToken,
+        checkId
     };
 
 };
