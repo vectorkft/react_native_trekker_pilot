@@ -5,6 +5,7 @@ import { useLoginService } from "../../services/login.service";
 import {NavigationProp} from "@react-navigation/native";
 import {useStore} from "../../states/state";
 import {tokenhandlingService} from "../../services/tokenhandling.service";
+import {profileService} from "../../services/profile.service";
 
 interface ProfileScreenProps {
     navigation: NavigationProp<any>;
@@ -17,6 +18,7 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
     useStore(state => state.setIsLoggedIn);
     const loginService = useLoginService();
     const tokenService = tokenhandlingService();
+    const profile = profileService();
 
     if (!context) {
         throw new Error("DarkModeContext is undefined");
@@ -47,7 +49,8 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                     </TouchableOpacity>
                     {/*<Button title={"Get Access Token"} onPress={tokenService.getAccessToken}/>*/}
                     {/*<Button title={"Get Refresh Token"} onPress={tokenService.getRefreshToken}/>*/}
-                    <Button title={"Token frissítés"} onPress={tokenService.getNewToken}/>
+                    {/*<Button title={"Get ID"} onPress={profile.checkId}/>*/}
+                    <Button title={"Token frissítés"} onPress={tokenService.isTokenValid}/>
                 </View>
             )}
             <View style={styles.switchMode}>

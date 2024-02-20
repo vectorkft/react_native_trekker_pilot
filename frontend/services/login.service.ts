@@ -64,7 +64,7 @@ export const useLoginService = () => {
                 setIsLoggedIn(true);
                 setAccessToken(result.accessToken);
                 setRefreshToken(result.refreshToken);
-                setId(result.id);
+                setId(result.userId);
                 loginSuccess = true;
             }else {
                 console.log('Sikertelen bejelentkezés!', result.message);
