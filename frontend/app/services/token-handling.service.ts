@@ -1,13 +1,10 @@
-import {useStore} from "../states/state";
+import {useStore} from "../states/states";
 import jwtDecode from 'jwt-decode';
-import {API_URL} from "../config";
+import {API_URL} from "../../config";
 import { useNavigation } from '@react-navigation/native';
+import {DecodedToken} from '../interfaces/decoded-token'
 
-interface DecodedToken {
-    exp: number;
-}
-
-export const tokenhandlingService = () => {
+export const tokenHandlingService = () => {
     const navigation = useNavigation();
 
     const isTokenExpired = (token: string | null): boolean => {

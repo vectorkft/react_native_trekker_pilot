@@ -1,12 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '../config';
-import {useStore} from "../states/state";
-
-interface Errors {
-    username?: string;
-    password?: string;
-}
-
+import {API_URL} from '../../config';
+import {useStore} from "../states/states";
+import {Errors} from "../interfaces/login-errors";
 export const useLoginService = () => {
     const { setId, setRefreshToken, setAccessToken, setIsLoggedIn } = useStore.getState();
     const loadUsernameAndRememberMe = async () => {

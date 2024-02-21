@@ -1,14 +1,8 @@
 import React, {createContext, useState, useEffect, ReactNode} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appearance } from 'react-native-appearance';
-
-interface DarkModeContextType {
-    isDarkMode: boolean;
-    toggleDarkMode: () => Promise<void>;
-}
-
-// Létrehozunk egy új kontextust a sötét mód állapotának tárolására
-export const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined);
+import {DarkMode} from "../../interfaces/dark-mode";
+export const DarkModeContext = createContext<DarkMode | undefined>(undefined);
 
 // A DarkModeProvider komponens biztosítja a kontextust a gyermekkomponensek számára
 export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
