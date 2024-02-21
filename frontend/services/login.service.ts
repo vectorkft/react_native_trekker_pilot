@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Alert} from "react-native";
 import {API_URL} from '../config';
 import {useStore} from "../states/state";
 

@@ -1,52 +1,35 @@
-import {useStore} from "../states/state";
-import {Alert} from "react-native";
 import {tokenhandlingService} from "./tokenhandling.service";
+import {RequestInitFactory} from "../factory/requestinitfactory";
 import {API_URL} from "../config";
+import {useStore} from "../states/state";
 
 export const profileService = () => {
-    const { id, accessToken } = useStore.getState();
     const tokenService = tokenhandlingService();
+    const { id } = useStore.getState();
 
-    const checkId = () => {
-        Alert.alert(`${id}`);
-    }
-
-    const checkToken = async () => {
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", `Bearer ${accessToken}`);
-
-        const raw = JSON.stringify({
-            "id": id
-        });
-
-        const requestOptions: RequestInit = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
-        };
-
+    const handleUserProfileRequest  = async () => {
         try {
-            const response = await fetch(`${API_URL}/profile`, requestOptions);
-            const result = await response.text();
+            const requestInitFactory = new RequestInitFactory(`${API_URL}`);
 
-            if(await tokenService.isTokenValid()){
-                Alert.alert('Az accessToken frissítve.');
-            } else if (await tokenService.checkAccessToken()){
-                Alert.alert('Az accessToken még érvényes.')
-            } else {
-                Alert.alert('Nem sikerült frissíteni az accessToken-t.');
-            }
+            const options = {
+                method: "POST",
+                body: JSON.stringify({"id": id}),
+                accessToken: await tokenService.getTokenIfValid()
+            };
+
+            const response =
+                await fetch(`${requestInitFactory.baseUrl}/profile`, requestInitFactory.getClient(options));
+
+            //TODO: válasz is mehetne bele
+            return await response.json();
 
         } catch (error) {
-            Alert.alert('Az API nem elérhető.', error.message);
+            console.log('Az API nem elérhető.', error);
         }
     }
 
     return {
-        checkToken,
-        checkId
+        handleUserProfileRequest,
     };
 
 };

@@ -37,15 +37,16 @@ const Login: () => React.JSX.Element = () => {
     const { isDarkMode } = context;
 
     useEffect(() => {
-        const loadSavedData = async () => {
-            const { username, rememberMe } = await loginService.loadUsernameAndRememberMe();
-            setUsername(username);
-            setRememberMe(rememberMe);
-        };
-
-        loadSavedData();
+        (async () => {
+            try {
+                const { username, rememberMe } = await loginService.loadUsernameAndRememberMe();
+                setUsername(username);
+                setRememberMe(rememberMe);
+            } catch (error) {
+                console.error('Adatok betöltése sikertelen', error);
+            }
+        })();
     }, []);
-
 
     const handleFormSubmit = async () => {
         const { isValid, errors } = loginService.validateForm(username, password);

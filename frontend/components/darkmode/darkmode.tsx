@@ -22,13 +22,16 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        const loadDarkMode = async () => {
-            const savedMode = await AsyncStorage.getItem('darkMode');
-            if (savedMode !== null) {
-                setIsDarkMode(JSON.parse(savedMode));
+        (async () => {
+            try {
+                const savedMode = await AsyncStorage.getItem('darkMode');
+                if (savedMode !== null) {
+                    setIsDarkMode(JSON.parse(savedMode));
+                }
+            } catch (error) {
+                console.error('Hiba a sötét mód betöltésekor', error);
             }
-        };
-        loadDarkMode();
+        })();
     }, []);
 
     useEffect(() => {
