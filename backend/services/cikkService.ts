@@ -1,7 +1,7 @@
 import {PrismaClient} from "@prisma/client";
-import  {Response} from 'express';
 import {z} from "zod";
 import { ean } from 'luhn-validation';
+import {CikkDTO} from "../dto/cikkDTO";
 
 const prisma = new PrismaClient()
 
@@ -19,50 +19,40 @@ const cikkSchema = z.object({
 });
 
 
-export async function getCikkByCikkszam(cikkszam: number,res : Response) {
+export async function getCikkByCikkszam(cikkszam: number) {
     try{
-        const validateParam=cikkSchema.parse({cikkszam : cikkszam});
+        cikkSchema.parse({cikkszam:cikkszam});
         const cikk = await prisma.cikk.findFirst({
             where: {
                 cikkszam: cikkszam
             }
         })
-        if(!cikk){
-            return res.status(404).json({
-                message: 'A cikk nem található'
-            })
+        if(!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod){
+            return "Not found";
         }
-        return res.status(200).json(cikk);
-    } catch (err) {
+        return new CikkDTO(cikk.cikkszam,cikk.cikknev,Number(cikk.eankod));
+    } catch (err:any) {
         console.log(err)
-        return res.status(401).json({
-            message: 'Something went wrong',
-            err: err
-        })
+        throw err;
     }
 
 
 }
 
-export async function getCikkByEanKod(eankod:number, res: Response) {
+export async function getCikkByEanKod(eankod:number) {
     try{
-        const validateParam=cikkEANSchema.parse({eankod:eankod});
+        cikkEANSchema.parse({eankod:eankod});
         const cikk = await prisma.cikk.findFirst({
             where: {
                 eankod: eankod
             }
         })
-        if(!cikk){
-            return res.status(404).json({
-                message: 'A cikk nem található'
-            })
+        if(!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod){
+            return "Not found";
         }
-        return res.status(200).json(cikk);
+        return new CikkDTO(cikk.cikkszam,cikk.cikknev,Number(cikk.eankod));
     } catch (err) {
         console.log(err)
-        return res.status(401).json({
-            message: 'Something went wrong',
-            err: err
-        })
+        throw err;
     }
 }

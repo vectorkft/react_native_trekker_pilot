@@ -1,14 +1,15 @@
 
-import express, {Express,NextFunction, Request, Response} from 'express';
+import express, {Request, Response} from 'express';
 import * as userserv  from './services/userServices';
 import * as cikkserv from './services/cikkService';
-import bodyParser, {Options} from "body-parser";
+import bodyParser from "body-parser";
 import * as tokenserv from './services/tokenServices';
 import * as cron from 'node-cron';
 import {deleteExpiredTokens_new} from './services/tokenServices';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
-
+import { fromZodError } from 'zod-validation-error';
+import {ZodDTO} from "./dto/zodDTO";
 
 
 
@@ -47,8 +48,15 @@ app.get('/', ( req: Request, res: Response,) => {
 
 app.post('/login', async (req: Request, res: Response) => {
 
-    await userserv.loginUser(req.body.name, req.body.pw, res);
-    console.log(req.body)
+    try {
+        const body=await userserv.loginUser(req.body.name, req.body.pw);
+        if(body==='Wrong username or password'){
+            return res.status(401).json(body)
+        }
+        return res.status(200).json(body)
+    } catch (err: any) {
+        return res.status(400).send(fromZodError(err).toString());
+    }
 
 
 
@@ -58,33 +66,20 @@ app.post('/protected',verifyToken, (req,res) => {
 
     return res.status(200).json({ message: 'Protected route accessed' });
 })
-// app.post('/refresh', async (req : Request, res : Response) => {
-//     tokenserv.refreshToken(req.body.refreshToken,res)
-//
-// })
+
 
 
 app.post('/register', async (req: Request, res: Response) => {
     try {
-        await userserv.registerUser(req.body.name, req.body.pw, res);
-    } catch (err) {
-        console.error(err);
-        return res.status(500).send('An error occurred during registration.');
+        const body=await userserv.registerUser(req.body.name, req.body.pw);
+        return res.status(200).json(body)
+    } catch (err: any) {
+        return res.status(400).send(err);
     }
 });
 
 
 
-app.post('/deleteUser', async(req: Request, res: Response) => {
-    try{
-        await userserv.deleteUser(req.body.id, res);
-    } catch(err) {
-        console.error(err);
-        return res.status(500).send('An error occurred during deletion.');
-
-    }
-
-})
 
 cron.schedule("* * * * *", deleteExpiredTokens_new);
 
@@ -103,33 +98,30 @@ app.all('/check', (res: Response) => {
 
 app.post('/getCikk', async (req: Request, res: Response)=>{
     try{
-       await cikkserv.getCikkByCikkszam(req.body.cikkszam,res);
-    } catch (err) {
+        const body= await cikkserv.getCikkByCikkszam(req.body.cikkszam);
+        if(body==="Not found"){
+           return res.status(404).json({message:'Not found'})
+        }
+        return res.status(200).json(body);
+    } catch (err){
         console.error(err);
-        return res.status(500).send('An error occurred during registration.');
+        return res.status(400).json(err);
     }
 })
 
 app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
     try{
-        await cikkserv.getCikkByEanKod(req.body.eankod , res);
-    } catch (err){
+       const body= await cikkserv.getCikkByEanKod(req.body.eankod);
+        if(body==="Not found"){
+            return res.status(404).json({message:'Not found'})
+        }
+       return res.status(200).json(body);
+    } catch (err:any){
         console.error(err);
-        return res.status(500).send('An error occurred during registration.');
+        return res.status(400).json(fromZodError(err).toString());
     }
 
 })
-
-app.post('/profile',verifyToken ,async (req: Request, res: Response)=>{
-    try{
-        await userserv.getUserById(req.body.id,res);
-    } catch (err){
-        console.error(err);
-        return res.status(500).send('Something went wrong: ' + err);
-    }
-
-})
-
 
 
 app.post('/refresh', async (req : Request, res : Response) => {
@@ -146,8 +138,62 @@ app.get('/logout',verifyToken, async (req: Request, res : Response) =>{
     const accesToken = authHeader.split(' ')[1];
     try {
         await tokenserv.deleteTokensByLogout_new(accesToken);
-        return res.status(200).json('Sikeres kijelentkezes');
+        return res.status(200).json('Logout successful');
     }catch (e) {
         return res.status(403).json('err' + e);
     }
+})
+
+app.post('/profile',verifyToken,async (req: Request, res: Response)=>{
+    const authHeader = req.headers.authorization??'';
+    const accessToken = authHeader.split(' ')[1];
+    try{
+        const body=await userserv.getUserById_new(accessToken);
+        if(!body){
+            return res.status(404).send('User not found');
+        }
+        return res.status(200).json(body)
+    } catch (err){
+        console.error(err);
+        return res.status(404).send('Something went wrong: ' + err);
+    }
+
+})
+
+app.post('/deleteUser',verifyToken, async(req: Request, res: Response) => {
+    const authHeader = req.headers.authorization??'';
+    const accessToken = authHeader.split(' ')[1];
+    try{
+        const body=await userserv.deleteUserByIdFromToken(accessToken);
+        if(!body){
+            return res.status(404).send('User not found');
+        }
+        return res.status(200).json(body)
+    } catch (err){
+        console.error(err);
+        return res.status(404).send('Something went wrong: ' + err);
+    }
+
+})
+
+app.post('/login2', async (req: Request, res: Response) => {
+
+    try {
+        const body=await userserv.loginUser(req.body.name, req.body.pw);
+        if(body==='Wrong username or password'){
+            return res.status(401).json(body)
+        }
+        return res.status(200).json(body);
+    } catch (err: any) {
+        if (err.issues && err.issues.length > 0) {
+            const issues = err.issues.map((issue: any) => new ZodDTO(issue.code, issue.expected, issue.received, issue.path.join('.')));
+            return res.status(400).json(issues);
+        } else {
+            console.error(err);
+            return res.status(500).send('An unexpected error occurred');
+        }
+    }
+
+
+
 })

@@ -25,9 +25,9 @@ model Tokens_v1 {
 }
 
 model cikk {
-  cikkszam Int     @id @default(autoincrement())
-  cikknev  String?
-  eankod   BigInt?
+  cikkszam Int    @id @default(autoincrement())
+  cikknev  String
+  eankod   BigInt
 }
 
 model user {

@@ -1,14 +1,16 @@
 import {RefreshTokenDTO} from "../dto/refreshTokenDTO";
 import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
-
+import {JwtPayload} from "../models/JwtPayload";
+import {z} from "zod";
 
 
 const prisma = new PrismaClient()
 
-interface JwtPayload {
-    exp: number
-}
+const RefreshBodySchema = z.object({
+    refreshToken: z.string(),
+
+});
 
 
 
@@ -40,6 +42,7 @@ export async function addTokenAtLogin(accessToken: string, refreshToken: string,
 export async function refreshToken_new(refreshToken: string){
     const expireDate= Math.floor(Date.now() / 1000) + 30;
     const secretKey = process.env.JWT_SECRET_KEY ?? ''
+    RefreshBodySchema.parse({refreshToken: refreshToken});
     return new Promise<RefreshTokenDTO>((resolve, reject) => {
         jwt.verify(refreshToken,secretKey,async (err: any, payload: any) => {
             if (err) {
@@ -130,6 +133,19 @@ export async function deleteTokensByLogout_new(accessToken:string){
 
 
 }
+
+export async function deleteTokensByUserId(userId:number){
+    try {
+        return await prisma.tokens_v1.deleteMany({
+            where: {
+                userId: userId
+            }
+        });
+    } catch (err){
+
+    }
+}
+
 
 
 

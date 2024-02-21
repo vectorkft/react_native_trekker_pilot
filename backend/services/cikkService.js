@@ -13,6 +13,7 @@ exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
 const zod_1 = require("zod");
 const luhn_validation_1 = require("luhn-validation");
+const cikkDTO_1 = require("../dto/cikkDTO");
 const prisma = new client_1.PrismaClient();
 const cikkEANSchema = zod_1.z.object({
     eankod: zod_1.z.number().refine(value => value.toString().length === 13, {
@@ -24,54 +25,44 @@ const cikkEANSchema = zod_1.z.object({
 const cikkSchema = zod_1.z.object({
     cikkszam: zod_1.z.number(),
 });
-function getCikkByCikkszam(cikkszam, res) {
+function getCikkByCikkszam(cikkszam) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const validateParam = cikkSchema.parse({ cikkszam: cikkszam });
+            cikkSchema.parse({ cikkszam: cikkszam });
             const cikk = yield prisma.cikk.findFirst({
                 where: {
                     cikkszam: cikkszam
                 }
             });
-            if (!cikk) {
-                return res.status(404).json({
-                    message: 'A cikk nem található'
-                });
+            if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
+                return "Not found";
             }
-            return res.status(200).json(cikk);
+            return new cikkDTO_1.CikkDTO(cikk.cikkszam, cikk.cikknev, Number(cikk.eankod));
         }
         catch (err) {
             console.log(err);
-            return res.status(401).json({
-                message: 'Something went wrong',
-                err: err
-            });
+            throw err;
         }
     });
 }
 exports.getCikkByCikkszam = getCikkByCikkszam;
-function getCikkByEanKod(eankod, res) {
+function getCikkByEanKod(eankod) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const validateParam = cikkEANSchema.parse({ eankod: eankod });
+            cikkEANSchema.parse({ eankod: eankod });
             const cikk = yield prisma.cikk.findFirst({
                 where: {
                     eankod: eankod
                 }
             });
-            if (!cikk) {
-                return res.status(404).json({
-                    message: 'A cikk nem található'
-                });
+            if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
+                return "Not found";
             }
-            return res.status(200).json(cikk);
+            return new cikkDTO_1.CikkDTO(cikk.cikkszam, cikk.cikknev, Number(cikk.eankod));
         }
         catch (err) {
             console.log(err);
-            return res.status(401).json({
-                message: 'Something went wrong',
-                err: err
-            });
+            throw err;
         }
     });
 }
