@@ -15,10 +15,13 @@ model Tokens {
   token_type String?
 }
 
-model user {
-  id   Int     @id @default(autoincrement())
-  name String?
-  pw   String?
+model Tokens_v1 {
+  id                Int     @id @default(autoincrement())
+  accessToken       String?
+  accessExpireDate  Int?
+  refreshToken      String?
+  refreshExpireDate Int?
+  userId            Int?
 }
 
 model cikk {
@@ -27,11 +30,8 @@ model cikk {
   eankod   BigInt?
 }
 
-model Tokens_v1 {
-  id                Int     @id @default(autoincrement())
-  accessToken       String?
-  accessExpireDate  Int?
-  refreshToken      String?
-  refreshExpireDate Int?
-  userId            Int?
+model user {
+  id   Int     @id @default(autoincrement())
+  name String?
+  pw   String?
 }
