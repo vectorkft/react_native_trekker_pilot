@@ -1,32 +1,30 @@
-export class RequestInitFactory {
-    public readonly baseUrl: string;
-    private readonly contentType: string;
+import {API_URL} from "../config";
 
+const getClient = (options: any = {}): RequestInit  => {
 
+    const headers = {
+        'Content-Type': "application/json",
+        ...options.headers, // opcionális fejlécek hozzáadása
+    };
 
-    //TODO: default url configból,undefined akkor állítom a configra,konstruktor elmehet, dorequest-fetch minden info átmenne
-    constructor(apiUrl: string) {
-        this.baseUrl = apiUrl;
-        this.contentType = "application/json";
+    if(options.accessToken){
+        headers['Authorization'] = `Bearer ${options.accessToken}`;
     }
 
-    getClient = (options: any = {}): RequestInit  => {
+    return {
+        method: options.method,
+        headers: headers,
+        body: options.body,
+        redirect: "follow"
+    };
+};
 
-        const headers = {
-            'Content-Type': this.contentType,
-            ...options.headers, // opcionális fejlécek hozzáadása
-        };
+export const RequestInitFactory = {
 
-        if(options.accessToken){
-            headers['Authorization'] = `Bearer ${options.accessToken}`;
-        }
-
-        return {
-            method: options.method,
-            headers: headers,
-            body: options.body,
-            redirect: "follow"
-        };
+    doRequest : async (endpoint: string, requestOptions: any = {}) => {
+        const url = `${API_URL}${endpoint}`;
+        const response = await fetch(url, getClient(requestOptions));
+        return await response.json();
     }
 }
 

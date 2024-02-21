@@ -1,5 +1,5 @@
 import React, {ReactNode, useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
 import { DarkModeContext } from "../darkmode/darkmode";
 import { useLoginService } from "../../services/login.service";
 import {NavigationProp} from "@react-navigation/native";
@@ -16,7 +16,6 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
     const { accessToken, refreshToken, id } = useStore.getState();
     const context = useContext(DarkModeContext);
     const isLoggedIn = useStore(state => state.isLoggedIn);
-    useStore(state => state.setIsLoggedIn);
     const loginService = useLoginService();
     const tokenService = tokenhandlingService();
     const profileS = profileService();
@@ -44,18 +43,20 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
         navigation.setParams({ isDarkMode });
     }, [isDarkMode]);
 
-    // TODO: useeffect aszinkron működés keresés
     useEffect(() => {
-        (async () => {
-            try {
-                const data = await profileS.handleUserProfileRequest();
-                setProfileData(data);
-            } catch (error) {
-                console.error('Sikertelen handling hiba:', error);
-            }
-        })();
-    }, []);
+        profileS.handleUserProfileRequest().then(profile => {
+            setProfileData(profile);
+        })
+            .catch(console.error);
+    }, [setProfileData]);
 
+    if (!profileData) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
     const handleLogoutClick = async () => {
         await loginService.handleLogout();
         Alert.alert('Sikeres kijelentkezés!');

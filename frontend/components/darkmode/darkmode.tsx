@@ -22,17 +22,14 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        (async () => {
-            try {
-                const savedMode = await AsyncStorage.getItem('darkMode');
-                if (savedMode !== null) {
+        AsyncStorage.getItem('darkMode')
+            .then(savedMode => {
+                if(savedMode !== null){
                     setIsDarkMode(JSON.parse(savedMode));
                 }
-            } catch (error) {
-                console.error('Hiba a sötét mód betöltésekor', error);
-            }
-        })();
-    }, []);
+            })
+            .catch(console.error);
+    }, [setIsDarkMode]);
 
     useEffect(() => {
         const subscription = Appearance.addChangeListener(async ({ colorScheme }) => {

@@ -7,7 +7,7 @@
  */
 
 import React, {useContext, useEffect, useRef} from 'react';
-import {StyleSheet, View, Text, TextInput, Button, Switch, Alert} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
 import {useState} from 'react';
 import { DarkModeContext } from "../darkmode/darkmode";
 import { useLoginService  } from '../../services/login.service';
@@ -37,16 +37,20 @@ const Login: () => React.JSX.Element = () => {
     const { isDarkMode } = context;
 
     useEffect(() => {
-        (async () => {
-            try {
-                const { username, rememberMe } = await loginService.loadUsernameAndRememberMe();
-                setUsername(username);
-                setRememberMe(rememberMe);
-            } catch (error) {
-                console.error('Adatok betöltése sikertelen', error);
-            }
-        })();
-    }, []);
+        loginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
+            setUsername(username);
+            setRememberMe(rememberMe);
+        })
+            .catch(console.error);
+    }, [setUsername,setRememberMe]);
+
+    if (!username || !rememberMe) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
 
     const handleFormSubmit = async () => {
         const { isValid, errors } = loginService.validateForm(username, password);
