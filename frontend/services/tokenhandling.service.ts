@@ -1,4 +1,3 @@
-import {Alert} from "react-native";
 import {useStore} from "../states/state";
 import jwtDecode from 'jwt-decode';
 import {API_URL} from "../config";
@@ -9,16 +8,7 @@ interface DecodedToken {
 }
 
 export const tokenhandlingService = () => {
-    const { accessToken, refreshToken } = useStore.getState();
     const navigation = useNavigation();
-
-    const getAccessToken = () =>{
-        Alert.alert(accessToken)
-    }
-
-    const getRefreshToken = () =>{
-        Alert.alert(refreshToken)
-    }
 
     const isTokenExpired = (token: string | null): boolean => {
         if (!token) {
@@ -97,10 +87,8 @@ export const tokenhandlingService = () => {
 
             if (result.newAccessToken) {
                 setAccessToken(result.newAccessToken); // Frissítjük az accessToken-t
-                console.log('Az accessToken frissítve.');
                 return true;
             } else {
-                console.log('Nem sikerült frissíteni az accessToken-t.');
                 setIsLoggedIn(false);
                 navigation.reset({
                     index: 0,
@@ -132,12 +120,38 @@ export const tokenhandlingService = () => {
         return success;
     };
 
+    const getTokenIfValid = async (): Promise<string> => {
+        const { accessToken } = useStore.getState();
+        const isAccessTokenValid = await checkAccessToken();
+        let token: string = null;
+
+        if (isAccessTokenValid) {
+            token = accessToken;
+            console.log('Az accessToken még érvényes.');
+        } else {
+            const isRefreshTokenValid = await checkRefreshToken();
+
+            if (isRefreshTokenValid) {
+                const success = await refreshAccessToken();
+                if (success) {
+                    console.log('Az accessToken frissítve.');
+                    const { accessToken: newAccessToken } = useStore.getState();
+                    token = newAccessToken;
+                } else {
+                    console.log('Nem sikerült frissíteni az accessToken-t.');
+                }
+            }
+        }
+
+        return token;
+    };
+
+
     return {
+        getTokenIfValid,
         isTokenValid,
         refreshAccessToken,
         checkRefreshToken,
-        getAccessToken,
-        getRefreshToken,
         checkAccessToken,
     };
 }

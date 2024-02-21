@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Alert} from "react-native";
 import {API_URL} from '../config';
 import {useStore} from "../states/state";
 
@@ -59,14 +58,14 @@ export const useLoginService = () => {
             response = await fetch(`${API_URL}/login`, requestOptions);
             result = await response.json();
 
-            if (result.message === "Login Succes, token added succesfully") {
+            if (response.ok) {
                 console.log('Sikeres bejelentkezés!');
                 setIsLoggedIn(true);
                 setAccessToken(result.accessToken);
                 setRefreshToken(result.refreshToken);
                 setId(result.userId);
                 loginSuccess = true;
-            }else {
+            } else {
                 console.log('Sikertelen bejelentkezés!', result.message);
             }
         } catch (error: any) {

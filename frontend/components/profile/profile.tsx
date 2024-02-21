@@ -1,5 +1,5 @@
-import React, {ReactNode, useContext, useEffect} from 'react';
-import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, Button} from 'react-native';
+import React, {ReactNode, useContext, useEffect, useState} from 'react';
+import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
 import { DarkModeContext } from "../darkmode/darkmode";
 import { useLoginService } from "../../services/login.service";
 import {NavigationProp} from "@react-navigation/native";
@@ -13,12 +13,25 @@ interface ProfileScreenProps {
 }
 
 const Profile = ({ navigation }: ProfileScreenProps) => {
+    const { accessToken, refreshToken, id } = useStore.getState();
     const context = useContext(DarkModeContext);
     const isLoggedIn = useStore(state => state.isLoggedIn);
-    useStore(state => state.setIsLoggedIn);
     const loginService = useLoginService();
     const tokenService = tokenhandlingService();
-    const profile = profileService();
+    const profileS = profileService();
+    const [profileData, setProfileData] = useState(null);
+
+    const getAccessToken = () =>{
+        Alert.alert(accessToken)
+    }
+
+    const getRefreshToken = () =>{
+        Alert.alert(refreshToken)
+    }
+
+    const checkId = () => {
+        Alert.alert(`${id}`);
+    }
 
     if (!context) {
         throw new Error("DarkModeContext is undefined");
@@ -30,9 +43,23 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
         navigation.setParams({ isDarkMode });
     }, [isDarkMode]);
 
+    useEffect(() => {
+        profileS.handleUserProfileRequest().then(profile => {
+            setProfileData(profile);
+        })
+            .catch(console.error);
+    }, [setProfileData]);
+
+    if (!profileData) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
     const handleLogoutClick = async () => {
         await loginService.handleLogout();
-        Alert.alert('Sikeres kijelentkezés!')
+        Alert.alert('Sikeres kijelentkezés!');
         navigation.navigate('homescreen');
     };
 
@@ -50,7 +77,11 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                     {/*<Button title={"Get Access Token"} onPress={tokenService.getAccessToken}/>*/}
                     {/*<Button title={"Get Refresh Token"} onPress={tokenService.getRefreshToken}/>*/}
                     {/*<Button title={"Get ID"} onPress={profile.checkId}/>*/}
-                    <Button title={"Token frissítés"} onPress={tokenService.isTokenValid}/>
+                    {/*<Button title={"Token frissítés"} onPress={tokenService.isTokenValid}/>*/}
+                    {profileData && (
+                        <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>
+                            {JSON.stringify(profileData)}</Text> // profil adatok megjelenítése
+                    )}
                 </View>
             )}
             <View style={styles.switchMode}>

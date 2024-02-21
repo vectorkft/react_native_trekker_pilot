@@ -4,7 +4,6 @@ import { DarkModeContext } from "../darkmode/darkmode";
 import { NavigationProp } from '@react-navigation/native';
 import {useStore} from "../../states/state";
 import {useLoginService} from "../../services/login.service";
-import {profileService} from "../../services/profile.service";
 
 interface HomeScreenProps {
     navigation: NavigationProp<any>;
@@ -15,8 +14,6 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
     useStore(state => state.setIsLoggedIn);
     const loginService = useLoginService();
-    const useProfileService = profileService();
-
 
     const context = useContext(DarkModeContext);
 
@@ -40,7 +37,6 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
             {isLoggedIn ? (
                 <View>
                 <Button title="Profil" onPress={() => {
-                    useProfileService.checkToken();
                     navigation.navigate('profile');
                 }} />
                 <Button title="Kijelentkezés" onPress={handleLogout} />

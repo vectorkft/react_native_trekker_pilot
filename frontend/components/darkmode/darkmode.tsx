@@ -22,14 +22,14 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        const loadDarkMode = async () => {
-            const savedMode = await AsyncStorage.getItem('darkMode');
-            if (savedMode !== null) {
-                setIsDarkMode(JSON.parse(savedMode));
-            }
-        };
-        loadDarkMode();
-    }, []);
+        AsyncStorage.getItem('darkMode')
+            .then(savedMode => {
+                if(savedMode !== null){
+                    setIsDarkMode(JSON.parse(savedMode));
+                }
+            })
+            .catch(console.error);
+    }, [setIsDarkMode]);
 
     useEffect(() => {
         const subscription = Appearance.addChangeListener(async ({ colorScheme }) => {

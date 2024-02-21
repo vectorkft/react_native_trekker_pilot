@@ -1,52 +1,25 @@
-import {useStore} from "../states/state";
-import {Alert} from "react-native";
 import {tokenhandlingService} from "./tokenhandling.service";
-import {API_URL} from "../config";
+import {RequestInitFactory} from "../factory/requestinitfactory";
 
 export const profileService = () => {
-    const { id, accessToken } = useStore.getState();
     const tokenService = tokenhandlingService();
 
-    const checkId = () => {
-        Alert.alert(`${id}`);
-    }
-
-    const checkToken = async () => {
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", `Bearer ${accessToken}`);
-
-        const raw = JSON.stringify({
-            "id": id
-        });
-
-        const requestOptions: RequestInit = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
-        };
-
+    const handleUserProfileRequest  = async () => {
         try {
-            const response = await fetch(`${API_URL}/profile`, requestOptions);
-            const result = await response.text();
+            const options = {
+                method: "POST",
+                accessToken: await tokenService.getTokenIfValid()
+            };
 
-            if(await tokenService.isTokenValid()){
-                Alert.alert('Az accessToken frissítve.');
-            } else if (await tokenService.checkAccessToken()){
-                Alert.alert('Az accessToken még érvényes.')
-            } else {
-                Alert.alert('Nem sikerült frissíteni az accessToken-t.');
-            }
+            return await RequestInitFactory.doRequest('/profile', options);
 
         } catch (error) {
-            Alert.alert('Az API nem elérhető.', error.message);
+            console.log('Az API nem elérhető.', error);
         }
     }
 
     return {
-        checkToken,
-        checkId
+        handleUserProfileRequest,
     };
 
 };
