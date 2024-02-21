@@ -186,7 +186,12 @@ app.post('/login2', async (req: Request, res: Response) => {
         return res.status(200).json(body);
     } catch (err: any) {
         if (err.issues && err.issues.length > 0) {
-            const issues = err.issues.map((issue: any) => new ZodDTO(issue.code, issue.expected, issue.received, issue.path.join('.')));
+            const issues = err.issues.map((issue: any) => ({
+                code: issue.code,
+                expected: issue.expected,
+                received: issue.received,
+                path: issue.path.join('.')
+            }));
             return res.status(400).json(issues);
         } else {
             console.error(err);

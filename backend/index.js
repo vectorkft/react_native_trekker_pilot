@@ -45,7 +45,6 @@ const tokenServices_1 = require("./services/tokenServices");
 const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
 const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
 const zod_validation_error_1 = require("zod-validation-error");
-const zodDTO_1 = require("./dto/zodDTO");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 app.use(body_parser_1.default.urlencoded({ extended: false }));
@@ -196,7 +195,12 @@ app.post('/login2', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (err) {
         if (err.issues && err.issues.length > 0) {
-            const issues = err.issues.map((issue) => new zodDTO_1.ZodDTO(issue.code, issue.expected, issue.received, issue.path.join('.')));
+            const issues = err.issues.map((issue) => ({
+                code: issue.code,
+                expected: issue.expected,
+                received: issue.received,
+                path: issue.path.join('.')
+            }));
             return res.status(400).json(issues);
         }
         else {
