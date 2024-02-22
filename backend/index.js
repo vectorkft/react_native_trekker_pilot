@@ -44,6 +44,7 @@ const cron = __importStar(require("node-cron"));
 const tokenServices_1 = require("./services/tokenServices");
 const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
 const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
+const zodDTO_1 = require("./dto/zodDTO");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 app.use(body_parser_1.default.urlencoded({ extended: false }));
@@ -70,32 +71,27 @@ app.get('/', (req, res) => {
     return res.status(400).send('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
 });
 app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield userserv.loginUser(req.body.name, req.body.pw, res);
-    console.log(req.body);
+    try {
+        const body = yield userserv.loginUser(req.body.name, req.body.pw);
+        if (body === 'Wrong username or password') {
+            return res.status(401).json(body);
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
+    }
 }));
 app.post('/protected', TokenMiddleware_1.verifyToken, (req, res) => {
     return res.status(200).json({ message: 'Protected route accessed' });
 });
-// app.post('/refresh', async (req : Request, res : Response) => {
-//     tokenserv.refreshToken(req.body.refreshToken,res)
-//
-// })
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield userserv.registerUser(req.body.name, req.body.pw, res);
+        const body = yield userserv.registerUser(req.body.name, req.body.pw);
+        return res.status(200).json(body);
     }
     catch (err) {
-        console.error(err);
-        return res.status(500).send('An error occurred during registration.');
-    }
-}));
-app.post('/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield userserv.deleteUser(req.body.id, res);
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).send('An error occurred during deletion.');
+        return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens_new);
@@ -112,29 +108,28 @@ app.all('/check', (res) => {
 });
 app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield cikkserv.getCikkByCikkszam(req.body.cikkszam, res);
+        const body = yield cikkserv.getCikkByCikkszam(req.body.cikkszam);
+        if (body === "Not found") {
+            return res.status(404).json({ message: 'Not found' });
+        }
+        return res.status(200).json(body);
     }
     catch (err) {
         console.error(err);
-        return res.status(500).send('An error occurred during registration.');
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield cikkserv.getCikkByEanKod(req.body.eankod, res);
+        const body = yield cikkserv.getCikkByEanKod(req.body.eankod);
+        if (body === "Not found") {
+            return res.status(404).json({ message: 'Not found' });
+        }
+        return res.status(200).json(body);
     }
     catch (err) {
         console.error(err);
-        return res.status(500).send('An error occurred during registration.');
-    }
-}));
-app.post('/profile', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield userserv.getUserById(req.body.id, res);
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).send('Something went wrong: ' + err);
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -143,7 +138,7 @@ app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         return res.status(200).json(body);
     }
     catch (e) {
-        return res.status(403).json(e);
+        return res.status(403).json(zodDTO_1.ZodDTO.fromZodError(e));
     }
 }));
 app.get('/logout', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -152,9 +147,53 @@ app.get('/logout', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0
     const accesToken = authHeader.split(' ')[1];
     try {
         yield tokenserv.deleteTokensByLogout_new(accesToken);
-        return res.status(200).json('Sikeres kijelentkezes');
+        return res.status(200).json('Logout successful');
     }
     catch (e) {
         return res.status(403).json('err' + e);
+    }
+}));
+app.post('/profile', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    const authHeader = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
+    const accessToken = authHeader.split(' ')[1];
+    try {
+        const body = yield userserv.getUserById_new(accessToken);
+        if (!body) {
+            return res.status(404).send('User not found');
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(404).send('Something went wrong: ' + err);
+    }
+}));
+app.post('/deleteUser', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    const authHeader = (_c = req.headers.authorization) !== null && _c !== void 0 ? _c : '';
+    const accessToken = authHeader.split(' ')[1];
+    try {
+        const body = yield userserv.deleteUserByIdFromToken(accessToken);
+        if (!body) {
+            return res.status(404).send('User not found');
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(404).send('Something went wrong: ' + err);
+    }
+}));
+app.post('/login2', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const body = yield userserv.loginUser(req.body.name, req.body.pw);
+        if (body === 'Wrong username or password') {
+            return res.status(401).json(body);
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));

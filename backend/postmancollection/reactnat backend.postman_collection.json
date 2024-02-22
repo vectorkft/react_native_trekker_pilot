@@ -1,0 +1,343 @@
+{
+	"info": {
+		"_postman_id": "def3494b-4d92-43b0-a067-5445fdc9f41a",
+		"name": "reactnat backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32366350"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Godzillaasd\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "Felhasználó belépésére szolgáló végpont  \nParaméterek\n\n- name - a felhasználó neve\n- pw - a felhasználó jelszava\n    \n\nHa rossz paramatérert adsz vissza adja hogy mit vár.\n\nHa 200 OK jön akkor minden jó.\n\nHa 400 bad request akkor amit kapott json nemjó pl: a name param helyett namet-adtál meg.\n\nHa 401 akkor hibás jelszó vagy felhasználó név"
+			},
+			"response": []
+		},
+		{
+			"name": "Token ellenőrzés",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzA4MzUzOTE4LCJleHAiOjE3MDgzNTM5NDh9.CS6-AkUkVbdorWsEUpbBbbRP1helhzQ7di2l_RfzqAk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/protected",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"protected"
+					]
+				},
+				"description": "Az accessToken ellenőrzésére szolgáló végpont\n\nA headerből olvassa ki az accesTokent\n\n- Az Authorization-be a Bearer szó után kell beilleszteni a login-nál generált accesToken-t.\n- Ha sikeres akkor jön valami message\n- Ha sikertelen akkor forbidden jön 403-as kóddal."
+			},
+			"response": []
+		},
+		{
+			"name": "Regisztráció",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Godzillaasd1QWEEEE\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register"
+					]
+				},
+				"description": "Regisztrációt szolgáló végpont.  \nParaméterek:\n\n- name - felhasználó neve\n- pw - felhasználó jelszava\n    \n\nHa nem valid paramétereket használsz akkor zod error kiirja hogy mit vár. Siker esetén felviszi az adatokat a user táblába.\n\n200 OK - Sikeres regisztráció\n\n400 Akkor a bodyban valamelyik kulcsot elirtad pl name helyett namea"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"id\": 812   \r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/deleteUser",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"deleteUser"
+					]
+				},
+				"description": "Felhasználó törlésére szánt végpont. Védett végpont, érvényes accessToken-el lehet csak elérni.  \nParaméterek:\n\n- Headerből jön a jwt token, az alapján törlődik a felhasználó\n    \n\nId alapján kitörli az adatbázisból az adott személyt.  \nNem létező user esetén 404 jön és egy prisma hiba üzenet."
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"refreshToken\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzA4NDM1OTU0LCJleHAiOjE3MDg1MjIzNTR9.qA0VvUj-mt-8hjdTsTYe0lLX9hzCrlcQhHGgWKHOtaY\"    \r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/refresh",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"refresh"
+					]
+				},
+				"description": "Ez a végpont szolgál arra hogy új accessTokent generáljunk.  \nParaméterek:\n\n- refreshToken - a bejelentkezésnél generált token\n    \n\nHa nem jó refershTokent adunk meg akkor 403 status kód jön.\n\n200 OK ha jó a token és generálja is az új accessTokent\n\n403 Forbidden ha nem jó a refresh kód amit kapott"
+			},
+			"response": []
+		},
+		{
+			"name": "getCikkByCikkszam",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzA4MzQ5NjkwLCJleHAiOjE3MDgzNDk3MjB9.Pw4LmeMUSKEEIrcivD7Uxjl4nRupwW-aPJGYS9xSNlM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n\"cikkszam\":1\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/getCikk",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"getCikk"
+					]
+				},
+				"description": "Cikk lekérdezése cikkszám alapján. Védett végpont tehát a headerben szerepelnie kell egy érvényes accessTokennek.  \nParaméterek:\n\n- cikkszam\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n404 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
+			},
+			"response": []
+		},
+		{
+			"name": "getCikkByEAN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n\"eankod\": 8886813777511\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/getCikkByEAN",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"getCikkByEAN"
+					]
+				},
+				"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n404 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
+			},
+			"response": []
+		},
+		{
+			"name": "Profile",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDg1MDY5MzQsImV4cCI6MTcwODUwNjk2NH0.cfrl_wfUH0Mio5j5q9eJ6kOnrrzDw-qiVY5MvCd6Q7w",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/profile",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"profile"
+					]
+				},
+				"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait."
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDg0NDE4NDgsImV4cCI6MTcwODQ0MTg3OH0.ZgaMSHtwmMpnXm2M-BaS0B-IpreqKIdvcCtsBtvMZJU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n\"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzA4NDE4NDU2LCJleHAiOjE3MDg1MDQ4NTZ9.bSBcCibq8D-_KYxuzK0KGt6S8v3ATUgJL8K3kKqOKuM\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"logout"
+					]
+				},
+				"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja."
+			},
+			"response": []
+		},
+		{
+			"name": "Profile2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGEiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjozNSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDg1MDg4NzQsImV4cCI6MTcwODUwODkwNH0.CL0Jr4VrlhLQaPBolK2kS6GA_Cjg78JXPZO2mq8480Y",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/deleteUser2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"deleteUser2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}

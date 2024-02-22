@@ -12,11 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.refreshToken_new = exports.addTokenAtLogin = void 0;
+exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.refreshToken_new = exports.addTokenAtLogin = void 0;
 const refreshTokenDTO_1 = require("../dto/refreshTokenDTO");
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const zod_1 = require("zod");
 const prisma = new client_1.PrismaClient();
+const RefreshBodySchema = zod_1.z.object({
+    refreshToken: zod_1.z.string(),
+});
 function addTokenAtLogin(accessToken, refreshToken, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
@@ -47,6 +51,7 @@ function refreshToken_new(refreshToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const expireDate = Math.floor(Date.now() / 1000) + 30;
         const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
+        RefreshBodySchema.parse({ refreshToken: refreshToken });
         return new Promise((resolve, reject) => {
             jsonwebtoken_1.default.verify(refreshToken, secretKey, (err, payload) => __awaiter(this, void 0, void 0, function* () {
                 if (err) {
@@ -138,6 +143,20 @@ function deleteTokensByLogout_new(accessToken) {
     });
 }
 exports.deleteTokensByLogout_new = deleteTokensByLogout_new;
+function deleteTokensByUserId(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            return yield prisma.tokens_v1.deleteMany({
+                where: {
+                    userId: userId
+                }
+            });
+        }
+        catch (err) {
+        }
+    });
+}
+exports.deleteTokensByUserId = deleteTokensByUserId;
 // export async function addToken(token: string, userId: number, res : Response, currentTime: number,tokenType: string){
 //     try{
 //         await prisma.tokens.create({
