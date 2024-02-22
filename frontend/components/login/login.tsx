@@ -27,6 +27,7 @@ const Login: () => React.JSX.Element = () => {
     let passwordInput = useRef<TextInput | null>(null);
     const navigation = useNavigation();
     const loginService = useLoginService();
+    const [loading, setLoading] = useState(true);
 
     const context = useContext(DarkModeContext);
 
@@ -40,11 +41,12 @@ const Login: () => React.JSX.Element = () => {
         loginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
             setUsername(username);
             setRememberMe(rememberMe);
+            setLoading(false);
         })
             .catch(console.error);
     }, [setUsername,setRememberMe]);
 
-    if (!username || !rememberMe) {
+    if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#0000ff" />

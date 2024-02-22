@@ -8,7 +8,6 @@ import * as cron from 'node-cron';
 import {deleteExpiredTokens_new} from './services/tokenServices';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
-import { fromZodError } from 'zod-validation-error';
 import {ZodDTO} from "./dto/zodDTO";
 
 
@@ -55,7 +54,7 @@ app.post('/login', async (req: Request, res: Response) => {
         }
         return res.status(200).json(body)
     } catch (err: any) {
-        return res.status(400).send(fromZodError(err).toString());
+        return res.status(400).send(ZodDTO.fromZodError(err));
     }
 
 
@@ -74,7 +73,7 @@ app.post('/register', async (req: Request, res: Response) => {
         const body=await userserv.registerUser(req.body.name, req.body.pw);
         return res.status(200).json(body)
     } catch (err: any) {
-        return res.status(400).send(err);
+        return res.status(400).send(ZodDTO.fromZodError(err));
     }
 });
 
@@ -105,7 +104,7 @@ app.post('/getCikk', async (req: Request, res: Response)=>{
         return res.status(200).json(body);
     } catch (err){
         console.error(err);
-        return res.status(400).json(err);
+        return res.status(400).json(ZodDTO.fromZodError(err));
     }
 })
 
@@ -116,9 +115,9 @@ app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
             return res.status(404).json({message:'Not found'})
         }
        return res.status(200).json(body);
-    } catch (err:any){
+    } catch (err){
         console.error(err);
-        return res.status(400).json(fromZodError(err).toString());
+        return res.status(400).json(ZodDTO.fromZodError(err));
     }
 
 })
@@ -129,7 +128,7 @@ app.post('/refresh', async (req : Request, res : Response) => {
         const body = await tokenserv.refreshToken_new(req.body.refreshToken);
         return res.status(200).json(body);
     } catch (e) {
-        return res.status(403).json(e);
+        return res.status(403).json(ZodDTO.fromZodError(e));
     }
 })
 
@@ -185,19 +184,9 @@ app.post('/login2', async (req: Request, res: Response) => {
         }
         return res.status(200).json(body);
     } catch (err: any) {
-        if (err.issues && err.issues.length > 0) {
-            const issues = err.issues.map((issue: any) => ({
-                code: issue.code,
-                expected: issue.expected,
-                received: issue.received,
-                path: issue.path.join('.')
-            }));
-            return res.status(400).json(issues);
-        } else {
-            console.error(err);
-            return res.status(500).send('An unexpected error occurred');
-        }
+        return res.status(400).json(ZodDTO.fromZodError(err));
     }
+
 
 
 

@@ -44,7 +44,7 @@ const cron = __importStar(require("node-cron"));
 const tokenServices_1 = require("./services/tokenServices");
 const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
 const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
-const zod_validation_error_1 = require("zod-validation-error");
+const zodDTO_1 = require("./dto/zodDTO");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 app.use(body_parser_1.default.urlencoded({ extended: false }));
@@ -79,7 +79,7 @@ app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(200).json(body);
     }
     catch (err) {
-        return res.status(400).send((0, zod_validation_error_1.fromZodError)(err).toString());
+        return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 app.post('/protected', TokenMiddleware_1.verifyToken, (req, res) => {
@@ -91,7 +91,7 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(200).json(body);
     }
     catch (err) {
-        return res.status(400).send(err);
+        return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens_new);
@@ -116,7 +116,7 @@ app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (err) {
         console.error(err);
-        return res.status(400).json(err);
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -129,7 +129,7 @@ app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
     catch (err) {
         console.error(err);
-        return res.status(400).json((0, zod_validation_error_1.fromZodError)(err).toString());
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -138,7 +138,7 @@ app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         return res.status(200).json(body);
     }
     catch (e) {
-        return res.status(403).json(e);
+        return res.status(403).json(zodDTO_1.ZodDTO.fromZodError(e));
     }
 }));
 app.get('/logout', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -194,18 +194,6 @@ app.post('/login2', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return res.status(200).json(body);
     }
     catch (err) {
-        if (err.issues && err.issues.length > 0) {
-            const issues = err.issues.map((issue) => ({
-                code: issue.code,
-                expected: issue.expected,
-                received: issue.received,
-                path: issue.path.join('.')
-            }));
-            return res.status(400).json(issues);
-        }
-        else {
-            console.error(err);
-            return res.status(500).send('An unexpected error occurred');
-        }
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));

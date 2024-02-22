@@ -51,7 +51,7 @@ export async function getCikkByEanKod(eankod:number) {
             return "Not found";
         }
         return new CikkDTO(cikk.cikkszam,cikk.cikknev,Number(cikk.eankod));
-    } catch (err) {
+    } catch (err:any) {
         console.log(err)
         throw err;
     }
