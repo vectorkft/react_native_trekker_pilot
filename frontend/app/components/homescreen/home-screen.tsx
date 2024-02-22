@@ -1,20 +1,13 @@
-import React, {ReactNode, useContext, useEffect} from 'react';
+import React, {JSX, useContext, useEffect} from 'react';
 import {View, Button, StyleSheet, Text, Switch, Alert} from 'react-native';
-import { DarkModeContext } from "../darkmode/darkmode";
-import { NavigationProp } from '@react-navigation/native';
-import {useStore} from "../../states/state";
+import { DarkModeContext } from "../darkmode/dark-mode";
+import {useStore} from "../../states/states";
 import {useLoginService} from "../../services/login.service";
+import {RouterProps} from "../../interfaces/navigation-props";
 
-interface HomeScreenProps {
-    navigation: NavigationProp<any>;
-    children?: ReactNode;
-}
-
-const HomeScreen = ({ navigation }: HomeScreenProps) => {
+const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
-    useStore(state => state.setIsLoggedIn);
     const loginService = useLoginService();
-
     const context = useContext(DarkModeContext);
 
     if (!context) {

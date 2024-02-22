@@ -1,31 +1,18 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {JSX, useContext, useEffect, useRef} from 'react';
 import {StyleSheet, View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
 import {useState} from 'react';
-import { DarkModeContext } from "../darkmode/darkmode";
+import { DarkModeContext } from "../darkmode/dark-mode";
 import { useLoginService  } from '../../services/login.service';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Errors} from "../../interfaces/login-errors";
+import {RouterProps} from "../../interfaces/navigation-props";
 
-interface Errors {
-    username?: string;
-    password?: string;
-}
-
-const Login: () => React.JSX.Element = () => {
+const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<Errors>({});
     const [rememberMe, setRememberMe] = useState(false);
     let passwordInput = useRef<TextInput | null>(null);
-    const navigation = useNavigation();
     const loginService = useLoginService();
     const [loading, setLoading] = useState(true);
 

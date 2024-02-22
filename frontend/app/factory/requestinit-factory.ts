@@ -1,4 +1,4 @@
-import {API_URL} from "../config";
+import {API_URL} from "../../config";
 
 const getClient = (options: any = {}): RequestInit  => {
 
@@ -19,12 +19,16 @@ const getClient = (options: any = {}): RequestInit  => {
     };
 };
 
-export const RequestInitFactory = {
+export const RequestinitFactory = {
 
     doRequest : async (endpoint: string, requestOptions: any = {}) => {
         const url = `${API_URL}${endpoint}`;
         const response = await fetch(url, getClient(requestOptions));
-        return await response.json();
+        const data = await response.json();
+        return {
+            ...data,
+            status: response.status
+        };
     }
 }
 

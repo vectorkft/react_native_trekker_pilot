@@ -1,37 +1,18 @@
-import React, {ReactNode, useContext, useEffect, useState} from 'react';
+import React, {JSX, useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
-import { DarkModeContext } from "../darkmode/darkmode";
+import { DarkModeContext } from "../darkmode/dark-mode";
 import { useLoginService } from "../../services/login.service";
-import {NavigationProp} from "@react-navigation/native";
-import {useStore} from "../../states/state";
-import {tokenhandlingService} from "../../services/tokenhandling.service";
+import {useStore} from "../../states/states";
 import {profileService} from "../../services/profile.service";
+import {RouterProps} from "../../interfaces/navigation-props";
 
-interface ProfileScreenProps {
-    navigation: NavigationProp<any>;
-    children?: ReactNode;
-}
-
-const Profile = ({ navigation }: ProfileScreenProps) => {
-    const { accessToken, refreshToken, id } = useStore.getState();
+const Profile = ({ navigation }: RouterProps): JSX.Element => {
     const context = useContext(DarkModeContext);
-    const isLoggedIn = useStore(state => state.isLoggedIn);
+    const { isLoggedIn } = useStore.getState();
     const loginService = useLoginService();
-    const tokenService = tokenhandlingService();
     const profileS = profileService();
     const [profileData, setProfileData] = useState(null);
-
-    const getAccessToken = () =>{
-        Alert.alert(accessToken)
-    }
-
-    const getRefreshToken = () =>{
-        Alert.alert(refreshToken)
-    }
-
-    const checkId = () => {
-        Alert.alert(`${id}`);
-    }
+    const [loading, setLoading] = useState(true);
 
     if (!context) {
         throw new Error("DarkModeContext is undefined");
@@ -46,11 +27,12 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
     useEffect(() => {
         profileS.handleUserProfileRequest().then(profile => {
             setProfileData(profile);
+            setLoading(false);
         })
             .catch(console.error);
     }, [setProfileData]);
 
-    if (!profileData) {
+    if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -74,10 +56,12 @@ const Profile = ({ navigation }: ProfileScreenProps) => {
                     >
                         <Text style={{color: 'white'}}>Kijelentkezés</Text>
                     </TouchableOpacity>
-                    {/*<Button title={"Get Access Token"} onPress={tokenService.getAccessToken}/>*/}
-                    {/*<Button title={"Get Refresh Token"} onPress={tokenService.getRefreshToken}/>*/}
-                    {/*<Button title={"Get ID"} onPress={profile.checkId}/>*/}
-                    {/*<Button title={"Token frissítés"} onPress={tokenService.isTokenValid}/>*/}
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('articles')}
+                        style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
+                    >
+                        <Text style={{color: 'white'}}>Cikkek</Text>
+                    </TouchableOpacity>
                     {profileData && (
                         <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>
                             {JSON.stringify(profileData)}</Text> // profil adatok megjelenítése
