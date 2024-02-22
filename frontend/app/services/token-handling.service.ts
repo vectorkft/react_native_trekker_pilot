@@ -1,8 +1,8 @@
 import {useStore} from "../states/states";
 import jwtDecode from 'jwt-decode';
-import {API_URL} from "../../config";
 import { useNavigation } from '@react-navigation/native';
-import {DecodedToken} from '../interfaces/decoded-token'
+import {DecodedToken} from '../interfaces/decoded-token';
+import {RequestinitFactory} from "../factory/requestinit-factory";
 
 export const tokenHandlingService = () => {
     const navigation = useNavigation();
@@ -65,25 +65,18 @@ export const tokenHandlingService = () => {
     const refreshAccessToken = async () => {
         const { refreshToken, setAccessToken, setIsLoggedIn } = useStore.getState();
 
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        const raw = JSON.stringify({
-            "refreshToken": refreshToken
-        });
-
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-        };
+       const options = {
+            method: 'POST',
+            body: JSON.stringify({
+                "refreshToken": refreshToken
+            }),
+       };
 
         try {
-            const response = await fetch(`${API_URL}/refresh`, requestOptions);
-            const result = await response.json();
+            const result = await RequestinitFactory.doRequest('/refresh', options);
 
             if (result.newAccessToken) {
-                setAccessToken(result.newAccessToken); // Frissítjük az accessToken-t
+                setAccessToken(result.newAccessToken);
                 return true;
             } else {
                 setIsLoggedIn(false);

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {JSX, useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import { useLoginService } from "../../services/login.service";
@@ -6,12 +6,13 @@ import {useStore} from "../../states/states";
 import {profileService} from "../../services/profile.service";
 import {RouterProps} from "../../interfaces/navigation-props";
 
-const Profile = ({ navigation }: RouterProps) => {
+const Profile = ({ navigation }: RouterProps): JSX.Element => {
     const context = useContext(DarkModeContext);
     const { isLoggedIn } = useStore.getState();
     const loginService = useLoginService();
     const profileS = profileService();
     const [profileData, setProfileData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     if (!context) {
         throw new Error("DarkModeContext is undefined");
@@ -26,11 +27,12 @@ const Profile = ({ navigation }: RouterProps) => {
     useEffect(() => {
         profileS.handleUserProfileRequest().then(profile => {
             setProfileData(profile);
+            setLoading(false);
         })
             .catch(console.error);
     }, [setProfileData]);
 
-    if (!profileData) {
+    if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -53,6 +55,12 @@ const Profile = ({ navigation }: RouterProps) => {
                         style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
                     >
                         <Text style={{color: 'white'}}>Kijelentkezés</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('articles')}
+                        style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
+                    >
+                        <Text style={{color: 'white'}}>Cikkek</Text>
                     </TouchableOpacity>
                     {profileData && (
                         <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>

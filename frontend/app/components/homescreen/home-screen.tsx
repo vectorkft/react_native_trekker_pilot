@@ -1,11 +1,11 @@
-import React, {useContext, useEffect} from 'react';
+import React, {JSX, useContext, useEffect} from 'react';
 import {View, Button, StyleSheet, Text, Switch, Alert} from 'react-native';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import {useStore} from "../../states/states";
 import {useLoginService} from "../../services/login.service";
 import {RouterProps} from "../../interfaces/navigation-props";
 
-const HomeScreen = ({ navigation }: RouterProps) => {
+const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
     const loginService = useLoginService();
     const context = useContext(DarkModeContext);

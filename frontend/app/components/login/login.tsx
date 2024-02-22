@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {JSX, useContext, useEffect, useRef} from 'react';
 import {StyleSheet, View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
 import {useState} from 'react';
 import { DarkModeContext } from "../darkmode/dark-mode";
@@ -7,13 +7,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Errors} from "../../interfaces/login-errors";
 import {RouterProps} from "../../interfaces/navigation-props";
 
-const Login = ({ navigation }: RouterProps) => {
+const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<Errors>({});
     const [rememberMe, setRememberMe] = useState(false);
     let passwordInput = useRef<TextInput | null>(null);
     const loginService = useLoginService();
+    const [loading, setLoading] = useState(true);
 
     const context = useContext(DarkModeContext);
 
@@ -27,11 +28,12 @@ const Login = ({ navigation }: RouterProps) => {
         loginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
             setUsername(username);
             setRememberMe(rememberMe);
+            setLoading(false);
         })
             .catch(console.error);
     }, [setUsername,setRememberMe]);
 
-    if (!username || !rememberMe) {
+    if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#0000ff" />

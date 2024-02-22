@@ -1,9 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '../../config';
 import {useStore} from "../states/states";
 import {Errors} from "../interfaces/login-errors";
+import {RequestinitFactory} from "../factory/requestinit-factory";
+import {tokenHandlingService} from "./token-handling.service";
+
 export const useLoginService = () => {
     const { setId, setRefreshToken, setAccessToken, setIsLoggedIn } = useStore.getState();
+    const tokenService = tokenHandlingService();
     const loadUsernameAndRememberMe = async () => {
         const savedUsername = await AsyncStorage.getItem('username');
         const savedRememberMe = await AsyncStorage.getItem('rememberMe');
@@ -30,30 +33,20 @@ export const useLoginService = () => {
     };
 
     const handleSubmit = async (username: string, password: string) => {
-        const myHeaders: Record<string, string> = {
-            "Content-Type": "application/json"
-        };
-
-        const raw: string = JSON.stringify({
-            "name": username,
-            "pw": password
-        });
-
-        const requestOptions: RequestInit = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-        };
-
-        let response: Response;
-        let result: any;
         let loginSuccess = false;
 
-        try {
-            response = await fetch(`${API_URL}/login`, requestOptions);
-            result = await response.json();
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({
+                "name": username,
+                "pw": password
+            }),
+        };
 
-            if (response.ok) {
+        try {
+            const result = await RequestinitFactory.doRequest('/login',options);
+
+            if (result.status === 200) {
                 console.log('Sikeres bejelentkezés!');
                 setIsLoggedIn(true);
                 setAccessToken(result.accessToken);
@@ -70,8 +63,22 @@ export const useLoginService = () => {
     };
 
     const handleLogout = async () => {
-        setIsLoggedIn(false);
-        console.log('Sikeres kijelentkezés!');
+        const options = {
+            method: 'GET',
+            accessToken: await tokenService.getTokenIfValid()
+        };
+        try {
+            const result = await RequestinitFactory.doRequest('/logout', options);
+
+            if(result.status === 200) {
+                setIsLoggedIn(false);
+                console.log('Sikeres kijelentkezés!');
+            }else {
+                console.log('Sikertelen kijelentkezés!', result.message);
+            }
+        } catch (error: any) {
+            console.log('Hiba történt!', 'Az API nem elérhető.', error);
+        }
     };
 
     return {
