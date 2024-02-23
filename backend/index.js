@@ -45,6 +45,7 @@ const tokenServices_1 = require("./services/tokenServices");
 const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
 const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
 const zodDTO_1 = require("./dto/zodDTO");
+const cikkNotFoundDTO_1 = require("./dto/cikkNotFoundDTO");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 app.use(body_parser_1.default.urlencoded({ extended: false }));
@@ -122,8 +123,8 @@ app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* (
 app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = yield cikkserv.getCikkByEanKod(req.body.eankod);
-        if (body === "Not found") {
-            return res.status(404).json({ message: 'Not found' });
+        if (body instanceof cikkNotFoundDTO_1.CikkNotFoundDTO) {
+            return res.status(404).json(body);
         }
         return res.status(200).json(body);
     }

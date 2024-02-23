@@ -14,6 +14,7 @@ const client_1 = require("@prisma/client");
 const zod_1 = require("zod");
 const luhn_validation_1 = require("luhn-validation");
 const cikkDTO_1 = require("../dto/cikkDTO");
+const cikkNotFoundDTO_1 = require("../dto/cikkNotFoundDTO");
 const prisma = new client_1.PrismaClient();
 const cikkEANSchema = zod_1.z.object({
     eankod: zod_1.z.number().refine(value => value.toString().length === 13, {
@@ -56,7 +57,7 @@ function getCikkByEanKod(eankod) {
                 }
             });
             if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
-                return "Not found";
+                return new cikkNotFoundDTO_1.CikkNotFoundDTO('Not found', eankod);
             }
             return new cikkDTO_1.CikkDTO(cikk.cikkszam, cikk.cikknev, Number(cikk.eankod));
         }

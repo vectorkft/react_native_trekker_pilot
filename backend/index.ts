@@ -9,6 +9,7 @@ import {deleteExpiredTokens_new} from './services/tokenServices';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
 import {ZodDTO} from "./dto/zodDTO";
+import {CikkNotFoundDTO} from "./dto/cikkNotFoundDTO";
 
 
 
@@ -111,8 +112,8 @@ app.post('/getCikk', async (req: Request, res: Response)=>{
 app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
     try{
        const body= await cikkserv.getCikkByEanKod(req.body.eankod);
-        if(body==="Not found"){
-            return res.status(404).json({message:'Not found'})
+        if(body instanceof CikkNotFoundDTO){
+            return res.status(404).json(body);
         }
        return res.status(200).json(body);
     } catch (err){

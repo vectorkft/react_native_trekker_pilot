@@ -2,6 +2,7 @@ import {PrismaClient} from "@prisma/client";
 import {z} from "zod";
 import { ean } from 'luhn-validation';
 import {CikkDTO} from "../dto/cikkDTO";
+import {CikkNotFoundDTO} from "../dto/cikkNotFoundDTO";
 
 const prisma = new PrismaClient()
 
@@ -48,7 +49,7 @@ export async function getCikkByEanKod(eankod:number) {
             }
         })
         if(!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod){
-            return "Not found";
+            return new CikkNotFoundDTO('Not found',eankod);
         }
         return new CikkDTO(cikk.cikkszam,cikk.cikknev,Number(cikk.eankod));
     } catch (err:any) {
