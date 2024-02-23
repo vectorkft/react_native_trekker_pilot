@@ -1,22 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useStore} from "../states/states";
 import {Errors} from "../interfaces/login-errors";
 import {RequestinitFactory} from "../factory/requestinit-factory";
 import {tokenHandlingService} from "./token-handling.service";
 
-export const useLoginService = () => {
-    const { setId, setRefreshToken, setAccessToken, setIsLoggedIn } = useStore.getState();
-    const tokenService = tokenHandlingService();
-    const loadUsernameAndRememberMe = async () => {
+export const LoginService = {
+
+    loadUsernameAndRememberMe : async () => {
         const savedUsername = await AsyncStorage.getItem('username');
         const savedRememberMe = await AsyncStorage.getItem('rememberMe');
         return {
             username: savedUsername ? savedUsername : '',
             rememberMe: savedRememberMe ? JSON.parse(savedRememberMe) : false,
         };
-    };
+    },
 
-    const validateForm = (username: string, password: string) => {
+    validateForm : (username: string, password: string) => {
         let errors: Errors = {};
 
         if (!username) {
@@ -30,11 +28,9 @@ export const useLoginService = () => {
             isValid: Object.keys(errors).length === 0,
             errors,
         };
-    };
+    },
 
-    const handleSubmit = async (username: string, password: string) => {
-        let loginSuccess = false;
-
+    handleSubmit : async (username: string, password: string) => {
         const options = {
             method: 'POST',
             body: JSON.stringify({
@@ -48,45 +44,34 @@ export const useLoginService = () => {
 
             if (result.status === 200) {
                 console.log('Sikeres bejelentkezés!');
-                setIsLoggedIn(true);
-                setAccessToken(result.accessToken);
-                setRefreshToken(result.refreshToken);
-                setId(result.userId);
-                loginSuccess = true;
+                return result;
             } else {
                 console.log('Sikertelen bejelentkezés!', result.message);
+                return undefined;
             }
         } catch (error: any) {
             console.log('Hiba történt!', 'Az API nem elérhető.');
         }
-        return loginSuccess;
-    };
+    },
 
-    const handleLogout = async () => {
+    handleLogout : async () => {
         const options = {
             method: 'GET',
-            accessToken: await tokenService.getTokenIfValid()
+            accessToken: await tokenHandlingService.getTokenIfValid()
         };
         try {
             const result = await RequestinitFactory.doRequest('/logout', options);
 
             if(result.status === 200) {
-                setIsLoggedIn(false);
                 console.log('Sikeres kijelentkezés!');
-            }else {
+                return true;
+            } else {
                 console.log('Sikertelen kijelentkezés!', result.message);
+                return false;
             }
         } catch (error: any) {
             console.log('Hiba történt!', 'Az API nem elérhető.', error);
         }
-    };
-
-    return {
-        setIsLoggedIn,
-        loadUsernameAndRememberMe,
-        validateForm,
-        handleSubmit,
-        handleLogout,
-    };
+    },
 };
 

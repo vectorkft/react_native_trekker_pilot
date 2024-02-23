@@ -2,10 +2,11 @@ import React, {JSX, useContext, useEffect, useRef} from 'react';
 import {StyleSheet, View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
 import {useState} from 'react';
 import { DarkModeContext } from "../darkmode/dark-mode";
-import { useLoginService  } from '../../services/login.service';
+import { LoginService  } from '../../services/login.service';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Errors} from "../../interfaces/login-errors";
 import {RouterProps} from "../../interfaces/navigation-props";
+import {useStore} from "../../states/states";
 
 const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
@@ -13,8 +14,8 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [errors, setErrors] = useState<Errors>({});
     const [rememberMe, setRememberMe] = useState(false);
     let passwordInput = useRef<TextInput | null>(null);
-    const loginService = useLoginService();
     const [loading, setLoading] = useState(true);
+    const { setId, setRefreshToken, setAccessToken, setIsLoggedIn } = useStore.getState();
 
     const context = useContext(DarkModeContext);
 
@@ -25,7 +26,7 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     const { isDarkMode } = context;
 
     useEffect(() => {
-        loginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
+        LoginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
             setUsername(username);
             setRememberMe(rememberMe);
             setLoading(false);
@@ -42,11 +43,11 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     }
 
     const handleFormSubmit = async () => {
-        const { isValid, errors } = loginService.validateForm(username, password);
+        const { isValid, errors } = LoginService.validateForm(username, password);
 
         if (isValid) {
-            const loginSuccess = await loginService.handleSubmit(username, password);
-            if (loginSuccess) {
+            const loginSuccess = await LoginService.handleSubmit(username, password);
+            if (loginSuccess !== undefined) {
                 if (rememberMe) {
                     await AsyncStorage.setItem('username', username);
                     await AsyncStorage.setItem('rememberMe', JSON.stringify(true));
@@ -59,6 +60,10 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
                 setUsername('');
                 setPassword('');
                 setErrors({});
+                setIsLoggedIn(true);
+                setAccessToken(loginSuccess.accessToken);
+                setRefreshToken(loginSuccess.refreshToken);
+                setId(loginSuccess.userId);
             } else {
                 Alert.alert('Sikertelen bejelentkezés!', 'Hibás felhasználónév vagy jelszó!');
                 setErrors(errors);

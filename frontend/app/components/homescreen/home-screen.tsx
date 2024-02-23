@@ -2,12 +2,12 @@ import React, {JSX, useContext, useEffect} from 'react';
 import {View, Button, StyleSheet, Text, Switch, Alert} from 'react-native';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import {useStore} from "../../states/states";
-import {useLoginService} from "../../services/login.service";
+import {LoginService} from "../../services/login.service";
 import {RouterProps} from "../../interfaces/navigation-props";
 
 const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
-    const loginService = useLoginService();
+    const { setIsLoggedIn } = useStore.getState();
     const context = useContext(DarkModeContext);
 
     if (!context) {
@@ -21,8 +21,11 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     }, [isDarkMode]);
 
     const handleLogout = async () => {
-        await loginService.handleLogout();
-        Alert.alert("Sikeres kijelentkezés!");
+        const logoutSuccess = await LoginService.handleLogout();
+        if (logoutSuccess) {
+            setIsLoggedIn(false);
+            Alert.alert("Sikeres kijelentkezés!");
+        }
     }
 
     return (

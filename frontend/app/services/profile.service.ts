@@ -1,14 +1,13 @@
 import {tokenHandlingService} from "./token-handling.service";
 import {RequestinitFactory} from "../factory/requestinit-factory";
 
-export const profileService = () => {
-    const tokenService = tokenHandlingService();
+export const profileService = {
 
-    const handleUserProfileRequest  = async () => {
+    handleUserProfileRequest : async () => {
         try {
             const options = {
                 method: "POST",
-                accessToken: await tokenService.getTokenIfValid()
+                accessToken: await tokenHandlingService.getTokenIfValid()
             };
 
             return await RequestinitFactory.doRequest('/profile', options);
@@ -16,10 +15,5 @@ export const profileService = () => {
         } catch (error) {
             console.log('Az API nem elérhető.', error);
         }
-    }
-
-    return {
-        handleUserProfileRequest,
-    };
-
+    },
 };

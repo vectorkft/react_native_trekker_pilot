@@ -1,16 +1,14 @@
 import React, {JSX, useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
 import { DarkModeContext } from "../darkmode/dark-mode";
-import { useLoginService } from "../../services/login.service";
 import {useStore} from "../../states/states";
 import {profileService} from "../../services/profile.service";
 import {RouterProps} from "../../interfaces/navigation-props";
+import {LoginService} from "../../services/login.service";
 
 const Profile = ({ navigation }: RouterProps): JSX.Element => {
     const context = useContext(DarkModeContext);
-    const { isLoggedIn } = useStore.getState();
-    const loginService = useLoginService();
-    const profileS = profileService();
+    const { setIsLoggedIn, isLoggedIn } = useStore.getState();
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -25,7 +23,7 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
     }, [isDarkMode]);
 
     useEffect(() => {
-        profileS.handleUserProfileRequest().then(profile => {
+        profileService.handleUserProfileRequest().then(profile => {
             setProfileData(profile);
             setLoading(false);
         })
@@ -39,10 +37,13 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
             </View>
         );
     }
-    const handleLogoutClick = async () => {
-        await loginService.handleLogout();
-        Alert.alert('Sikeres kijelentkezés!');
-        navigation.navigate('homescreen');
+    const handleLogout = async () => {
+        const logoutSuccess = await LoginService.handleLogout();
+        if (logoutSuccess) {
+            setIsLoggedIn(false);
+            Alert.alert("Sikeres kijelentkezés!");
+            navigation.navigate('homescreen');
+        }
     };
 
     return (
@@ -51,7 +52,7 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
                 <View style={{alignItems: 'center'}}>
                     <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}> Bevagy jelentkezve juhu!</Text>
                     <TouchableOpacity
-                        onPress={handleLogoutClick}
+                        onPress={handleLogout}
                         style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
                     >
                         <Text style={{color: 'white'}}>Kijelentkezés</Text>
