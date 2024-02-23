@@ -2,6 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Errors} from "../interfaces/login-errors";
 import {RequestinitFactory} from "../factory/requestinit-factory";
 import {tokenHandlingService} from "./token-handling.service";
+import {
+    UserLoginDTOInput,
+    UserLoginDTOOutput,
+    ZUserLoginDTOInput,
+    ZUserLoginDTOOutput
+} from "../dto/user-login.dto";
+import {zParse} from "./zod-dto.service";
 
 export const LoginService = {
 
@@ -14,13 +21,13 @@ export const LoginService = {
     },
 
 
-    validateForm : (username: string, password: string) => {
+    validateForm : (input: ZUserLoginDTOInput) => {
         let errors: Errors = {};
 
-        if (!username) {
+        if (!input.name) {
             errors.username = 'A felhasználónév megadása kötelező!';
         }
-        if (!password) {
+        if (!input.pw) {
             errors.password = 'A jelszó megadása kötelező!';
         }
 
@@ -30,23 +37,28 @@ export const LoginService = {
         };
     },
 
-    handleSubmit : async (username: string, password: string) => {
+    handleSubmit : async (input: ZUserLoginDTOInput): Promise<ZUserLoginDTOOutput> => {
+
         const options = {
             method: 'POST',
             body: JSON.stringify({
-                "name": username,
-                "pw": password
+                "name": input.name,
+                "pw": input.pw,
             }),
         };
-
-        // TODO: DTO
 
         try {
             const result = await RequestinitFactory.doRequest('/login',options);
 
             if (result.status === 200) {
-                console.log('Sikeres bejelentkezés!');
-                return result;
+                try {
+                    const body : ZUserLoginDTOInput = await zParse(UserLoginDTOInput, JSON.parse(options.body));
+                    const output : ZUserLoginDTOOutput = await zParse(UserLoginDTOOutput, result);
+                    console.log('Sikeres bejelentkezés!');
+                    return output;
+                } catch (error){
+                    console.log('Hiba:', error);
+                }
             } else {
                 console.log('Sikertelen bejelentkezés!', result.message);
                 return undefined;
@@ -61,6 +73,7 @@ export const LoginService = {
             method: 'GET',
             accessToken: await tokenHandlingService.getTokenIfValid()
         };
+
         try {
             const result = await RequestinitFactory.doRequest('/logout', options);
 

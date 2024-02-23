@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './components/homescreen/home-screen';
 import Login from "./components/login/login";
@@ -9,11 +9,13 @@ import Articles from "./components/articles/articles";
 
 const Stack = createStackNavigator();
 
+export const navigationRef = React.createRef<NavigationContainerRef>();
+
 const App = () => {
     return (
         <DarkModeProvider>
-            <NavigationContainer>
-                <Stack.Navigator initialRouteName="homescreen">
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator>
                     <Stack.Screen
                         name="homescreen"
                         component={HomeScreen}

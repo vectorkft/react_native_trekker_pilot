@@ -4,7 +4,7 @@ const getClient = (options: any = {}): RequestInit  => {
 
     const headers = {
         'Content-Type': "application/json",
-        ...options.headers, // opcionális fejlécek hozzáadása
+        ...options.headers,
     };
 
     if(options.accessToken){

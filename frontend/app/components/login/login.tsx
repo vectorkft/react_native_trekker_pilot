@@ -44,10 +44,10 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     }
 
     const handleFormSubmit = async () => {
-        const { isValid, errors } = LoginService.validateForm(username, password);
+        const { isValid, errors } = LoginService.validateForm({name: username, pw: password});
 
         if (isValid) {
-            const loginSuccess = await LoginService.handleSubmit(username, password);
+            const loginSuccess = await LoginService.handleSubmit({name: username, pw: password});
             if (loginSuccess !== undefined) {
                 if (rememberMe) {
                     await AsyncStorage.multiSet([['username', username],['rememberMe', JSON.stringify(true)]]);
