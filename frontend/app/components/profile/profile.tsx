@@ -1,10 +1,11 @@
 import React, {JSX, useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
+import {View, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import {useStore} from "../../states/states";
 import {profileService} from "../../services/profile.service";
 import {RouterProps} from "../../interfaces/navigation-props";
 import {LoginService} from "../../services/login.service";
+import {styles} from "../../styles/components.stylesheet";
 
 const Profile = ({ navigation }: RouterProps): JSX.Element => {
     const context = useContext(DarkModeContext);
@@ -82,47 +83,5 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    lightContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    darkContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-    },
-    lightTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#000',
-    },
-    darkTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#ffffff',
-    },
-    switchMode: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    lightModeText: {
-        fontSize: 16, // Kisebb méretű szöveg
-        fontWeight: 'bold',
-        color: '#000',
-    },
-    darkModeText: {
-        fontSize: 16, // Kisebb méretű szöveg
-        fontWeight: 'bold',
-        color: '#ffffff',
-    },
-});
 
 export default Profile;

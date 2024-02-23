@@ -1,9 +1,10 @@
 import React, {JSX, useContext, useEffect} from 'react';
-import {View, Button, StyleSheet, Text, Switch, Alert} from 'react-native';
+import {View, Button, Text, Switch, Alert} from 'react-native';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import {useStore} from "../../states/states";
 import {LoginService} from "../../services/login.service";
 import {RouterProps} from "../../interfaces/navigation-props";
+import {styles} from "../../styles/components.stylesheet";
 
 const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -53,47 +54,5 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    lightContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    darkContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-    },
-    lightTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#000',
-    },
-    darkTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#ffffff',
-    },
-    switchMode: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    lightModeText: {
-        fontSize: 16, // Kisebb méretű szöveg
-        fontWeight: 'bold',
-        color: '#000',
-    },
-    darkModeText: {
-        fontSize: 16, // Kisebb méretű szöveg
-        fontWeight: 'bold',
-        color: '#ffffff',
-    },
-});
 
 export default HomeScreen;

@@ -6,13 +6,13 @@ import {tokenHandlingService} from "./token-handling.service";
 export const LoginService = {
 
     loadUsernameAndRememberMe : async () => {
-        const savedUsername = await AsyncStorage.getItem('username');
-        const savedRememberMe = await AsyncStorage.getItem('rememberMe');
+        const [savedUsername, savedRememberMe] = await AsyncStorage.multiGet(['username','rememberMe']);
         return {
-            username: savedUsername ? savedUsername : '',
-            rememberMe: savedRememberMe ? JSON.parse(savedRememberMe) : false,
+            username: savedUsername[1] ? savedUsername[1] : '',
+            rememberMe: savedRememberMe[1] ? JSON.parse(savedRememberMe[1]) : false,
         };
     },
+
 
     validateForm : (username: string, password: string) => {
         let errors: Errors = {};
@@ -38,6 +38,8 @@ export const LoginService = {
                 "pw": password
             }),
         };
+
+        // TODO: DTO
 
         try {
             const result = await RequestinitFactory.doRequest('/login',options);

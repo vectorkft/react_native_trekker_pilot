@@ -1,5 +1,5 @@
 import React, {JSX, useContext, useEffect, useRef} from 'react';
-import {StyleSheet, View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
+import {View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
 import {useState} from 'react';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import { LoginService  } from '../../services/login.service';
@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Errors} from "../../interfaces/login-errors";
 import {RouterProps} from "../../interfaces/navigation-props";
 import {useStore} from "../../states/states";
+import {formStylesheet} from "../../styles/form.stylesheet";
 
 const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
@@ -49,8 +50,7 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
             const loginSuccess = await LoginService.handleSubmit(username, password);
             if (loginSuccess !== undefined) {
                 if (rememberMe) {
-                    await AsyncStorage.setItem('username', username);
-                    await AsyncStorage.setItem('rememberMe', JSON.stringify(true));
+                    await AsyncStorage.multiSet([['username', username],['rememberMe', JSON.stringify(true)]]);
                 } else {
                     await AsyncStorage.removeItem('username');
                     await AsyncStorage.setItem('rememberMe', JSON.stringify(false));
@@ -73,11 +73,11 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
 
 
     return (
-        <View style={isDarkMode ? styles.darkContainer : styles.lightContainer} >
-        <View style={styles.form}>
-        <Text style={styles.label}>Felhasználónév</Text>
+        <View style={isDarkMode ? formStylesheet.darkContainer : formStylesheet.lightContainer} >
+        <View style={formStylesheet.form}>
+        <Text style={formStylesheet.label}>Felhasználónév</Text>
             <TextInput
-    style={styles.input}
+    style={formStylesheet.input}
     placeholder="Add meg a felhasználónevedet"
     value={username}
     onChangeText={setUsername}
@@ -88,11 +88,11 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     blurOnSubmit={false}
     />
     {errors.username ? (
-        <Text style={styles.errorText}>{errors.username}</Text>
+        <Text style={formStylesheet.errorText}>{errors.username}</Text>
     ) : null}
-    <Text style={styles.label}>Jelszó</Text>
+    <Text style={formStylesheet.label}>Jelszó</Text>
         <TextInput
-    style={styles.input}
+    style={formStylesheet.input}
     placeholder="Add meg a jelszavadat"
     secureTextEntry
     value={password}
@@ -101,72 +101,16 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     onSubmitEditing={handleFormSubmit}
     />
     {errors.password ? (
-        <Text style={styles.errorText}>{errors.password}</Text>
+        <Text style={formStylesheet.errorText}>{errors.password}</Text>
     ) : null}
-    <View style={styles.rememberMe}>
+    <View style={formStylesheet.rememberMe}>
     <Switch value={rememberMe} onValueChange={setRememberMe} />
-    <Text style={styles.label}>Jegyezze meg</Text>
+    <Text style={formStylesheet.label}>Jegyezze meg</Text>
     </View>
     <Button title="Bejelentkezés" onPress={handleFormSubmit} />
     </View>
     </View>
 );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        paddingHorizontal: 20,
-        backgroundColor: '#f5f5f5',
-    },
-    form: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        shadowColor: 'black',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 5,
-        fontWeight: 'bold',
-    },
-    input: {
-        height: 40,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        marginBottom: 15,
-        padding: 10,
-        borderRadius: 5,
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 10,
-    },
-    rememberMe: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    lightContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    },
-    darkContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-    },
-});
 
 export default Login;
