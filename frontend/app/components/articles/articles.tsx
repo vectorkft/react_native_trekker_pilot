@@ -76,18 +76,25 @@ const Articles = ({ navigation }: RouterProps): JSX.Element => {
                 // onFocus = {()=> Keyboard.dismiss()}
             />
             <Button title="Keresés" onPress={handleFormSubmit}></Button>
-            {result && !results && flag &&(
-                <View style={styles.card} >
-                    <Text style={{color: 'red'}}>{result.message}</Text>
-                    <Text style={{color: 'red'}}>EAN kód: {result.ean}</Text>
-                </View>
-            )}
+            {/*{result && !results && flag &&(*/}
+            {/*    <View style={styles.card} >*/}
+            {/*        <Text style={{color: 'red'}}>{result.message}</Text>*/}
+            {/*        <Text style={{color: 'red'}}>EAN kód: {result.ean}</Text>*/}
+            {/*    </View>*/}
+            {/*)}*/}
+            {/*{results && result && flag && (*/}
+            {/*    <View style={styles.card}>*/}
+
+            {/*        <Text>Cikkszám: {result.cikkszam}</Text>*/}
+            {/*        <Text>Cikk neve: {result.cikknev}</Text>*/}
+            {/*        <Text>EAN kód: {result.eankod}</Text>*/}
+            {/*    </View>*/}
+
+
+            {/*)}*/}
             {results && result && flag && (
                 <View style={styles.card}>
-
-                    <Text>Cikkszám: {result.cikkszam}</Text>
-                    <Text>Cikk neve: {result.cikknev}</Text>
-                    <Text>EAN kód: {result.eankod}</Text>
+                    <Text>Cikkszám: {result}</Text>
                 </View>
 
 

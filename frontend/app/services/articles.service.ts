@@ -1,6 +1,6 @@
 import {RequestinitFactory} from "../factory/requestinit-factory";
 import {useStore} from "../states/states";
-import {Articleresults} from "../interfaces/article-results";
+import {ArticleDTOOutput, ZArticleDTOOutput,zParse} from "C:/fejlesztes/react_native_trekker_pilot/shared/dto/article.dto";
 
 export const ArticlesService = () => {
     const {results, setResults} = useStore.getState();
@@ -16,12 +16,8 @@ export const ArticlesService = () => {
             const response= await RequestinitFactory.doRequest('/getCikkByEAN', options);
             if(response.status === 200){
                 setResults(true);
-                const articleResults: Articleresults = {
-                    cikkszam: response.cikkszam,
-                    cikknev: response.cikknev,
-                    eankod: response.eankod
-                };
-                return articleResults;
+                const body :ZArticleDTOOutput =await zParse(ArticleDTOOutput,response);
+                return body;
             } else if(response.status === 404){
                 setResults(false);
                 return response;

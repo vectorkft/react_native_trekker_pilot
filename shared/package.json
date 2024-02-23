@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "luhn-validation": "^1.0.3",
+    "zod": "^3.22.4"
+  }
+}

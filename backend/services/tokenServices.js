@@ -13,14 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.refreshToken_new = exports.addTokenAtLogin = void 0;
-const refreshTokenDTO_1 = require("../dto/refreshTokenDTO");
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const zod_1 = require("zod");
+const article_dto_1 = require("../../shared/dto/article.dto");
+const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
+const messageDTO_1 = require("../dto/messageDTO");
 const prisma = new client_1.PrismaClient();
-const RefreshBodySchema = zod_1.z.object({
-    refreshToken: zod_1.z.string(),
-});
 function addTokenAtLogin(accessToken, refreshToken, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
@@ -51,35 +49,35 @@ function refreshToken_new(refreshToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const expireDate = Math.floor(Date.now() / 1000) + 30;
         const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
-        RefreshBodySchema.parse({ refreshToken: refreshToken });
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             jsonwebtoken_1.default.verify(refreshToken, secretKey, (err, payload) => __awaiter(this, void 0, void 0, function* () {
                 if (err) {
                     console.log('Invalid token ' + err);
-                    reject('Invalid token');
-                    return;
+                    resolve(new messageDTO_1.MessageDTO('Invalid token ' + err));
                 }
-                const newAccessToken = jsonwebtoken_1.default.sign({ name: payload.name, pw: payload.pw, id: payload.id }, secretKey, { expiresIn: "30s" });
-                try {
-                    yield prisma.tokens_v1.updateMany({
-                        where: {
-                            userId: payload.id
-                        },
-                        data: {
-                            accessToken: newAccessToken,
-                            accessExpireDate: expireDate
-                        },
-                    });
-                    console.log('Access token successfully refreshed');
-                    const body = new refreshTokenDTO_1.RefreshTokenDTO('New access token generated', newAccessToken);
-                    resolve(body);
-                }
-                catch (err) {
-                    console.log('An error occurred during refreshing the access token');
-                    reject('An error occurred during refreshing the access token');
+                else {
+                    const newAccessToken = jsonwebtoken_1.default.sign({ name: payload.name, pw: payload.pw, id: payload.id }, secretKey, { expiresIn: "30s" });
+                    try {
+                        yield prisma.tokens_v1.updateMany({
+                            where: {
+                                userId: payload.id
+                            },
+                            data: {
+                                accessToken: newAccessToken,
+                                accessExpireDate: expireDate
+                            },
+                        });
+                        console.log('Access token successfully refreshed');
+                        const body = yield (0, article_dto_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', refreshToken: newAccessToken });
+                        resolve(body);
+                    }
+                    catch (err) {
+                        console.log('An error occurred during refreshing the access token');
+                        resolve(new messageDTO_1.MessageDTO('Invalid token'));
+                    }
                 }
             }));
-        });
+        }));
     });
 }
 exports.refreshToken_new = refreshToken_new;
