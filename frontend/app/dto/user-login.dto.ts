@@ -3,8 +3,10 @@ import {z} from 'zod';
 const jwtRegex = /(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/;
 
 export const UserLoginDTOInput = z.object({
-    name: z.string().min(6).max(100).describe("Username"),
-    pw: z.string().min(6).max(100).describe("Password"),
+    name: z.string().min(6,"A felhasználónév hossza minimum 6 karakter kell legyen!")
+        .max(100,"A felhasználónév hossza maximum 100 karakter lehet!").describe("Username"),
+    pw: z.string().min(6,"A jelszó hossza minimum 6 karakter kell legyen!")
+        .max(100,"A jelszó hossza maximum 100 karakter lehet!").describe("Password"),
 });
 
 export const UserLoginDTOOutput = z.object({

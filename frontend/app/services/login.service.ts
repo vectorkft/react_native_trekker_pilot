@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Errors} from "../interfaces/login-errors";
 import {RequestinitFactory} from "../factory/requestinit-factory";
 import {tokenHandlingService} from "./token-handling.service";
 import {
@@ -9,6 +8,7 @@ import {
     ZUserLoginDTOOutput
 } from "../dto/user-login.dto";
 import {zParse} from "./zod-dto.service";
+import {ZodError} from "zod";
 
 export const LoginService = {
 
@@ -21,30 +21,28 @@ export const LoginService = {
     },
 
 
-    validateForm : (input: ZUserLoginDTOInput) => {
-        let errors: Errors = {};
-
-        if (!input.name) {
-            errors.username = 'A felhasználónév megadása kötelező!';
-        }
-        if (!input.pw) {
-            errors.password = 'A jelszó megadása kötelező!';
+    validateForm : async (formData: ZUserLoginDTOInput) : Promise<{isValid: boolean, error: ZodError}> => {
+        try {
+            const body : ZUserLoginDTOInput = await zParse(UserLoginDTOInput, formData);
+            console.log(body);
+        } catch (error) {
+            console.log(error);
+            return {
+                isValid: false,
+                error,
+            };
         }
 
         return {
-            isValid: Object.keys(errors).length === 0,
-            errors,
+            error : null,
+            isValid: true,
         };
     },
 
-    handleSubmit : async (input: ZUserLoginDTOInput): Promise<ZUserLoginDTOOutput> => {
-
+    handleSubmit : async (input: ZUserLoginDTOInput): Promise<{output: ZUserLoginDTOOutput}> => {
         const options = {
             method: 'POST',
-            body: JSON.stringify({
-                "name": input.name,
-                "pw": input.pw,
-            }),
+            body: JSON.stringify(input),
         };
 
         try {
@@ -52,10 +50,9 @@ export const LoginService = {
 
             if (result.status === 200) {
                 try {
-                    const body : ZUserLoginDTOInput = await zParse(UserLoginDTOInput, JSON.parse(options.body));
-                    const output : ZUserLoginDTOOutput = await zParse(UserLoginDTOOutput, result);
+                    const handleSubmitDTOOutput : ZUserLoginDTOOutput = await zParse(UserLoginDTOOutput, result);
                     console.log('Sikeres bejelentkezés!');
-                    return output;
+                    return {output: handleSubmitDTOOutput};
                 } catch (error){
                     console.log('Hiba:', error);
                 }
@@ -68,7 +65,7 @@ export const LoginService = {
         }
     },
 
-    handleLogout : async () => {
+    handleLogout : async () : Promise<boolean> => {
         const options = {
             method: 'GET',
             accessToken: await tokenHandlingService.getTokenIfValid()

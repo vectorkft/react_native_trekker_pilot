@@ -7,7 +7,14 @@ import { DarkModeProvider } from './components/darkmode/dark-mode';
 import Profile from "./components/profile/profile";
 import Articles from "./components/articles/articles";
 
-const Stack = createStackNavigator();
+type StackParamList = {
+    homescreen: undefined;
+    profile: undefined;
+    articles: undefined;
+    login: { hideBackButton?: boolean };
+};
+
+const Stack = createStackNavigator<StackParamList>();
 
 export const navigationRef = React.createRef<NavigationContainerRef>();
 
@@ -32,7 +39,7 @@ const App = () => {
                     <Stack.Screen
                         name="login"
                         component={Login}
-                        options={{
+                        options={({ route }) => ({
                             title: 'Bejelentkezés',
                             headerStyle: {
                                 backgroundColor: '#fff', // Fekete háttér
@@ -40,7 +47,8 @@ const App = () => {
                             headerTitleStyle: {
                                 color: '#000', // Fehér címszín
                             },
-                        }} />
+                            headerLeft: route.params?.hideBackButton ? () => null : undefined,
+                        })} />
                     <Stack.Screen
                         name="profile"
                         component={Profile}

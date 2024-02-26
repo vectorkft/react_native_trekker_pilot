@@ -13,3 +13,14 @@ export async function zParse<T extends AnyZodObject>(
         return new Error(JSON.stringify(error));
     }
 }
+
+export async function parseZodError(error: any) : Promise<string> {
+    try {
+        const msg = JSON.parse(error.message);
+        const messages = msg.map((m: any) => m.message);
+        return messages.join(' , ');
+    } catch (e) {
+        console.log('Hiba a hibaüzenet feldolgozásakor:', e);
+        return '';
+    }
+}
