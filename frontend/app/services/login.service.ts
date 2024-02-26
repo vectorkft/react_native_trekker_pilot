@@ -1,7 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Errors} from "../interfaces/login-errors";
 import {RequestinitFactory} from "../factory/requestinit-factory";
 import {tokenHandlingService} from "./token-handling.service";
+import {
+    UserLoginDTOInput,
+    UserLoginDTOOutput,
+    ZUserLoginDTOInput,
+    ZUserLoginDTOOutput
+} from "../dto/user-login.dto";
+import {zParse} from "./zod-dto.service";
+import {ZodError} from "zod";
 
 export const LoginService = {
 
@@ -14,39 +21,41 @@ export const LoginService = {
     },
 
 
-    validateForm : (username: string, password: string) => {
-        let errors: Errors = {};
-
-        if (!username) {
-            errors.username = 'A felhasználónév megadása kötelező!';
-        }
-        if (!password) {
-            errors.password = 'A jelszó megadása kötelező!';
+    validateForm : async (formData: ZUserLoginDTOInput) : Promise<{isValid: boolean, error: ZodError}> => {
+        try {
+            const body : ZUserLoginDTOInput = await zParse(UserLoginDTOInput, formData);
+            console.log(body);
+        } catch (error) {
+            console.log(error);
+            return {
+                isValid: false,
+                error,
+            };
         }
 
         return {
-            isValid: Object.keys(errors).length === 0,
-            errors,
+            error : null,
+            isValid: true,
         };
     },
 
-    handleSubmit : async (username: string, password: string) => {
+    handleSubmit : async (input: ZUserLoginDTOInput): Promise<{output: ZUserLoginDTOOutput}> => {
         const options = {
             method: 'POST',
-            body: JSON.stringify({
-                "name": username,
-                "pw": password
-            }),
+            body: JSON.stringify(input),
         };
-
-        // TODO: DTO
 
         try {
             const result = await RequestinitFactory.doRequest('/login',options);
 
             if (result.status === 200) {
-                console.log('Sikeres bejelentkezés!');
-                return result;
+                try {
+                    const handleSubmitDTOOutput : ZUserLoginDTOOutput = await zParse(UserLoginDTOOutput, result);
+                    console.log('Sikeres bejelentkezés!');
+                    return {output: handleSubmitDTOOutput};
+                } catch (error){
+                    console.log('Hiba:', error);
+                }
             } else {
                 console.log('Sikertelen bejelentkezés!', result.message);
                 return undefined;
@@ -56,11 +65,12 @@ export const LoginService = {
         }
     },
 
-    handleLogout : async () => {
+    handleLogout : async () : Promise<boolean> => {
         const options = {
             method: 'GET',
             accessToken: await tokenHandlingService.getTokenIfValid()
         };
+
         try {
             const result = await RequestinitFactory.doRequest('/logout', options);
 

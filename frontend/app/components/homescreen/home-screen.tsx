@@ -18,7 +18,13 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const { isDarkMode, toggleDarkMode } = context;
 
     useEffect(() => {
+        let cancelled = false;
+
         navigation.setParams({ isDarkMode });
+
+        return () => {
+            cancelled = true;
+        };
     }, [isDarkMode]);
 
     const handleLogout = async () => {

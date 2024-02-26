@@ -18,6 +18,8 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
+        let cancelled = false;
+
         AsyncStorage.getItem('darkMode')
             .then(savedMode => {
                 if(savedMode !== null){
@@ -26,6 +28,10 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
                 setLoading(false);
             })
             .catch(console.error);
+
+        return () => {
+            cancelled = true;
+        };
     }, [setIsDarkMode]);
 
     useEffect(() => {

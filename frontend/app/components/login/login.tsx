@@ -4,15 +4,14 @@ import {useState} from 'react';
 import { DarkModeContext } from "../darkmode/dark-mode";
 import { LoginService  } from '../../services/login.service';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {Errors} from "../../interfaces/login-errors";
 import {RouterProps} from "../../interfaces/navigation-props";
 import {useStore} from "../../states/states";
 import {formStylesheet} from "../../styles/form.stylesheet";
+import {parseZodError} from "../../services/zod-dto.service";
 
 const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState<Errors>({});
     const [rememberMe, setRememberMe] = useState(false);
     let passwordInput = useRef<TextInput | null>(null);
     const [loading, setLoading] = useState(true);
@@ -27,12 +26,18 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     const { isDarkMode } = context;
 
     useEffect(() => {
+        let cancelled = false;
+
         LoginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
             setUsername(username);
             setRememberMe(rememberMe);
             setLoading(false);
         })
             .catch(console.error);
+
+        return () => {
+            cancelled = true;
+        };
     }, [setUsername,setRememberMe]);
 
     if (loading) {
@@ -44,10 +49,10 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     }
 
     const handleFormSubmit = async () => {
-        const { isValid, errors } = LoginService.validateForm(username, password);
+        const { isValid, error } = await LoginService.validateForm({name: username, pw: password});
 
         if (isValid) {
-            const loginSuccess = await LoginService.handleSubmit(username, password);
+            const loginSuccess = await LoginService.handleSubmit({name: username, pw: password});
             if (loginSuccess !== undefined) {
                 if (rememberMe) {
                     await AsyncStorage.multiSet([['username', username],['rememberMe', JSON.stringify(true)]]);
@@ -55,19 +60,20 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
                     await AsyncStorage.removeItem('username');
                     await AsyncStorage.setItem('rememberMe', JSON.stringify(false));
                 }
-                Alert.alert("Sikeres bejelentkezés!");
-                navigation.navigate('homescreen');
                 setUsername('');
                 setPassword('');
-                setErrors({});
                 setIsLoggedIn(true);
-                setAccessToken(loginSuccess.accessToken);
-                setRefreshToken(loginSuccess.refreshToken);
-                setId(loginSuccess.userId);
+                setAccessToken(loginSuccess.output.accessToken);
+                setRefreshToken(loginSuccess.output.refreshToken);
+                setId(loginSuccess.output.userId);
+                navigation.navigate('homescreen');
+                Alert.alert("Sikeres bejelentkezés!");
             } else {
                 Alert.alert('Sikertelen bejelentkezés!', 'Hibás felhasználónév vagy jelszó!');
-                setErrors(errors);
             }
+        } else {
+            const msg = await parseZodError(error);
+            Alert.alert('Hibás belépés!', msg);
         }
     };
 
@@ -87,9 +93,6 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     }}
     blurOnSubmit={false}
     />
-    {errors.username ? (
-        <Text style={formStylesheet.errorText}>{errors.username}</Text>
-    ) : null}
     <Text style={formStylesheet.label}>Jelszó</Text>
         <TextInput
     style={formStylesheet.input}
@@ -100,9 +103,6 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     ref={passwordInput}
     onSubmitEditing={handleFormSubmit}
     />
-    {errors.password ? (
-        <Text style={formStylesheet.errorText}>{errors.password}</Text>
-    ) : null}
     <View style={formStylesheet.rememberMe}>
     <Switch value={rememberMe} onValueChange={setRememberMe} />
     <Text style={formStylesheet.label}>Jegyezze meg</Text>

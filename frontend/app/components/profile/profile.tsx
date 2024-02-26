@@ -20,15 +20,27 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
     const { isDarkMode, toggleDarkMode } = context;
 
     useEffect(() => {
+        let cancelled = false;
+
         navigation.setParams({ isDarkMode });
+
+        return () => {
+            cancelled = true;
+        };
     }, [isDarkMode]);
 
     useEffect(() => {
+        let cancelled = false;
+
         profileService.handleUserProfileRequest().then(profile => {
             setProfileData(profile);
             setLoading(false);
         })
             .catch(console.error);
+
+        return () => {
+            cancelled = true;
+        };
     }, [setProfileData]);
 
     if (loading) {

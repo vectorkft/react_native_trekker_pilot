@@ -1,27 +1,21 @@
-import { z } from 'zod';
-import jwt from 'jsonwebtoken';
+import {z} from 'zod';
 
-export const UserLoginDTO = {
-    accessToken: "",
-    refreshToken: "",
-    userId: "",
-};
+const jwtRegex = /(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/;
 
+export const UserLoginDTOInput = z.object({
+    name: z.string().min(6,"A felhasználónév hossza minimum 6 karakter kell legyen!")
+        .max(100,"A felhasználónév hossza maximum 100 karakter lehet!").describe("Username"),
+    pw: z.string().min(6,"A jelszó hossza minimum 6 karakter kell legyen!")
+        .max(100,"A jelszó hossza maximum 100 karakter lehet!").describe("Password"),
+});
 
-const UserLoginDTOSchema = z.object({
-    accessToken: z.string().refine(token => jwt.verify(token, process.env.JWT_SECRET), {
-        message: 'Access token must be a valid JWT',
-    }),
-    refreshToken: z.string().refine(token => jwt.verify(token, process.env.JWT_SECRET), {
-        message: 'Refresh token must be a valid JWT',
-    }),
+export const UserLoginDTOOutput = z.object({
+    accessToken: z.string().refine(token => jwtRegex.test(token), {message: "Érvénytelen JWT token"}),
+    refreshToken: z.string().refine(token => jwtRegex.test(token), {message: "Érvénytelen JWT token"}),
     userId: z.number(),
 });
 
-const validUserLoginDTO = UserLoginDTOSchema.safeParse(UserLoginDTO);
+export type ZUserLoginDTOInput = z.infer<typeof UserLoginDTOInput>;
 
-// if (validUserLoginDTO.success) {
-//     console.log('UserLoginDTO is valid');
-// } else {
-//     console.log('UserLoginDTO is invalid:', validUserLoginDTO.error);
-// }
+export type ZUserLoginDTOOutput = z.infer<typeof UserLoginDTOOutput>;
+

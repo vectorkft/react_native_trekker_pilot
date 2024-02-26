@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './components/homescreen/home-screen';
 import Login from "./components/login/login";
@@ -7,13 +7,22 @@ import { DarkModeProvider } from './components/darkmode/dark-mode';
 import Profile from "./components/profile/profile";
 import Articles from "./components/articles/articles";
 
-const Stack = createStackNavigator();
+type StackParamList = {
+    homescreen: undefined;
+    profile: undefined;
+    articles: undefined;
+    login: { hideBackButton?: boolean };
+};
+
+const Stack = createStackNavigator<StackParamList>();
+
+export const navigationRef = React.createRef<NavigationContainerRef>();
 
 const App = () => {
     return (
         <DarkModeProvider>
-            <NavigationContainer>
-                <Stack.Navigator initialRouteName="homescreen">
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator>
                     <Stack.Screen
                         name="homescreen"
                         component={HomeScreen}
@@ -30,7 +39,7 @@ const App = () => {
                     <Stack.Screen
                         name="login"
                         component={Login}
-                        options={{
+                        options={({ route }) => ({
                             title: 'Bejelentkezés',
                             headerStyle: {
                                 backgroundColor: '#fff', // Fekete háttér
@@ -38,7 +47,8 @@ const App = () => {
                             headerTitleStyle: {
                                 color: '#000', // Fehér címszín
                             },
-                        }} />
+                            headerLeft: route.params?.hideBackButton ? () => null : undefined,
+                        })} />
                     <Stack.Screen
                         name="profile"
                         component={Profile}
