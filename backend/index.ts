@@ -9,12 +9,20 @@ import {deleteExpiredTokens_new} from './services/tokenServices';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
 import {ZodDTO} from "./dto/zodDTO";
+import {CikkNotFoundDTO} from "./dto/cikkNotFoundDTO";
+import {cikkEANSchemaInput, cikkSzamSchemaInput, zParse} from "../shared/dto/article.dto";
+import {RefreshBodySchemaInput} from "../shared/dto/refresh.token.dto";
+import {MessageDTO} from "./dto/messageDTO";
+import {userSchemaInput} from "../shared/dto/user.dto";
 
 
 
 
 const app = express();
 const HTTP_PORT = 8000;
+(BigInt.prototype as any).toJSON = function () {
+    return this.toString();
+};
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -48,7 +56,8 @@ app.get('/', ( req: Request, res: Response,) => {
 app.post('/login', async (req: Request, res: Response) => {
 
     try {
-        const body=await userserv.loginUser(req.body.name, req.body.pw);
+        const validData= await zParse(userSchemaInput,req.body);
+        const body=await userserv.loginUser(validData.name,validData.pw);
         if(body==='Wrong username or password'){
             return res.status(401).json(body)
         }
@@ -70,7 +79,11 @@ app.post('/protected',verifyToken, (req,res) => {
 
 app.post('/register', async (req: Request, res: Response) => {
     try {
+        const validData= await zParse(userSchemaInput,req.body);
         const body=await userserv.registerUser(req.body.name, req.body.pw);
+        if(body instanceof MessageDTO) {
+            return res.status(409 ).json(body);
+        }
         return res.status(200).json(body)
     } catch (err: any) {
         return res.status(400).send(ZodDTO.fromZodError(err));
@@ -97,7 +110,8 @@ app.all('/check', (res: Response) => {
 
 app.post('/getCikk', async (req: Request, res: Response)=>{
     try{
-        const body= await cikkserv.getCikkByCikkszam(req.body.cikkszam);
+        const validData = await zParse(cikkSzamSchemaInput,req.body);
+        const body= await cikkserv.getCikkByCikkszam(validData.cikkszam);
         if(body==="Not found"){
            return res.status(404).json({message:'Not found'})
         }
@@ -110,11 +124,14 @@ app.post('/getCikk', async (req: Request, res: Response)=>{
 
 app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
     try{
-       const body= await cikkserv.getCikkByEanKod(req.body.eankod);
-        if(body==="Not found"){
-            return res.status(404).json({message:'Not found'})
+        const validData=await zParse(cikkEANSchemaInput,req.body);
+        const body= await cikkserv.getCikkByEanKod(validData.eankod);
+        if(body instanceof CikkNotFoundDTO){
+            return res.status(404).json(body);
+
         }
-       return res.status(200).json(body);
+        return res.status(200).json(body);
+
     } catch (err){
         console.error(err);
         return res.status(400).json(ZodDTO.fromZodError(err));
@@ -125,7 +142,11 @@ app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
 
 app.post('/refresh', async (req : Request, res : Response) => {
     try {
-        const body = await tokenserv.refreshToken_new(req.body.refreshToken);
+        const validData= await zParse(RefreshBodySchemaInput,req.body);
+        const body = await tokenserv.refreshToken_new(validData.refreshToken);
+        if(body instanceof MessageDTO){
+            return res.status(403).json(body);
+        }
         return res.status(200).json(body);
     } catch (e) {
         return res.status(403).json(ZodDTO.fromZodError(e));

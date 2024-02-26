@@ -1,16 +1,15 @@
-import {RefreshTokenDTO} from "../dto/refreshTokenDTO";
+
 import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
 import {JwtPayload} from "../models/JwtPayload";
-import {z} from "zod";
+
+import {zParse} from "../../shared/dto/article.dto";
+import {refreshTokenDTOOutput, ZrefreshTokenOutput} from "../../shared/dto/refresh.token.dto";
+import {MessageDTO} from "../dto/messageDTO";
 
 
 const prisma = new PrismaClient()
 
-const RefreshBodySchema = z.object({
-    refreshToken: z.string(),
-
-});
 
 
 
@@ -42,37 +41,38 @@ export async function addTokenAtLogin(accessToken: string, refreshToken: string,
 export async function refreshToken_new(refreshToken: string){
     const expireDate= Math.floor(Date.now() / 1000) + 30;
     const secretKey = process.env.JWT_SECRET_KEY ?? ''
-    RefreshBodySchema.parse({refreshToken: refreshToken});
-    return new Promise<RefreshTokenDTO>((resolve, reject) => {
-        jwt.verify(refreshToken,secretKey,async (err: any, payload: any) => {
+
+    return new Promise(async (resolve, reject) => {
+        jwt.verify(refreshToken, secretKey, async (err: any, payload: any) => {
             if (err) {
                 console.log('Invalid token ' + err);
-                reject('Invalid token');
-                return;
-            }
-            const newAccessToken=jwt.sign({name: payload.name, pw: payload.pw, id: payload.id},
-                secretKey,{ expiresIn: "30s"});
+                resolve(new MessageDTO('Invalid token ' +err));
+            } else {
+                const newAccessToken = jwt.sign({name: payload.name, pw: payload.pw, id: payload.id},
+                    secretKey, { expiresIn: "30s" });
 
-            try {
-                await prisma.tokens_v1.updateMany({
-                    where: {
-                        userId: payload.id
-                    },
-                    data: {
-                        accessToken: newAccessToken,
-                        accessExpireDate: expireDate
-                    },
-                })
-                console.log('Access token successfully refreshed');
-                const body=new RefreshTokenDTO('New access token generated', newAccessToken);
-                resolve(body);
-            } catch (err) {
-                console.log('An error occurred during refreshing the access token');
-                reject('An error occurred during refreshing the access token');
+                try {
+                    await prisma.tokens_v1.updateMany({
+                        where: {
+                            userId: payload.id
+                        },
+                        data: {
+                            accessToken: newAccessToken,
+                            accessExpireDate: expireDate
+                        },
+                    })
+                    console.log('Access token successfully refreshed');
+                    const body :ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput,{message:'New access token generated', refreshToken: newAccessToken});
+                    resolve(body);
+                } catch (err) {
+                    console.log('An error occurred during refreshing the access token');
+                    resolve(new MessageDTO('Invalid token'));
+                }
             }
-        })
+        });
     });
 }
+
 
 export async function deleteExpiredTokens_new(){
     const currentTime = Math.floor(Date.now() / 1000);

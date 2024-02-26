@@ -11,24 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
-const zod_1 = require("zod");
-const luhn_validation_1 = require("luhn-validation");
-const cikkDTO_1 = require("../dto/cikkDTO");
+const cikkNotFoundDTO_1 = require("../dto/cikkNotFoundDTO");
+const article_dto_1 = require("../../shared/dto/article.dto");
 const prisma = new client_1.PrismaClient();
-const cikkEANSchema = zod_1.z.object({
-    eankod: zod_1.z.number().refine(value => value.toString().length === 13, {
-        message: "Az EAN kód pontosan 13 karakter hosszú kell legyen.",
-    }).refine(value => (0, luhn_validation_1.ean)(value), {
-        message: 'Nem valid EAN kód',
-    }),
-});
-const cikkSchema = zod_1.z.object({
-    cikkszam: zod_1.z.number(),
-});
 function getCikkByCikkszam(cikkszam) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            cikkSchema.parse({ cikkszam: cikkszam });
             const cikk = yield prisma.cikk.findFirst({
                 where: {
                     cikkszam: cikkszam
@@ -37,7 +25,8 @@ function getCikkByCikkszam(cikkszam) {
             if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
                 return "Not found";
             }
-            return new cikkDTO_1.CikkDTO(cikk.cikkszam, cikk.cikknev, Number(cikk.eankod));
+            const body = yield (0, article_dto_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
+            return body;
         }
         catch (err) {
             console.log(err);
@@ -49,16 +38,17 @@ exports.getCikkByCikkszam = getCikkByCikkszam;
 function getCikkByEanKod(eankod) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            cikkEANSchema.parse({ eankod: eankod });
             const cikk = yield prisma.cikk.findFirst({
                 where: {
                     eankod: eankod
                 }
             });
             if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
-                return "Not found";
+                return new cikkNotFoundDTO_1.CikkNotFoundDTO('Not found', eankod);
             }
-            return new cikkDTO_1.CikkDTO(cikk.cikkszam, cikk.cikknev, Number(cikk.eankod));
+            console.log(typeof eankod);
+            const body = yield (0, article_dto_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
+            return body;
         }
         catch (err) {
             console.log(err);
