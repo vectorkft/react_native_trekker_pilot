@@ -98,7 +98,7 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const validData = yield (0, article_dto_1.zParse)(user_dto_1.userSchemaInput, req.body);
         const body = yield userserv.registerUser(req.body.name, req.body.pw);
-        if (body instanceof messageDTO_1.MessageDTO) {
+        if ('message' in body && body.message === 'Username already exists' /*body instanceof MessageDTO*/) {
             return res.status(409).json(body);
         }
         return res.status(200).json(body);

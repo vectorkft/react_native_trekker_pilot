@@ -8,8 +8,9 @@ import {ProfileDTO} from "../dto/profileDTO";
 import {JwtPayload} from "../models/JwtPayload";
 import {MessageDTO} from "../dto/messageDTO";
 import {
+    userAlreadyExistDTOOutput,
     userLoginDTOOutput,
-    userRegisterDTOOutput,
+    userRegisterDTOOutput, ZuserAlreadyExistsDTOOutput,
     ZuserLoginDTOOutput,
     ZuserRegisterDTOOutput
 } from "../../shared/dto/user.dto";
@@ -64,7 +65,9 @@ export async function registerUser(name: string, password: string) {
             }
         })
         if(existed){
-            return new MessageDTO('Username already exists');
+            const body : ZuserAlreadyExistsDTOOutput=await zParse(userAlreadyExistDTOOutput,{message:'Username already exists',name:name});
+            //return new MessageDTO('Username already exists');
+            return body;
         }
             await prisma.user.create({
                 data: {

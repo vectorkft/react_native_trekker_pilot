@@ -81,7 +81,7 @@ app.post('/register', async (req: Request, res: Response) => {
     try {
         const validData= await zParse(userSchemaInput,req.body);
         const body=await userserv.registerUser(req.body.name, req.body.pw);
-        if(body instanceof MessageDTO) {
+        if('message' in body && body.message === 'Username already exists'/*body instanceof MessageDTO*/) {
             return res.status(409 ).json(body);
         }
         return res.status(200).json(body)

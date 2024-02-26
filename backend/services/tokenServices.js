@@ -68,7 +68,7 @@ function refreshToken_new(refreshToken) {
                             },
                         });
                         console.log('Access token successfully refreshed');
-                        const body = yield (0, article_dto_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', refreshToken: newAccessToken });
+                        const body = yield (0, article_dto_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
                         resolve(body);
                     }
                     catch (err) {
