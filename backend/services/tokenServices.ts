@@ -62,7 +62,7 @@ export async function refreshToken_new(refreshToken: string){
                         },
                     })
                     console.log('Access token successfully refreshed');
-                    const body :ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput,{message:'New access token generated', refreshToken: newAccessToken});
+                    const body :ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput,{message:'New access token generated', newAccessToken: newAccessToken});
                     resolve(body);
                 } catch (err) {
                     console.log('An error occurred during refreshing the access token');

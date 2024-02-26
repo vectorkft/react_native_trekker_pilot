@@ -42,7 +42,7 @@
   "devDependencies": {
     "@babel/core": "7.16.5",
     "@babel/preset-flow": "7.16.5",
-    "@babel/runtime": "7.16.5",
+    "@babel/runtime": "^7.16.5",
     "@react-native-community/eslint-config": "^0.0.5",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.11.19",

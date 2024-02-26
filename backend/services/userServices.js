@@ -87,7 +87,9 @@ function registerUser(name, password) {
                 }
             });
             if (existed) {
-                return new messageDTO_1.MessageDTO('Username already exists');
+                const body = yield (0, article_dto_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: name });
+                //return new MessageDTO('Username already exists');
+                return body;
             }
             yield prisma.user.create({
                 data: {

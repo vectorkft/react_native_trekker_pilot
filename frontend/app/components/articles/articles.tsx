@@ -94,7 +94,7 @@ const Articles = ({ navigation }: RouterProps): JSX.Element => {
             {/*)}*/}
             {results && result && flag && (
                 <View style={styles.card}>
-                    <Text>Cikkszám: {result}</Text>
+                    <Text>{{result}}</Text>
                 </View>
 
 
