@@ -1,6 +1,6 @@
 // darkModeService.js
 import { useContext } from 'react';
-import { DarkModeContext } from "../components/darkmode/dark-mode";
+import { DarkModeContext } from "../providers/darkmode/dark-mode";
 
 export const DarkModeService = {
     useDarkMode : () => {
