@@ -13,6 +13,7 @@ exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
 const cikkNotFoundDTO_1 = require("../dto/cikkNotFoundDTO");
 const article_dto_1 = require("../../shared/dto/article.dto");
+const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const prisma = new client_1.PrismaClient();
 function getCikkByCikkszam(cikkszam) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -25,7 +26,7 @@ function getCikkByCikkszam(cikkszam) {
             if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
                 return "Not found";
             }
-            const body = yield (0, article_dto_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
+            const body = yield (0, zod_dto_service_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
             return body;
         }
         catch (err) {
@@ -47,7 +48,7 @@ function getCikkByEanKod(eankod) {
                 return new cikkNotFoundDTO_1.CikkNotFoundDTO('Not found', eankod);
             }
             console.log(typeof eankod);
-            const body = yield (0, article_dto_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
+            const body = yield (0, zod_dto_service_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
             return body;
         }
         catch (err) {

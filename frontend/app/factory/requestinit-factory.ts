@@ -24,7 +24,10 @@ export const RequestinitFactory = {
     doRequest : async (endpoint: string, requestOptions: any = {}) => {
         const url = `${API_URL}${endpoint}`;
         const response = await fetch(url, getClient(requestOptions));
-        const data = await response.json();
+        let data = response;
+        if(response.status !== 204 && response.status !== 403){
+            data = await response.json();
+        }
         return {
             ...data,
             status: response.status

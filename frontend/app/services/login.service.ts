@@ -7,8 +7,8 @@ import {
     ZUserLoginDTOInput,
     ZUserLoginDTOOutput
 } from "../dto/user-login.dto";
-import {zParse} from "./zod-dto.service";
-import {ZodError} from "zod";
+import {zParse} from "../../../shared/services/zod-dto.service";
+import {ValidateForm} from "../interfaces/validate-form";
 
 export const LoginService = {
 
@@ -21,7 +21,7 @@ export const LoginService = {
     },
 
 
-    validateForm : async (formData: ZUserLoginDTOInput) : Promise<{isValid: boolean, error: ZodError}> => {
+    validateForm : async (formData: ZUserLoginDTOInput) : Promise<ValidateForm> => {
         try {
             const body : ZUserLoginDTOInput = await zParse(UserLoginDTOInput, formData);
             console.log(body);
@@ -39,7 +39,7 @@ export const LoginService = {
         };
     },
 
-    handleSubmit : async (input: ZUserLoginDTOInput): Promise<{output: ZUserLoginDTOOutput}> => {
+    handleSubmit : async (input: ZUserLoginDTOInput): Promise<ZUserLoginDTOOutput|undefined> => {
         const options = {
             method: 'POST',
             body: JSON.stringify(input),
@@ -52,7 +52,7 @@ export const LoginService = {
                 try {
                     const handleSubmitDTOOutput : ZUserLoginDTOOutput = await zParse(UserLoginDTOOutput, result);
                     console.log('Sikeres bejelentkezés!');
-                    return {output: handleSubmitDTOOutput};
+                    return handleSubmitDTOOutput;
                 } catch (error){
                     console.log('Hiba:', error);
                 }

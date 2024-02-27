@@ -3,7 +3,7 @@ import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
 import {JwtPayload} from "../models/JwtPayload";
 
-import {zParse} from "../../shared/dto/article.dto";
+import {zParse} from "../../shared/services/zod-dto.service";
 import {refreshTokenDTOOutput, ZrefreshTokenOutput} from "../../shared/dto/refresh.token.dto";
 import {MessageDTO} from "../dto/messageDTO";
 

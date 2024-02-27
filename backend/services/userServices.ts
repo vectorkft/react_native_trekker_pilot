@@ -14,7 +14,7 @@ import {
     ZuserLoginDTOOutput,
     ZuserRegisterDTOOutput
 } from "../../shared/dto/user.dto";
-import {zParse} from "../../shared/dto/article.dto";
+import {zParse} from "../../shared/services/zod-dto.service";
 
 
 

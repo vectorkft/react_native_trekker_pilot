@@ -9,10 +9,12 @@ interface Store {
     setRefreshToken: (value: string) => void;
     id: number;
     setId: (value: number) => void;
-    results: boolean;
-    setResults: (value: boolean) => void;
-    flag: boolean;
-    setFlag: (value: boolean) => void;
+    globalFlagSuccess: boolean;
+    setGlobalFlagSuccess: (value: boolean) => void;
+    globalFlagHelperFailed: boolean;
+    setGlobalFlagHelperFailed: (value: boolean) => void;
+    globalFlagHelperNotFound: boolean;
+    setGlobalFlagHelperNotFound: (value: boolean) => void;
 }
 
 export const useStore = create<Store>(set => ({
@@ -24,8 +26,10 @@ export const useStore = create<Store>(set => ({
     setRefreshToken: (value) => set({ refreshToken: value }),
     id: 0,
     setId: (value) => set({ id: value }),
-    results: false,
-    setResults: (value) => set({ results: value }),
-    flag: true,
-    setFlag: (value) => set({ flag: value }),
+    globalFlagSuccess: false,
+    setGlobalFlagSuccess: (value) => set({ globalFlagSuccess: value }),
+    globalFlagHelperFailed: false,
+    setGlobalFlagHelperFailed: (value) => set({ globalFlagHelperFailed: value }),
+    globalFlagHelperNotFound: false,
+    setGlobalFlagHelperNotFound: (value) => set({ globalFlagHelperNotFound: value }),
 }));

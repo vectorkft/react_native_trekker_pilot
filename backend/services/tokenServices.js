@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.refreshToken_new = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const article_dto_1 = require("../../shared/dto/article.dto");
+const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
 const messageDTO_1 = require("../dto/messageDTO");
 const prisma = new client_1.PrismaClient();
@@ -68,7 +68,7 @@ function refreshToken_new(refreshToken) {
                             },
                         });
                         console.log('Access token successfully refreshed');
-                        const body = yield (0, article_dto_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
+                        const body = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
                         resolve(body);
                     }
                     catch (err) {

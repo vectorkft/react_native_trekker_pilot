@@ -44,7 +44,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const profileDTO_1 = require("../dto/profileDTO");
 const messageDTO_1 = require("../dto/messageDTO");
 const user_dto_1 = require("../../shared/dto/user.dto");
-const article_dto_1 = require("../../shared/dto/article.dto");
+const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 function loginUser(name, password) {
@@ -61,7 +61,7 @@ function loginUser(name, password) {
                 const token = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30s" });
                 const refreshToken = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1d" });
                 yield tokenService.addTokenAtLogin(token, refreshToken, userId);
-                const body = yield (0, article_dto_1.zParse)(user_dto_1.userLoginDTOOutput, { message: 'Login Success, token added successfully', accessToken: token,
+                const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutput, { message: 'Login Success, token added successfully', accessToken: token,
                     refreshToken: refreshToken, userId: userId, currentTime: now });
                 return body;
                 //return new loginDTO('Login Success, token added successfully', token, refreshToken, userId, now);
@@ -87,7 +87,7 @@ function registerUser(name, password) {
                 }
             });
             if (existed) {
-                const body = yield (0, article_dto_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: name });
+                const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: name });
                 //return new MessageDTO('Username already exists');
                 return body;
             }
@@ -97,7 +97,7 @@ function registerUser(name, password) {
                     pw: password,
                 },
             });
-            const body = yield (0, article_dto_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', username: name, password: password });
+            const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', username: name, password: password });
             return body;
             //return new registerDTO('User registration successful', name, password)
         }

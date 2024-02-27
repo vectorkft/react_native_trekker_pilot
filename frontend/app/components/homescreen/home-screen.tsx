@@ -1,30 +1,19 @@
-import React, {JSX, useContext, useEffect} from 'react';
+import React, {JSX, useEffect} from 'react';
 import {View, Button, Text, Switch, Alert} from 'react-native';
-import { DarkModeContext } from "../darkmode/dark-mode";
-import {useStore} from "../../states/states";
-import {LoginService} from "../../services/login.service";
-import {RouterProps} from "../../interfaces/navigation-props";
-import {styles} from "../../styles/components.stylesheet";
+import { useStore } from "../../states/states";
+import { LoginService } from "../../services/login.service";
+import { DarkModeService } from "../../services/dark-mode.service";
+import { RouterProps } from "../../interfaces/navigation-props";
+import { styles } from "../../styles/components.stylesheet";
+import ButtonComponent from "../button/button";
 
 const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
     const { setIsLoggedIn } = useStore.getState();
-    const context = useContext(DarkModeContext);
-
-    if (!context) {
-        throw new Error("DarkModeContext is undefined");
-    }
-
-    const { isDarkMode, toggleDarkMode } = context;
+    const { isDarkMode, toggleDarkMode } = DarkModeService.useDarkMode();
 
     useEffect(() => {
-        let cancelled = false;
-
         navigation.setParams({ isDarkMode });
-
-        return () => {
-            cancelled = true;
-        };
     }, [isDarkMode]);
 
     const handleLogout = async () => {
@@ -43,6 +32,11 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
                     navigation.navigate('profile');
                 }} />
                 <Button title="Kijelentkezés" onPress={handleLogout} />
+                    <ButtonComponent
+                        label="Kattints rám"
+                        enabled={true}
+                        onClick={() => console.log('A gombra kattintottak!')}
+                    />
                 </View>
             ) : (
                 <Button title="Bejelentkezés" onPress={() => navigation.navigate('login')} />

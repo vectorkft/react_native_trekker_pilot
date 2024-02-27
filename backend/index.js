@@ -47,6 +47,7 @@ const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
 const zodDTO_1 = require("./dto/zodDTO");
 const cikkNotFoundDTO_1 = require("./dto/cikkNotFoundDTO");
 const article_dto_1 = require("../shared/dto/article.dto");
+const zod_dto_service_1 = require("../shared/services/zod-dto.service");
 const refresh_token_dto_1 = require("../shared/dto/refresh.token.dto");
 const messageDTO_1 = require("./dto/messageDTO");
 const user_dto_1 = require("../shared/dto/user.dto");
@@ -80,7 +81,7 @@ app.get('/', (req, res) => {
 });
 app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, article_dto_1.zParse)(user_dto_1.userSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
         const body = yield userserv.loginUser(validData.name, validData.pw);
         if (body === 'Wrong username or password') {
             return res.status(401).json(body);
@@ -96,7 +97,7 @@ app.post('/protected', TokenMiddleware_1.verifyToken, (req, res) => {
 });
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, article_dto_1.zParse)(user_dto_1.userSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
         const body = yield userserv.registerUser(req.body.name, req.body.pw);
         if ('message' in body && body.message === 'Username already exists' /*body instanceof MessageDTO*/) {
             return res.status(409).json(body);
@@ -121,7 +122,7 @@ app.all('/check', (res) => {
 });
 app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, article_dto_1.zParse)(article_dto_1.cikkSzamSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(article_dto_1.cikkSzamSchemaInput, req.body);
         const body = yield cikkserv.getCikkByCikkszam(validData.cikkszam);
         if (body === "Not found") {
             return res.status(404).json({ message: 'Not found' });
@@ -135,10 +136,10 @@ app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* (
 }));
 app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, article_dto_1.zParse)(article_dto_1.cikkEANSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(article_dto_1.cikkEANSchemaInput, req.body);
         const body = yield cikkserv.getCikkByEanKod(validData.eankod);
         if (body instanceof cikkNotFoundDTO_1.CikkNotFoundDTO) {
-            return res.status(404).json(body);
+            return res.status(204).json(body);
         }
         return res.status(200).json(body);
     }
@@ -149,7 +150,7 @@ app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, functi
 }));
 app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, article_dto_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
         const body = yield tokenserv.refreshToken_new(validData.refreshToken);
         if (body instanceof messageDTO_1.MessageDTO) {
             return res.status(403).json(body);

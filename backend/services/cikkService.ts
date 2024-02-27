@@ -3,9 +3,10 @@ import {CikkNotFoundDTO} from "../dto/cikkNotFoundDTO";
 import {
     ArticleDTOOutput,
 
-    ZArticleDTOOutput,zParse
+    ZArticleDTOOutput,
 
 } from "../../shared/dto/article.dto";
+import {zParse} from "../../shared/services/zod-dto.service";
 
 const prisma = new PrismaClient()
 

@@ -22,10 +22,10 @@ export const DarkModeProvider = ({ children }: { children: ReactNode }) => {
 
         AsyncStorage.getItem('darkMode')
             .then(savedMode => {
-                if(savedMode !== null){
+                if (!cancelled && savedMode !== null) {
                     setIsDarkMode(JSON.parse(savedMode));
+                    setLoading(false);
                 }
-                setLoading(false);
             })
             .catch(console.error);
 

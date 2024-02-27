@@ -14,7 +14,7 @@ export async function zParse<T extends AnyZodObject>(
     }
 }
 
-export async function parseZodError(error: any) : Promise<string> {
+export async function parseZodError(error: ZodError) : Promise<string> {
     try {
         const msg = JSON.parse(error.message);
         const messages = msg.map((m: any) => m.message);
@@ -24,3 +24,26 @@ export async function parseZodError(error: any) : Promise<string> {
         return '';
     }
 }
+
+export async function parseResponseMessages(response: Response) : Promise<string> {
+    try {
+        let messages = [];
+        for (let key in response) {
+            if (response[key].message) {
+                messages.push(response[key].message);
+            }
+        }
+        return messages.join(' , ');
+    } catch (e) {
+        console.log('Hiba a válaszüzenetek feldolgozásakor:', e);
+        return '';
+    }
+}
+
+
+
+
+
+
+
+

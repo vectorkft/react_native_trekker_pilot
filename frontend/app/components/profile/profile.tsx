@@ -1,40 +1,32 @@
-import React, {JSX, useContext, useEffect, useState} from 'react';
+import React, {JSX, useEffect, useState} from 'react';
 import {View, Text, Switch, Alert, TouchableOpacity, ActivityIndicator} from 'react-native';
-import { DarkModeContext } from "../darkmode/dark-mode";
 import {useStore} from "../../states/states";
 import {profileService} from "../../services/profile.service";
 import {RouterProps} from "../../interfaces/navigation-props";
 import {LoginService} from "../../services/login.service";
 import {styles} from "../../styles/components.stylesheet";
+import {ProfileData} from "../../interfaces/profile-data";
+import {DarkModeService} from "../../services/dark-mode.service";
 
 const Profile = ({ navigation }: RouterProps): JSX.Element => {
-    const context = useContext(DarkModeContext);
     const { setIsLoggedIn, isLoggedIn } = useStore.getState();
-    const [profileData, setProfileData] = useState(null);
+    const [profileData, setProfileData] = useState<ProfileData|Response>();
     const [loading, setLoading] = useState(true);
 
-    if (!context) {
-        throw new Error("DarkModeContext is undefined");
-    }
-
-    const { isDarkMode, toggleDarkMode } = context;
+    const { isDarkMode, toggleDarkMode } = DarkModeService.useDarkMode();
 
     useEffect(() => {
-        let cancelled = false;
-
         navigation.setParams({ isDarkMode });
-
-        return () => {
-            cancelled = true;
-        };
     }, [isDarkMode]);
 
     useEffect(() => {
         let cancelled = false;
 
         profileService.handleUserProfileRequest().then(profile => {
-            setProfileData(profile);
-            setLoading(false);
+            if (!cancelled) {
+                setProfileData(profile);
+                setLoading(false);
+            }
         })
             .catch(console.error);
 
@@ -42,6 +34,7 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
             cancelled = true;
         };
     }, [setProfileData]);
+
 
     if (loading) {
         return (
@@ -63,7 +56,10 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
         <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
             {isLoggedIn && (
                 <View style={{alignItems: 'center'}}>
-                    <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}> Bevagy jelentkezve juhu!</Text>
+                    {profileData && 'username' in profileData && (
+                        <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>
+                            Üdvözöllek a profilon {profileData.username}!</Text>
+                    )}
                     <TouchableOpacity
                         onPress={handleLogout}
                         style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
@@ -76,10 +72,6 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
                     >
                         <Text style={{color: 'white'}}>Cikkek</Text>
                     </TouchableOpacity>
-                    {profileData && (
-                        <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>
-                            {JSON.stringify(profileData)}</Text> // profil adatok megjelenítése
-                    )}
                 </View>
             )}
             <View style={styles.switchMode}>
@@ -91,7 +83,6 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
                     value={isDarkMode}
                 />
             </View>
-            <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>Üdvözöllek a profilon!</Text>
         </View>
     );
 };

@@ -1,13 +1,13 @@
-import React, {JSX, useContext, useEffect, useRef} from 'react';
+import React, {JSX, useEffect, useRef} from 'react';
 import {View, Text, TextInput, Button, Switch, Alert, ActivityIndicator} from 'react-native';
 import {useState} from 'react';
-import { DarkModeContext } from "../darkmode/dark-mode";
 import { LoginService  } from '../../services/login.service';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {RouterProps} from "../../interfaces/navigation-props";
 import {useStore} from "../../states/states";
 import {formStylesheet} from "../../styles/form.stylesheet";
-import {parseZodError} from "../../services/zod-dto.service";
+import {parseZodError} from "../../../../shared/services/zod-dto.service";
+import {DarkModeService} from "../../services/dark-mode.service";
 
 const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
@@ -16,22 +16,17 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
     let passwordInput = useRef<TextInput | null>(null);
     const [loading, setLoading] = useState(true);
     const { setId, setRefreshToken, setAccessToken, setIsLoggedIn } = useStore.getState();
-
-    const context = useContext(DarkModeContext);
-
-    if (!context) {
-        throw new Error("DarkModeContext is undefined");
-    }
-
-    const { isDarkMode } = context;
+    const { isDarkMode } = DarkModeService.useDarkMode();
 
     useEffect(() => {
         let cancelled = false;
 
         LoginService.loadUsernameAndRememberMe().then(({username, rememberMe}) => {
-            setUsername(username);
-            setRememberMe(rememberMe);
-            setLoading(false);
+            if (!cancelled) {
+                setUsername(username);
+                setRememberMe(rememberMe);
+                setLoading(false);
+            }
         })
             .catch(console.error);
 
@@ -63,9 +58,9 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
                 setUsername('');
                 setPassword('');
                 setIsLoggedIn(true);
-                setAccessToken(loginSuccess.output.accessToken);
-                setRefreshToken(loginSuccess.output.refreshToken);
-                setId(loginSuccess.output.userId);
+                setAccessToken(loginSuccess.accessToken);
+                setRefreshToken(loginSuccess.refreshToken);
+                setId(loginSuccess.userId);
                 navigation.navigate('homescreen');
                 Alert.alert("Sikeres bejelentkezés!");
             } else {
@@ -79,38 +74,36 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
 
 
     return (
-        <View style={isDarkMode ? formStylesheet.darkContainer : formStylesheet.lightContainer} >
-        <View style={formStylesheet.form}>
-        <Text style={formStylesheet.label}>Felhasználónév</Text>
-            <TextInput
-    style={formStylesheet.input}
-    placeholder="Add meg a felhasználónevedet"
-    value={username}
-    onChangeText={setUsername}
-    autoFocus
-    onSubmitEditing={() => {
-        passwordInput.current?.focus();
-    }}
-    blurOnSubmit={false}
-    />
-    <Text style={formStylesheet.label}>Jelszó</Text>
-        <TextInput
-    style={formStylesheet.input}
-    placeholder="Add meg a jelszavadat"
-    secureTextEntry
-    value={password}
-    onChangeText={setPassword}
-    ref={passwordInput}
-    onSubmitEditing={handleFormSubmit}
-    />
-    <View style={formStylesheet.rememberMe}>
-    <Switch value={rememberMe} onValueChange={setRememberMe} />
-    <Text style={formStylesheet.label}>Jegyezze meg</Text>
-    </View>
-    <Button title="Bejelentkezés" onPress={handleFormSubmit} />
-    </View>
-    </View>
-);
+        <View style={isDarkMode ? formStylesheet.darkContainer : formStylesheet.lightContainer}>
+            <View style={formStylesheet.form}>
+                <Text style={formStylesheet.label}>Felhasználónév</Text>
+                <TextInput
+                    style={formStylesheet.input}
+                    placeholder="Add meg a felhasználónevedet"
+                    value={username}
+                    onChangeText={setUsername}
+                    autoFocus
+                    onSubmitEditing={() => passwordInput.current?.focus()}
+                    blurOnSubmit={false}
+                />
+                <Text style={formStylesheet.label}>Jelszó</Text>
+                <TextInput
+                    style={formStylesheet.input}
+                    placeholder="Add meg a jelszavadat"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                    ref={passwordInput}
+                    onSubmitEditing={handleFormSubmit}
+                />
+                <View style={formStylesheet.rememberMe}>
+                    <Switch value={rememberMe} onValueChange={setRememberMe} />
+                    <Text style={formStylesheet.label}>Emlékezz rám</Text>
+                </View>
+                <Button title="Bejelentkezés" onPress={handleFormSubmit} />
+            </View>
+        </View>
+    );
 };
 
 export default Login;

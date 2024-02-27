@@ -10,7 +10,8 @@ import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
 import {ZodDTO} from "./dto/zodDTO";
 import {CikkNotFoundDTO} from "./dto/cikkNotFoundDTO";
-import {cikkEANSchemaInput, cikkSzamSchemaInput, zParse} from "../shared/dto/article.dto";
+import {cikkEANSchemaInput, cikkSzamSchemaInput} from "../shared/dto/article.dto";
+import {zParse} from "../shared/services/zod-dto.service"
 import {RefreshBodySchemaInput} from "../shared/dto/refresh.token.dto";
 import {MessageDTO} from "./dto/messageDTO";
 import {userSchemaInput} from "../shared/dto/user.dto";
@@ -127,7 +128,7 @@ app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
         const validData=await zParse(cikkEANSchemaInput,req.body);
         const body= await cikkserv.getCikkByEanKod(validData.eankod);
         if(body instanceof CikkNotFoundDTO){
-            return res.status(404).json(body);
+            return res.status(204).json(body);
 
         }
         return res.status(200).json(body);

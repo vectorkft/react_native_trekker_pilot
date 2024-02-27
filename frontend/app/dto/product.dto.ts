@@ -11,7 +11,7 @@ const article =z.object({
     }),
 });
 
-export class ArticleDTO{
+export class ProductDto {
     message: string;
     cikkszam: number;
     cikknev: string;

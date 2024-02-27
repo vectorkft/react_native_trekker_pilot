@@ -5,7 +5,7 @@ import HomeScreen from './components/homescreen/home-screen';
 import Login from "./components/login/login";
 import { DarkModeProvider } from './components/darkmode/dark-mode';
 import Profile from "./components/profile/profile";
-import Articles from "./components/articles/articles";
+import Product from "./components/products/product";
 
 type StackParamList = {
     homescreen: undefined;
@@ -64,7 +64,7 @@ const App = () => {
                     />
                     <Stack.Screen
                         name="articles"
-                        component={Articles}
+                        component={Product}
                         options={{
                             title: 'Cikkek',
                             headerStyle: {
