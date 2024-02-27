@@ -10,8 +10,8 @@ import {ZArticleDTOOutput2} from "../../../../shared/dto/article.dto";
 
 const Product = ({ navigation }: RouterProps): JSX.Element => {
     const [searchQuery, setSearchQuery] = React.useState('');
-    const [searchQueryState, setSearchQueryState] = React.useState('');
-    const [value, setValue] = React.useState('');
+    const [searchQueryState, setSearchQueryState] = React.useState(0);
+    const [value, setValue] = React.useState(0);
     const timeout = React.useRef(null);
     const [result, setResult] = React.useState<ZArticleDTOOutput2|undefined|Response>();
     const { globalFlagSuccess, globalFlagHelperFailed, globalFlagHelperNotFound } = useStore.getState();
@@ -22,65 +22,90 @@ const Product = ({ navigation }: RouterProps): JSX.Element => {
     //         return;
     //     }
     // });
-    async function handleFormSubmit() {
-        const eanNumber = Number(searchQuery);
-
-        if (isNaN(eanNumber)) {
-            Alert.alert('Hiba', 'Kérjük, adjon meg egy érvényes számot.');
-        } else {
-            try {
-                const response = await ProductsService.getArticlesByEAN({ eankod: eanNumber });
-                setResult(response);
-                setSearchQueryState(searchQuery);
-
-                if (globalFlagHelperFailed && response && 'status' in response) {
-                    const msg = await parseResponseMessages(response);
-                    Alert.alert('Hiba!', msg);
-                }
-
-
-                Keyboard.dismiss();
-                // sound.play((success) => {
-                //     if (!success) {
-                //         console.log('Sound did not play successfully');
-                //     }
-                // });
-
-            } catch (error: any) {
-                console.log('Hiba történt', error);
-            }
-        }
-    }
-    // const onChangeHandler = (value) => {
-    //     clearTimeout(timeout.current);
-    //     setValue(value);
-    //     timeout.current = setTimeout(async () => {
-    //         const response = await ProductsService.getArticlesByEAN({eankod: Number(value)});
+    // async function handleFormSubmit() {
+    //     const eanNumber = Number(searchQuery);
     //
-    //         setResult(response);
-    //     }, 10);
+    //     if (isNaN(eanNumber)) {
+    //         Alert.alert('Hiba', 'Kérjük, adjon meg egy érvényes számot.');
+    //     } else {
+    //         try {
+    //             const response = await ProductsService.getArticlesByEAN({ eankod: eanNumber });
+    //             setResult(response);
+    //             setSearchQueryState(searchQuery);
+    //
+    //             if (globalFlagHelperFailed && response && 'status' in response) {
+    //                 const msg = await parseResponseMessages(response);
+    //                 Alert.alert('Hiba!', msg);
+    //             }
+    //
+    //
+    //             Keyboard.dismiss();
+    //             // sound.play((success) => {
+    //             //     if (!success) {
+    //             //         console.log('Sound did not play successfully');
+    //             //     }
+    //             // });
+    //
+    //         } catch (error: any) {
+    //             console.log('Hiba történt', error);
+    //         }
+    //     }
     // }
+    const onChangeHandler = (value: number) => {
+        clearTimeout(timeout.current);
+        setValue(value);
+        timeout.current = setTimeout(async () => {
+
+            const eanNumber = Number(value);
+
+            if (isNaN(eanNumber)) {
+                Alert.alert('Hiba', 'Kérjük, adjon meg egy érvényes számot.');
+            } else {
+                try {
+                    const response = await ProductsService.getArticlesByEAN({ eankod: eanNumber });
+                    setResult(response);
+                    setSearchQueryState(value);
+
+                    if (globalFlagHelperFailed && response && 'status' in response) {
+                        const msg = await parseResponseMessages(response);
+                        Alert.alert('Hiba!', msg);
+                    }
+
+
+                    Keyboard.dismiss();
+                    // sound.play((success) => {
+                    //     if (!success) {
+                    //         console.log('Sound did not play successfully');
+                    //     }
+                    // });
+
+                } catch (error: any) {
+                    console.log('Hiba történt', error);
+                }
+            }
+        }, 100);
+    }
 
 
     return (
         <View style={articleStyles.container}>
             <TextInput
                 style={articleStyles.input}
-                // onChangeText={ (value: any) => {onChangeHandler(value)
-                //     setSearchQuery(searchQuery)
-                // } }
-                onChangeText={async (text) => {
-                    setSearchQuery(text);
-
-
-                }}
+                onChangeText={ (value: any) => {onChangeHandler(value)
+                    setSearchQuery(searchQuery)
+                } }
+                // onChangeText={async (text) => {
+                //     setSearchQuery(text);
+                //
+                //
+                // }}
                 value={searchQuery}
                 placeholder="Keresés..."
                 keyboardType="numeric"
                 autoFocus
-                // onFocus = {()=> Keyboard.dismiss()}
+                onFocus = {()=> Keyboard.dismiss()}
             />
-            <Button title="Keresés" onPress={handleFormSubmit}></Button>
+            <Button title="Keresés" onPress={()=>onChangeHandler}></Button>
             {globalFlagSuccess && result && 'cikkszam' in result && (
                 <View style={articleStyles.card}>
 
