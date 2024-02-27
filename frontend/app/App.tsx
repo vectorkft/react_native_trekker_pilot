@@ -1,11 +1,11 @@
 import React from 'react';
 import {NavigationContainer, NavigationContainerRef} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import HomeScreen from './components/homescreen/home-screen';
-import Login from "./components/login/login";
-import { DarkModeProvider } from './components/darkmode/dark-mode';
-import Profile from "./components/profile/profile";
-import Product from "./components/products/product";
+import HomeScreen from './screens/homescreen/home-screen';
+import Login from "./screens/login/login";
+import { DarkModeProvider } from './providers/darkmode/dark-mode';
+import Profile from "./screens/profile/profile";
+import Product from "./screens/products/product";
 
 type StackParamList = {
     homescreen: undefined;

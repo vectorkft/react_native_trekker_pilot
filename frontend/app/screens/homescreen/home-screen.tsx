@@ -5,7 +5,7 @@ import { LoginService } from "../../services/login.service";
 import { DarkModeService } from "../../services/dark-mode.service";
 import { RouterProps } from "../../interfaces/navigation-props";
 import { styles } from "../../styles/components.stylesheet";
-import ButtonComponent from "../button/button";
+import ButtonComponent from "../../components/button/button";
 
 const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -31,11 +31,10 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
                 <Button title="Profil" onPress={() => {
                     navigation.navigate('profile');
                 }} />
-                <Button title="Kijelentkezés" onPress={handleLogout} />
                     <ButtonComponent
-                        label="Kattints rám"
+                        label="Kijelentkezés"
                         enabled={true}
-                        onClick={() => console.log('A gombra kattintottak!')}
+                        onClick={handleLogout}
                     />
                 </View>
             ) : (
