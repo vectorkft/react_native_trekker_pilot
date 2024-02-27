@@ -1,9 +1,9 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 19260,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "packagerPid": 44480,
+  "expoServerNgrokUrl": "https://t9-zfc.anonymous.frontend.exp.direct",
+  "packagerNgrokUrl": "https://packager.t9-zfc.anonymous.frontend.exp.direct",
+  "ngrokPid": 44604,
   "webpackServerPort": null
 }
