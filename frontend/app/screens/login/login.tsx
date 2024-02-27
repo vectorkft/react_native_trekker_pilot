@@ -8,6 +8,7 @@ import {useStore} from "../../states/states";
 import {formStylesheet} from "../../styles/form.stylesheet";
 import {parseZodError} from "../../../../shared/services/zod-dto.service";
 import {DarkModeService} from "../../services/dark-mode.service";
+import ButtonComponent from "../../components/button/button-component";
 
 const Login = ({ navigation }: RouterProps): JSX.Element => {
     const [username, setUsername] = useState('');
@@ -100,7 +101,11 @@ const Login = ({ navigation }: RouterProps): JSX.Element => {
                     <Switch value={rememberMe} onValueChange={setRememberMe} />
                     <Text style={formStylesheet.label}>Emlékezz rám</Text>
                 </View>
-                <Button title="Bejelentkezés" onPress={handleFormSubmit} />
+                <ButtonComponent
+                    label="Bejelentkezés"
+                    enabled={isDarkMode}
+                    onClick={handleFormSubmit}
+                />
             </View>
         </View>
     );

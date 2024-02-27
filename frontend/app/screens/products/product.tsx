@@ -6,6 +6,7 @@ import {articleStyles} from "../../styles/article.stylesheet";
 import {parseResponseMessages} from "../../../../shared/services/zod-dto.service";
 import {useStore} from "../../states/states";
 import {ZArticleDTOOutput2} from "../../../../shared/dto/article.dto";
+import ButtonComponent from "../../components/button/button-component";
 // import Sound from 'react-native-sound';
 
 const Product = ({ navigation }: RouterProps): JSX.Element => {
@@ -80,7 +81,11 @@ const Product = ({ navigation }: RouterProps): JSX.Element => {
                 autoFocus
                 // onFocus = {()=> Keyboard.dismiss()}
             />
-            <Button title="Keresés" onPress={handleFormSubmit}></Button>
+            <ButtonComponent
+                label="Keresés"
+                enabled={true}
+                onClick={handleFormSubmit}
+            />
             {globalFlagSuccess && result && 'cikkszam' in result && (
                 <View style={articleStyles.card}>
 

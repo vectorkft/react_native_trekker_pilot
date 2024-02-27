@@ -7,6 +7,7 @@ import {LoginService} from "../../services/login.service";
 import {styles} from "../../styles/components.stylesheet";
 import {ProfileData} from "../../interfaces/profile-data";
 import {DarkModeService} from "../../services/dark-mode.service";
+import ButtonComponent from "../../components/button/button-component";
 
 const Profile = ({ navigation }: RouterProps): JSX.Element => {
     const { setIsLoggedIn, isLoggedIn } = useStore.getState();
@@ -60,18 +61,16 @@ const Profile = ({ navigation }: RouterProps): JSX.Element => {
                         <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>
                             Üdvözöllek a profilon {profileData.username}!</Text>
                     )}
-                    <TouchableOpacity
-                        onPress={handleLogout}
-                        style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
-                    >
-                        <Text style={{color: 'white'}}>Kijelentkezés</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('articles')}
-                        style={{backgroundColor: '#841584', width: '100%', padding: 10, alignItems: 'center'}}
-                    >
-                        <Text style={{color: 'white'}}>Cikkek</Text>
-                    </TouchableOpacity>
+                    <ButtonComponent
+                        label="Kijelentkezés"
+                        enabled={isDarkMode}
+                        onClick={handleLogout}
+                    />
+                    <ButtonComponent
+                        label="Cikkek"
+                        enabled={isDarkMode}
+                        onClick={() => navigation.navigate('articles')}
+                    />
                 </View>
             )}
             <View style={styles.switchMode}>

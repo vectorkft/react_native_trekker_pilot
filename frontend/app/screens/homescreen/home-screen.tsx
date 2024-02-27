@@ -5,7 +5,7 @@ import { LoginService } from "../../services/login.service";
 import { DarkModeService } from "../../services/dark-mode.service";
 import { RouterProps } from "../../interfaces/navigation-props";
 import { styles } from "../../styles/components.stylesheet";
-import ButtonComponent from "../../components/button/button";
+import ButtonComponent from "../../components/button/button-component";
 
 const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
     const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -28,18 +28,25 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
         <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
             {isLoggedIn ? (
                 <View>
-                <Button title="Profil" onPress={() => {
-                    navigation.navigate('profile');
-                }} />
+                    <ButtonComponent
+                        label="Profil"
+                        enabled={isDarkMode}
+                        onClick={() => navigation.navigate('profile')}
+                    />
                     <ButtonComponent
                         label="Kijelentkezés"
-                        enabled={true}
+                        enabled={isDarkMode}
                         onClick={handleLogout}
                     />
                 </View>
             ) : (
-                <Button title="Bejelentkezés" onPress={() => navigation.navigate('login')} />
+                <ButtonComponent
+                    label="Bejelentkezés"
+                    enabled={isDarkMode}
+                    onClick={() => navigation.navigate('login')}
+                />
             )}
+            <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>Ez a főoldal</Text>
             <View style={styles.switchMode}>
                 <Text style={isDarkMode ? styles.darkModeText : styles.lightModeText}>Sötét mód</Text>
                 <Switch
@@ -49,7 +56,6 @@ const HomeScreen = ({ navigation }: RouterProps): JSX.Element => {
                     value={isDarkMode}
                 />
             </View>
-            <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>Ez a főoldal</Text>
         </View>
     );
 };
