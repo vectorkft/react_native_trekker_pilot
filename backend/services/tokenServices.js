@@ -93,7 +93,6 @@ function deleteExpiredTokens_new() {
                 },
                 data: {
                     accessToken: null,
-                    accessExpireDate: null
                 }
             });
             const deletedRefreshTokens = yield prisma.tokens_v1.updateMany({
@@ -104,7 +103,6 @@ function deleteExpiredTokens_new() {
                 },
                 data: {
                     refreshToken: null,
-                    refreshExpireDate: null
                 }
             });
             const deleteTheWholeRecord = yield prisma.tokens_v1.deleteMany({
