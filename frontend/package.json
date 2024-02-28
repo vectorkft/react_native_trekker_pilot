@@ -35,7 +35,7 @@
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "~2.2.0",
     "react-native-sound": "^0.11.0",
-    "react-native-vector-icons": "^10.0.3",
+    "react-native-vector-icons": "^6.6.0",
     "react-native-worklets-core": "^0.3.0",
     "ts-node": "^10.9.2",
     "zod": "^3.22.4",

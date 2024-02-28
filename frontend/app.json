@@ -1,14 +1,5 @@
 {
   "name": "VectorNativeDev",
   "displayName": "VectorNativeDev",
-  "expo": {
-    "plugins": [
-      [
-        "expo-barcode-scanner",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
-        }
-      ]
-    ]
-  }
+  "expo": {}
 }
