@@ -58,8 +58,8 @@ function loginUser(name, password) {
             if (user) {
                 const userId = user.id;
                 const now = Math.floor(new Date().getTime() / 1000);
-                const token = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30s" });
-                const refreshToken = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1d" });
+                const token = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30min" });
+                const refreshToken = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1h" });
                 yield tokenService.addTokenAtLogin(token, refreshToken, userId);
                 const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutput, { message: 'Login Success, token added successfully', accessToken: token,
                     refreshToken: refreshToken, userId: userId, currentTime: now });

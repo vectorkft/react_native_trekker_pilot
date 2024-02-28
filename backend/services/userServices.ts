@@ -34,9 +34,9 @@ export async function loginUser(name: string, password: string) {
             const userId=user.id
             const now = Math.floor(new Date().getTime() / 1000);
             const token = jwt.sign({name: name, pw: password,id: userId, tokenType: 'accessToken'},
-                process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "30s"});
+                process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "30min"});
             const refreshToken=jwt.sign({name: name, pw: password, id: userId, tokenType:'refreshToken'},
-                process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "1d"});
+                process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "1h"});
             await tokenService.addTokenAtLogin(token,refreshToken,userId);
             const body: ZuserLoginDTOOutput= await zParse(userLoginDTOOutput,{message:'Login Success, token added successfully', accessToken:token,
             refreshToken:refreshToken,userId:userId, currentTime:now});

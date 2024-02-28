@@ -85,7 +85,7 @@ export async function deleteExpiredTokens_new(){
             },
             data : {
                 accessToken:null,
-                accessExpireDate: null
+
             }
         });
         const deletedRefreshTokens = await prisma.tokens_v1.updateMany({
@@ -96,7 +96,7 @@ export async function deleteExpiredTokens_new(){
             },
             data : {
                 refreshToken:null,
-                refreshExpireDate: null
+
             }
         });
         const deleteTheWholeRecord = await prisma.tokens_v1.deleteMany({
