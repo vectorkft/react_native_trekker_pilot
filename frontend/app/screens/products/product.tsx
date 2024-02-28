@@ -1,20 +1,21 @@
-import {RouterProps} from "../../interfaces/navigation-props";
 import React, {JSX} from "react";
-import {View, Text, TextInput, Button, Alert, Keyboard} from "react-native";
+import {View, TextInput, Alert, Keyboard} from "react-native";
 import {ProductsService} from '../../services/products.service';
-import {articleStyles} from "../../styles/article.stylesheet";
+import {articleStyles} from "../../styles/products.stylesheet";
 import {parseResponseMessages} from "../../../../shared/services/zod-dto.service";
-import {useStore} from "../../states/states";
 import {ZArticleDTOOutput2} from "../../../../shared/dto/article.dto";
+import CardComponentSuccess from "../../components/card/card-component";
+import CardComponentNotFound from "../../components/card/card-component-not-found";
+import ButtonComponent from "../../components/button/button-component";
+import DataTable from "../../components/table/data-table";
 // import Sound from 'react-native-sound';
 
-const Product = ({ navigation }: RouterProps): JSX.Element => {
+const Product = (): JSX.Element => {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [searchQueryState, setSearchQueryState] = React.useState(0);
     const [value, setValue] = React.useState(0);
     const timeout = React.useRef(null);
-    const [result, setResult] = React.useState<ZArticleDTOOutput2|undefined|Response>();
-    const { globalFlagSuccess, globalFlagHelperFailed, globalFlagHelperNotFound } = useStore.getState();
+    const [result, setResult] = React.useState<ZArticleDTOOutput2|false|Response>();
 
     // const sound = new Sound('frontend/app/assets/beep-07a.mp3', Sound.MAIN_BUNDLE, (error) => {
     //     if (error) {
@@ -66,7 +67,7 @@ const Product = ({ navigation }: RouterProps): JSX.Element => {
                     setResult(response);
                     setSearchQueryState(value);
 
-                    if (globalFlagHelperFailed && response && 'status' in response) {
+                    if (response && 'status' in response) {
                         const msg = await parseResponseMessages(response);
                         Alert.alert('Hiba!', msg);
                     }
@@ -103,21 +104,18 @@ const Product = ({ navigation }: RouterProps): JSX.Element => {
                 placeholder="Keresés..."
                 keyboardType="numeric"
                 autoFocus
-                onFocus = {()=> Keyboard.dismiss()}
+                // onFocus = {()=> Keyboard.dismiss()}
             />
-            <Button title="Keresés" onPress={()=>onChangeHandler}></Button>
-            {globalFlagSuccess && result && 'cikkszam' in result && (
-                <View style={articleStyles.card}>
-
-                    <Text>Cikkszám: {result.cikkszam}</Text>
-                    <Text>Cikk neve: {result.cikknev}</Text>
-                    <Text>EAN kód: {result.eankod}</Text>
+            <ButtonComponent label={"Keresés"} enabled={true} onClick={()=>onChangeHandler}/>
+            {result && 'cikkszam' in result && (
+                <View>
+                    {/*<CardComponentSuccess title={"Találat"} content={result}/>*/}
+                    <DataTable data={result}/>
                 </View>
             )}
-            {globalFlagHelperNotFound && (
-                <View style={articleStyles.card} >
-                    <Text style={{color: 'red'}}>Not Found</Text>
-                    <Text style={{color: 'red'}}>EAN kód: {searchQueryState}</Text>
+            {result === false && (
+                <View>
+                    <CardComponentNotFound title={"Not Found"} ean={searchQueryState}/>
                 </View>
             )}
         </View>

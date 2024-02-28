@@ -2,7 +2,7 @@ import { StyleSheet, Platform } from 'react-native';
 
 export const buttonStyles = StyleSheet.create({
     button: {
-        backgroundColor: 'green',
+        backgroundColor: '#026b02',
         padding: 10,
         paddingHorizontal: 20, // Szöveg körüli térköz hozzáadása
         alignItems: 'center',

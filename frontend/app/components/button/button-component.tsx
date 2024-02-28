@@ -5,7 +5,7 @@ import {styles} from "../../styles/components.stylesheet";
 import {DarkModeService} from "../../services/dark-mode.service";
 import {buttonStyles} from "../../styles/button-component.stylesheet";
 
-const ButtonComponent: React.FC<ButtonProps> = ({ label, enabled, onClick}: ButtonProps) => {
+const ButtonComponent: React.FC<ButtonProps> = ({ label, enabled, onClick }: ButtonProps) => {
     const { isDarkMode} = DarkModeService.useDarkMode();
 
     return (
