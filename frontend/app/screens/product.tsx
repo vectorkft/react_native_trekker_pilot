@@ -6,9 +6,10 @@ import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
 import {ZArticleDTOOutput2} from '../../../shared/dto/article.dto';
 // import {BarCodeScanner} from 'expo-barcode-scanner';
 import CardComponentNotFound from '../components/card-component-not-found';
-import ButtonComponent from '../components/button-component';
+import Vbutton from '../components/Vbutton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
+import CardComponentSuccess from '../components/card-component';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -111,7 +112,7 @@ const Product = (): JSX.Element => {
         // onFocus={() => Keyboard.dismiss()}
       />
       {/*{scanned && (*/}
-      {/*  <ButtonComponent*/}
+      {/*  <Vbutton*/}
       {/*    label={'Camera'}*/}
       {/*    enabled={true}*/}
       {/*    onClick={() => {*/}
@@ -120,7 +121,7 @@ const Product = (): JSX.Element => {
       {/*    }}*/}
       {/*  />*/}
       {/*)}*/}
-      <ButtonComponent
+      <Vbutton
         label={'Keresés'}
         enabled={true}
         isDarkModeOn={isDarkMode}
@@ -128,7 +129,7 @@ const Product = (): JSX.Element => {
       />
       {result && 'cikkszam' in result && (
         <View>
-          {/*<CardComponentSuccess title={"Találat"} content={result}/>*/}
+          <CardComponentSuccess title={'Találatok'} content={result} />
           <DataTable data={result} />
         </View>
       )}

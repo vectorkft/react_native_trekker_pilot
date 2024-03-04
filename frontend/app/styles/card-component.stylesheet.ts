@@ -1,24 +1,42 @@
 import {StyleSheet} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+
 export const cardComponentStylesheet = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     padding: 20,
-    borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
     margin: 10,
+    borderRadius: 10,
   },
-  title: {
+  cardBlack: {
+    backgroundColor: Colors.darker,
+  },
+  darkTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: Colors.dark,
   },
-  content: {
+  lightTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.white,
+  },
+  lightContent: {
     fontWeight: 'bold',
     fontSize: 15,
     marginTop: 10,
+    color: Colors.white,
+  },
+  darkContent: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginTop: 10,
+    color: Colors.dark,
   },
   notFoundTitle: {
     fontSize: 18,

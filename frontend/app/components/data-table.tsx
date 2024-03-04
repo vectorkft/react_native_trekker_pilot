@@ -52,7 +52,6 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         numberOfItemsPerPageList={numberOfItemsPerPageList}
         numberOfItemsPerPage={itemsPerPage}
         onItemsPerPageChange={onItemsPerPageChange}
-        showFastPaginationControls
         selectPageDropdownLabel={'Rows per page'}
         style={styles.pagination}
       />

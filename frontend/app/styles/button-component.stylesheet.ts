@@ -1,4 +1,5 @@
 import {StyleSheet, Platform} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 export const buttonStyles = StyleSheet.create({
   button: {
@@ -17,12 +18,6 @@ export const buttonStyles = StyleSheet.create({
       android: {
         elevation: 3,
       },
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },
     }),
   },
   buttonText: {
@@ -31,6 +26,6 @@ export const buttonStyles = StyleSheet.create({
     fontSize: 16,
   },
   buttonDisabled: {
-    backgroundColor: '#000',
+    backgroundColor: Colors.darker,
   },
 });

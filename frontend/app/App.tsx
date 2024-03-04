@@ -11,13 +11,7 @@ import Profile from './screens/profile';
 import Product from './screens/product';
 import {PaperProvider} from 'react-native-paper';
 import {LoadingProvider} from './providers/loading';
-
-type StackParamList = {
-  homescreen: undefined;
-  profile: undefined;
-  articles: undefined;
-  login: {hideBackButton?: boolean};
-};
+import {StackParamList} from './interfaces/stack-param-list';
 
 const Stack = createStackNavigator<StackParamList>();
 export const navigationRef = React.createRef<NavigationContainerRef>();
