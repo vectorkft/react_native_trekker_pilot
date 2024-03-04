@@ -4,7 +4,7 @@ import {useStore} from '../states/zustand-states';
 import {profileService} from '../services/profile.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {LoginService} from '../services/login.service';
-import {styles} from '../styles/components.stylesheet';
+import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {ProfileData} from '../interfaces/profile-data';
 import {DarkModeService} from '../services/dark-mode.service';
 import ButtonComponent from '../components/button-component';
@@ -37,7 +37,12 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
 
   if (loading) {
     return (
-      <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
+      <View
+        style={
+          isDarkMode
+            ? darkModeContent.darkContainer
+            : darkModeContent.lightContainer
+        }>
         <ActivityIndicator
           size="large"
           color={isDarkMode ? '#ffffff' : '#000000'}
@@ -57,28 +62,45 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
   };
 
   return (
-    <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
+    <View
+      style={
+        isDarkMode
+          ? darkModeContent.darkContainer
+          : darkModeContent.lightContainer
+      }>
       {isLoggedIn && (
         <View style={{alignItems: 'center'}}>
           {profileData && 'username' in profileData && (
-            <Text style={isDarkMode ? styles.darkTitle : styles.lightTitle}>
+            <Text
+              style={
+                isDarkMode
+                  ? darkModeContent.lightTitle
+                  : darkModeContent.darkTitle
+              }>
               Üdvözöllek a profilon {profileData.username}!
             </Text>
           )}
           <ButtonComponent
             label="Kijelentkezés"
-            enabled={isDarkMode}
+            enabled={true}
+            isDarkModeOn={isDarkMode}
             onClick={handleLogout}
           />
           <ButtonComponent
             label="Cikkek"
-            enabled={isDarkMode}
+            enabled={true}
+            isDarkModeOn={isDarkMode}
             onClick={() => navigation.navigate('articles')}
           />
         </View>
       )}
-      <View style={styles.switchMode}>
-        <Text style={isDarkMode ? styles.darkModeText : styles.lightModeText}>
+      <View style={darkModeContent.switchMode}>
+        <Text
+          style={
+            isDarkMode
+              ? darkModeContent.darkModeText
+              : darkModeContent.lightModeText
+          }>
           Sötét mód
         </Text>
         <Switch

@@ -16,7 +16,7 @@ import {formStylesheet} from '../styles/form.stylesheet';
 import {parseZodError} from '../../../shared/services/zod-dto.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import ButtonComponent from '../components/button-component';
-import {styles} from '../styles/components.stylesheet';
+import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import BackButton from '../components/back-button-component';
 import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
@@ -98,7 +98,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
 
   if (loading) {
     return (
-      <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
+      <View style={isDarkMode ? darkModeContent.darkContainer : darkModeContent.lightContainer}>
         <ActivityIndicator
           size="large"
           color={isDarkMode ? '#ffffff' : '#000000'}
@@ -148,8 +148,10 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
         </View>
         <ButtonComponent
           label="Bejelentkezés"
-          enabled={isDarkMode}
+          enabled={true}
           onClick={handleFormSubmit}
+          isDarkModeOn={false}
+          optional={true}
         />
       </View>
       <BackButton navigation={navigation} />

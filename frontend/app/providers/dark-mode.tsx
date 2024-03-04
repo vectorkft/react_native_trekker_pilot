@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useColorScheme} from 'react-native';
 import {DarkMode} from '../interfaces/dark-mode';
 import {ActivityIndicator, View} from 'react-native';
-import {styles} from '../styles/components.stylesheet';
+import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 
 export const DarkModeContext = createContext<DarkMode | undefined>(undefined);
 
@@ -37,7 +37,7 @@ export const DarkModeProvider = ({children}: {children: ReactNode}) => {
 
   if (loading) {
     return (
-      <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
+      <View style={isDarkMode ? darkModeContent.darkContainer : darkModeContent.lightContainer}>
         <ActivityIndicator
           size="large"
           color={isDarkMode ? '#ffffff' : '#000000'}

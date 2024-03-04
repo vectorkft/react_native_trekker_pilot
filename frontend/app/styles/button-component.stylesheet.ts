@@ -31,6 +31,6 @@ export const buttonStyles = StyleSheet.create({
     fontSize: 16,
   },
   buttonDisabled: {
-    backgroundColor: '#ddd',
+    backgroundColor: '#000',
   },
 });

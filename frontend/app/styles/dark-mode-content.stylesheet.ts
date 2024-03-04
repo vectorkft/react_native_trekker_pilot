@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-export const styles = StyleSheet.create({
+export const darkModeContent = StyleSheet.create({
   lightContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -17,12 +17,7 @@ export const styles = StyleSheet.create({
   lightTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
-  },
-  darkTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    color: Colors.white,
   },
   switchMode: {
     position: 'absolute',
@@ -31,14 +26,19 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  lightModeText: {
-    fontSize: 16, // Kisebb méretű szöveg
+  darkTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000',
+    color: Colors.black,
+  },
+  lightModeText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: Colors.black,
   },
   darkModeText: {
-    fontSize: 16, // Kisebb méretű szöveg
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: Colors.white,
   },
 });

@@ -26,6 +26,7 @@ export const useLoginState = () => {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setUsername, setRememberMe]);
 
   return {
@@ -48,7 +49,6 @@ export const useStoredUsername = () => {
   return {storedUsername, setStoredUsername};
 };
 
-// Egyedi hook a fókusz kezelésére
 export const useFocus = (
   username: string,
   usernameSubmitted: boolean,

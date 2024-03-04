@@ -8,6 +8,7 @@ import {ZArticleDTOOutput2} from '../../../shared/dto/article.dto';
 import CardComponentNotFound from '../components/card-component-not-found';
 import ButtonComponent from '../components/button-component';
 import DataTable from '../components//data-table';
+import {DarkModeService} from '../services/dark-mode.service';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -17,6 +18,8 @@ const Product = (): JSX.Element => {
   const [result, setResult] = React.useState<
     ZArticleDTOOutput2 | false | Response
   >();
+  const {isDarkMode} = DarkModeService.useDarkMode();
+
   // const [scanned, setScanned] = useState(true);
   // // const [text, setText] = useState('Not yet scanned');
   // // const [hasPermission, setHasPermission] = useState(null);
@@ -120,6 +123,7 @@ const Product = (): JSX.Element => {
       <ButtonComponent
         label={'Keresés'}
         enabled={true}
+        isDarkModeOn={isDarkMode}
         onClick={() => onChangeHandler}
       />
       {result && 'cikkszam' in result && (
