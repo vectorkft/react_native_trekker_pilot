@@ -1,8 +1,7 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {LoginService} from '../services/login.service';
 import {LoadingService} from '../services/loading.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TextInput} from 'react-native';
 
 export const useLoginState = () => {
   const [username, setUsername] = useState('');
@@ -47,4 +46,16 @@ export const useStoredUsername = () => {
   }, []);
 
   return {storedUsername, setStoredUsername};
+};
+
+export const useFocusTimer = (storedUsername: string | null) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (storedUsername !== null || true) {
+      setIsFocused(true);
+    }
+  }, [storedUsername]);
+
+  return isFocused;
 };

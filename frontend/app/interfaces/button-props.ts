@@ -1,7 +1,7 @@
 export interface ButtonProps {
+  color: string;
   label: string;
   enabled: boolean;
   onClick: () => void;
-  isDarkModeOn: boolean;
-  optional?: boolean;
+  buttonProps: ButtonProps;
 }

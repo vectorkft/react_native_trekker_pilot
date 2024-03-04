@@ -1,12 +1,13 @@
 import React, {JSX} from 'react';
-import {View, Text, Switch, ActivityIndicator} from 'react-native';
+import {View, Text, Switch} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {LoginService} from '../services/login.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import ButtonComponent from '../components/button-component';
+import Vbutton from '../components/Vbutton';
 import {LoadingService} from '../services/loading.service';
+import Loading from '../components/loading';
 
 const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -25,19 +26,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   };
 
   if (loading) {
-    return (
-      <View
-        style={
-          isDarkMode
-            ? darkModeContent.darkContainer
-            : darkModeContent.lightContainer
-        }>
-        <ActivityIndicator
-          size="large"
-          color={isDarkMode ? '#ffffff' : '#000000'}
-        />
-      </View>
-    );
+    return <Loading isDarkModeOn={isDarkMode} />;
   }
 
   return (
@@ -49,13 +38,13 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
       }>
       {isLoggedIn ? (
         <View>
-          <ButtonComponent
+          <Vbutton
             label="Profil"
             enabled={true}
             isDarkModeOn={isDarkMode}
             onClick={() => navigation.navigate('profile')}
           />
-          <ButtonComponent
+          <Vbutton
             label="Kijelentkezés"
             enabled={true}
             isDarkModeOn={isDarkMode}
@@ -63,7 +52,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
           />
         </View>
       ) : (
-        <ButtonComponent
+        <Vbutton
           label="Bejelentkezés"
           enabled={true}
           isDarkModeOn={isDarkMode}

@@ -1,5 +1,5 @@
 import React, {JSX, useEffect, useState} from 'react';
-import {View, Text, Switch, ActivityIndicator} from 'react-native';
+import {View, Text, Switch} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {profileService} from '../services/profile.service';
 import {RouterProps} from '../interfaces/navigation-props';
@@ -7,9 +7,10 @@ import {LoginService} from '../services/login.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {ProfileData} from '../interfaces/profile-data';
 import {DarkModeService} from '../services/dark-mode.service';
-import ButtonComponent from '../components/button-component';
+import Vbutton from '../components/Vbutton';
 import BackButton from '../components/back-button-component';
 import {LoadingService} from '../services/loading.service';
+import Loading from '../components/loading';
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
   const {setIsLoggedIn, isLoggedIn} = useStore.getState();
@@ -33,22 +34,11 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setProfileData]);
 
   if (loading) {
-    return (
-      <View
-        style={
-          isDarkMode
-            ? darkModeContent.darkContainer
-            : darkModeContent.lightContainer
-        }>
-        <ActivityIndicator
-          size="large"
-          color={isDarkMode ? '#ffffff' : '#000000'}
-        />
-      </View>
-    );
+    return <Loading isDarkModeOn={isDarkMode} />;
   }
   const handleLogout = async () => {
     setLoadingState(true);
@@ -80,13 +70,13 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
               Üdvözöllek a profilon {profileData.username}!
             </Text>
           )}
-          <ButtonComponent
+          <Vbutton
             label="Kijelentkezés"
             enabled={true}
             isDarkModeOn={isDarkMode}
             onClick={handleLogout}
           />
-          <ButtonComponent
+          <Vbutton
             label="Cikkek"
             enabled={true}
             isDarkModeOn={isDarkMode}
