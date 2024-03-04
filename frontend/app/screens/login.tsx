@@ -19,6 +19,7 @@ import {
 import Loading from '../components/loading';
 import AlertComponent from '../components/alert';
 import {useAlert} from '../states/use-alert';
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {
@@ -135,11 +136,12 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
           <Text style={formStylesheet.label}>Emlékezz rám</Text>
         </View>
         <Vbutton
-          label="Bejelentkezés"
-          enabled={true}
-          onClick={handleFormSubmit}
-          isDarkModeOn={false}
-          optional={true}
+            buttonProps={{
+              title: "Bejelentkezés",
+              onPress: handleFormSubmit,
+              disabled:!username ||!password,
+              color: isDarkMode? Colors.black : Colors.white
+            }}
         />
       </View>
       <BackButton navigation={navigation} />

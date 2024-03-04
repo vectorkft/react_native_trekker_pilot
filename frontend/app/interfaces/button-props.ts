@@ -1,7 +1,6 @@
+import {Button} from "react-native";
+import React from "react";
+
 export interface ButtonProps {
-  color: string;
-  label: string;
-  enabled: boolean;
-  onClick: () => void;
-  buttonProps: ButtonProps;
+  buttonProps: React.ComponentProps<typeof Button>;
 }

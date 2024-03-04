@@ -11,6 +11,7 @@ import Vbutton from '../components/Vbutton';
 import BackButton from '../components/back-button-component';
 import {LoadingService} from '../services/loading.service';
 import Loading from '../components/loading';
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
   const {setIsLoggedIn, isLoggedIn} = useStore.getState();
@@ -71,16 +72,18 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
             </Text>
           )}
           <Vbutton
-            label="Kijelentkezés"
-            enabled={true}
-            isDarkModeOn={isDarkMode}
-            onClick={handleLogout}
+              buttonProps={{
+                title: 'Kijelentkezés',
+                onPress: handleLogout,
+                color: isDarkMode? Colors.black : Colors.white,
+              }}
           />
           <Vbutton
-            label="Cikkek"
-            enabled={true}
-            isDarkModeOn={isDarkMode}
-            onClick={() => navigation.navigate('articles')}
+              buttonProps={{
+                title: 'Cikkek',
+                onPress: () => navigation.navigate('articles'),
+                color: isDarkMode? Colors.black : Colors.white,
+              }}
           />
         </View>
       )}
