@@ -4,7 +4,7 @@ import {useStore} from '../states/zustand-states';
 import {LoginService} from '../services/login.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import {RouterProps} from '../interfaces/navigation-props';
-import {styles} from '../styles/components.stylesheet';
+import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import ButtonComponent from '../components/button-component';
 import {LoadingService} from '../services/loading.service';
 
@@ -26,7 +26,12 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
 
   if (loading) {
     return (
-      <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
+      <View
+        style={
+          isDarkMode
+            ? darkModeContent.darkContainer
+            : darkModeContent.lightContainer
+        }>
         <ActivityIndicator
           size="large"
           color={isDarkMode ? '#ffffff' : '#000000'}
@@ -36,29 +41,42 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   }
 
   return (
-    <View style={isDarkMode ? styles.darkContainer : styles.lightContainer}>
+    <View
+      style={
+        isDarkMode
+          ? darkModeContent.darkContainer
+          : darkModeContent.lightContainer
+      }>
       {isLoggedIn ? (
         <View>
           <ButtonComponent
             label="Profil"
-            enabled={isDarkMode}
+            enabled={true}
+            isDarkModeOn={isDarkMode}
             onClick={() => navigation.navigate('profile')}
           />
           <ButtonComponent
             label="Kijelentkezés"
-            enabled={isDarkMode}
+            enabled={true}
+            isDarkModeOn={isDarkMode}
             onClick={handleLogout}
           />
         </View>
       ) : (
         <ButtonComponent
           label="Bejelentkezés"
-          enabled={isDarkMode}
+          enabled={true}
+          isDarkModeOn={isDarkMode}
           onClick={() => navigation.navigate('login')}
         />
       )}
-      <View style={styles.switchMode}>
-        <Text style={isDarkMode ? styles.darkModeText : styles.lightModeText}>
+      <View style={darkModeContent.switchMode}>
+        <Text
+          style={
+            isDarkMode
+              ? darkModeContent.darkModeText
+              : darkModeContent.lightModeText
+          }>
           Sötét mód
         </Text>
         <Switch
