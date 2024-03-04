@@ -8,6 +8,7 @@ import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import Vbutton from '../components/Vbutton';
 import {LoadingService} from '../services/loading.service';
 import Loading from '../components/loading';
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
 const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -39,24 +40,27 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
       {isLoggedIn ? (
         <View>
           <Vbutton
-            label="Profil"
-            enabled={true}
-            isDarkModeOn={isDarkMode}
-            onClick={() => navigation.navigate('profile')}
+              buttonProps={{
+            title: "Profil",
+            onPress: () => navigation.navigate('profile'),
+            color: isDarkMode ? Colors.black : Colors.white
+          }}
           />
           <Vbutton
-            label="Kijelentkezés"
-            enabled={true}
-            isDarkModeOn={isDarkMode}
-            onClick={handleLogout}
+              buttonProps={{
+                title: "Kijelentkezés",
+                onPress: handleLogout,
+                color: isDarkMode ? Colors.black : Colors.white
+              }}
           />
         </View>
       ) : (
         <Vbutton
-          label="Bejelentkezés"
-          enabled={true}
-          isDarkModeOn={isDarkMode}
-          onClick={() => navigation.navigate('login')}
+            buttonProps={{
+              title: "Bejelentkezés",
+              onPress: () => navigation.navigate('login'),
+              color: isDarkMode ? Colors.black : Colors.white
+            }}
         />
       )}
       <View style={darkModeContent.switchMode}>

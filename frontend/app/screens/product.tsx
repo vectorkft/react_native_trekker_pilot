@@ -10,6 +10,7 @@ import Vbutton from '../components/Vbutton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -122,10 +123,11 @@ const Product = (): JSX.Element => {
       {/*  />*/}
       {/*)}*/}
       <Vbutton
-        label={'Keresés'}
-        enabled={true}
-        isDarkModeOn={isDarkMode}
-        onClick={() => onChangeHandler}
+          buttonProps={{
+            title: 'Keresés',
+            onPress: () => onChangeHandler,
+            color: isDarkMode ? Colors.black : Colors.white
+          }}
       />
       {result && 'cikkszam' in result && (
         <View>
