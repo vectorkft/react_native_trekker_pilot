@@ -48,25 +48,3 @@ export const useStoredUsername = () => {
 
   return {storedUsername, setStoredUsername};
 };
-
-export const useFocus = (
-  username: string,
-  usernameSubmitted: boolean,
-  storedUsername: string | null,
-) => {
-  const usernameInputRef = useRef<TextInput | null>(null);
-  const passwordInput = useRef<TextInput | null>(null);
-
-  useEffect(() => {
-    if (usernameInputRef.current && username === '') {
-      usernameInputRef.current?.focus();
-    } else if (
-      (username !== '' && usernameSubmitted) ||
-      storedUsername !== null
-    ) {
-      passwordInput.current?.focus();
-    }
-  });
-
-  return {usernameInputRef, passwordInput};
-};
