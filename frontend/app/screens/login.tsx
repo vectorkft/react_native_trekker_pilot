@@ -19,9 +19,7 @@ import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import BackButton from '../components/back-button-component';
 import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
-import {
-  useLoginState, useStoredUsername,
-} from '../states/use-login-states';
+import {useLoginState, useStoredUsername} from '../states/use-login-states';
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {
@@ -38,7 +36,6 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
   const {setId, setRefreshToken, setAccessToken, setIsLoggedIn} =
     useStore.getState();
   const {isDarkMode} = DarkModeService.useDarkMode();
-
 
   const handleFormSubmit = async () => {
     try {
@@ -91,7 +88,12 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
 
   if (loading) {
     return (
-      <View style={isDarkMode ? darkModeContent.darkContainer : darkModeContent.lightContainer}>
+      <View
+        style={
+          isDarkMode
+            ? darkModeContent.darkContainer
+            : darkModeContent.lightContainer
+        }>
         <ActivityIndicator
           size="large"
           color={isDarkMode ? '#ffffff' : '#000000'}
