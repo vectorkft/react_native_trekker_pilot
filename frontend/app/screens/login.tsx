@@ -1,4 +1,4 @@
-import React, {JSX} from 'react';
+import React, {JSX, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import {useState} from 'react';
 import {LoginService} from '../services/login.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RouterProps} from '../interfaces/navigation-props';
@@ -20,11 +19,7 @@ import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import BackButton from '../components/back-button-component';
 import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
-import {
-  useFocus,
-  useLoginState,
-  useStoredUsername,
-} from '../states/use-login-states';
+import {useLoginState, useStoredUsername} from '../states/use-login-states';
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {
@@ -35,17 +30,12 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
     rememberMe,
     setRememberMe,
   } = useLoginState();
+  const {storedUsername} = useStoredUsername();
+  const passwordInput = useRef<TextInput | null>(null);
   const {loading, setLoadingState} = LoadingService.useLoading();
   const {setId, setRefreshToken, setAccessToken, setIsLoggedIn} =
     useStore.getState();
   const {isDarkMode} = DarkModeService.useDarkMode();
-  const [usernameSubmitted, setUsernameSubmitted] = useState(false);
-  const {storedUsername} = useStoredUsername();
-  const {usernameInputRef, passwordInput} = useFocus(
-    username,
-    usernameSubmitted,
-    storedUsername,
-  );
 
   const handleFormSubmit = async () => {
     try {
@@ -98,7 +88,12 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
 
   if (loading) {
     return (
-      <View style={isDarkMode ? darkModeContent.darkContainer : darkModeContent.lightContainer}>
+      <View
+        style={
+          isDarkMode
+            ? darkModeContent.darkContainer
+            : darkModeContent.lightContainer
+        }>
         <ActivityIndicator
           size="large"
           color={isDarkMode ? '#ffffff' : '#000000'}
@@ -117,17 +112,18 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       <View style={formStylesheet.form}>
         <Text style={formStylesheet.label}>Felhasználónév</Text>
         <TextInput
-          ref={usernameInputRef}
+          autoFocus={!storedUsername}
           style={formStylesheet.input}
           placeholder="Add meg a felhasználónevedet"
           placeholderTextColor="grey"
           value={username}
           onChangeText={setUsername}
-          onSubmitEditing={() => setUsernameSubmitted(true)}
+          onSubmitEditing={() => passwordInput.current?.focus()}
           blurOnSubmit={false}
         />
         <Text style={formStylesheet.label}>Jelszó</Text>
         <TextInput
+          autoFocus={!!storedUsername}
           style={formStylesheet.input}
           placeholder="Add meg a jelszavadat"
           placeholderTextColor="grey"
