@@ -5,7 +5,7 @@ import {buttonStyles} from '../styles/button-component.stylesheet';
 import {DarkModeService} from '../services/dark-mode.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 
-const Vbutton: React.FC<ButtonProps> = ({buttonProps}: ButtonProps) => {
+const VButton: React.FC<ButtonProps> = ({buttonProps}: ButtonProps) => {
   const {isDarkMode} = DarkModeService.useDarkMode();
 
   return (
@@ -29,4 +29,4 @@ const Vbutton: React.FC<ButtonProps> = ({buttonProps}: ButtonProps) => {
   );
 };
 
-export default Vbutton;
+export default VButton;

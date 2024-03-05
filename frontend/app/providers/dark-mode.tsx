@@ -2,7 +2,7 @@ import React, {createContext, useState, useEffect, ReactNode} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useColorScheme} from 'react-native';
 import {DarkMode} from '../interfaces/dark-mode';
-import Loading from '../components/loading';
+import VLoading from '../components/VLoading';
 
 export const DarkModeContext = createContext<DarkMode | undefined>(undefined);
 
@@ -32,10 +32,10 @@ export const DarkModeProvider = ({children}: {children: ReactNode}) => {
     return () => {
       cancelled = true;
     };
-  }, [colorScheme, isDarkMode, setIsDarkMode]);
+  }, [colorScheme, setIsDarkMode]);
 
   if (loading) {
-    return <Loading isDarkModeOn={isDarkMode} />;
+    return <VLoading isDarkModeOn={isDarkMode} />;
   }
 
   const value = {isDarkMode, toggleDarkMode};

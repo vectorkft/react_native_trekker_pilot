@@ -1,19 +1,19 @@
 import React, {JSX} from 'react';
-import {View, Text, Switch} from 'react-native';
+import {View} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {LoginService} from '../services/login.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import Vbutton from '../components/Vbutton';
+import VButton from '../components/VButton';
 import {LoadingService} from '../services/loading.service';
-import Loading from '../components/loading';
+import VLoading from '../components/VLoading';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
   const {setIsLoggedIn} = useStore.getState();
-  const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeService.useDarkMode();
   const {loading, setLoadingState} = LoadingService.useLoading();
 
   const handleLogout = async () => {
@@ -28,7 +28,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   };
 
   if (loading) {
-    return <Loading isDarkModeOn={isDarkMode} />;
+    return <VLoading isDarkModeOn={isDarkMode} />;
   }
 
   return (
@@ -40,14 +40,14 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
       }>
       {isLoggedIn && (
         <View>
-          <Vbutton
+          <VButton
             buttonProps={{
               title: 'Profil',
               onPress: () => navigation.navigate('profile'),
               color: isDarkMode ? Colors.lighter : Colors.darker,
             }}
           />
-          <Vbutton
+          <VButton
             buttonProps={{
               title: 'Kijelentkezés',
               onPress: handleLogout,
@@ -56,22 +56,6 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
           />
         </View>
       )}
-      <View style={darkModeContent.switchMode}>
-        <Text
-          style={
-            isDarkMode
-              ? darkModeContent.darkModeText
-              : darkModeContent.lightModeText
-          }>
-          Sötét mód
-        </Text>
-        <Switch
-          trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isDarkMode ? '#f5dd4b' : '#f4f3f4'}
-          onValueChange={toggleDarkMode}
-          value={isDarkMode}
-        />
-      </View>
     </View>
   );
 };

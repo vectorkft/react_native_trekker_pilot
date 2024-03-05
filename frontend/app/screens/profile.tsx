@@ -1,5 +1,5 @@
 import React, {JSX, useEffect, useState} from 'react';
-import {View, Text, Switch} from 'react-native';
+import {View, Text} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {profileService} from '../services/profile.service';
 import {RouterProps} from '../interfaces/navigation-props';
@@ -7,17 +7,17 @@ import {LoginService} from '../services/login.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {ProfileData} from '../interfaces/profile-data';
 import {DarkModeService} from '../services/dark-mode.service';
-import Vbutton from '../components/Vbutton';
-import BackButton from '../components/back-button-component';
+import VButton from '../components/VButton';
+import VBackButton from '../components/VBackButton';
 import {LoadingService} from '../services/loading.service';
-import Loading from '../components/loading';
-import {Colors} from "react-native/Libraries/NewAppScreen";
+import VLoading from '../components/VLoading';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
   const {setIsLoggedIn, isLoggedIn} = useStore.getState();
   const [profileData, setProfileData] = useState<ProfileData | Response>();
   const {loading, setLoadingState} = LoadingService.useLoading();
-  const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeService.useDarkMode();
 
   useEffect(() => {
     let cancelled = false;
@@ -39,14 +39,14 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
   }, [setProfileData]);
 
   if (loading) {
-    return <Loading isDarkModeOn={isDarkMode} />;
+    return <VLoading isDarkModeOn={isDarkMode} />;
   }
   const handleLogout = async () => {
     setLoadingState(true);
     const logoutSuccess = await LoginService.handleLogout();
     if (logoutSuccess) {
       setIsLoggedIn(false);
-      navigation.navigate('homescreen');
+      navigation.navigate('login');
       setLoadingState(false);
       return 'Sikeres kijelentkezés!';
     }
@@ -71,39 +71,23 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
               Üdvözöllek a profilon {profileData.username}!
             </Text>
           )}
-          <Vbutton
-              buttonProps={{
-                title: 'Kijelentkezés',
-                onPress: handleLogout,
-                color: isDarkMode? Colors.lighter : Colors.darker,
-              }}
+          <VButton
+            buttonProps={{
+              title: 'Kijelentkezés',
+              onPress: handleLogout,
+              color: isDarkMode ? Colors.lighter : Colors.darker,
+            }}
           />
-          <Vbutton
-              buttonProps={{
-                title: 'Cikkek',
-                onPress: () => navigation.navigate('articles'),
-                color: isDarkMode? Colors.lighter : Colors.darker,
-              }}
+          <VButton
+            buttonProps={{
+              title: 'Cikkek',
+              onPress: () => navigation.navigate('articles'),
+              color: isDarkMode ? Colors.lighter : Colors.darker,
+            }}
           />
         </View>
       )}
-      <View style={darkModeContent.switchMode}>
-        <Text
-          style={
-            isDarkMode
-              ? darkModeContent.darkModeText
-              : darkModeContent.lightModeText
-          }>
-          Sötét mód
-        </Text>
-        <Switch
-          trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isDarkMode ? '#f5dd4b' : '#f4f3f4'}
-          onValueChange={toggleDarkMode}
-          value={isDarkMode}
-        />
-      </View>
-      <BackButton navigation={navigation} />
+      <VBackButton navigation={navigation} />
     </View>
   );
 };

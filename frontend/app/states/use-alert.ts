@@ -1,17 +1,13 @@
 import {useState} from 'react';
 
 export const useAlert = (initialMessage = '') => {
-  const [showAlert, setShowAlert] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(initialMessage);
+  const [errorMessage, setErrorMessageState] = useState<string | null>(
+    initialMessage,
+  );
 
-  const showError = (message: string) => {
-    setErrorMessage(message);
-    setShowAlert(true);
+  const setErrorMessage = (message: string | null) => {
+    setErrorMessageState(message);
   };
 
-  const hideError = () => {
-    setShowAlert(false);
-  };
-
-  return {showAlert, errorMessage, showError, hideError};
+  return {errorMessage, setErrorMessage};
 };

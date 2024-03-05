@@ -48,7 +48,7 @@ export const useStoredUsername = () => {
   return {storedUsername, setStoredUsername};
 };
 
-export const useFocusTimer = (storedUsername: string | null) => {
+export const useFocus = (storedUsername: string | null) => {
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {

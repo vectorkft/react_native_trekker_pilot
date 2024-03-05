@@ -12,54 +12,57 @@ import Product from './screens/product';
 import {PaperProvider} from 'react-native-paper';
 import {LoadingProvider} from './providers/loading';
 import {StackParamList} from './interfaces/stack-param-list';
+import {NativeBaseProvider} from 'native-base';
 
 const Stack = createStackNavigator<StackParamList>();
 export const navigationRef = React.createRef<NavigationContainerRef>();
 
 const App = () => {
   return (
-    <PaperProvider>
+    <NativeBaseProvider>
       <DarkModeProvider>
         <LoadingProvider>
-          <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator initialRouteName="login">
-              <Stack.Screen
-                name="login"
-                component={Login}
-                options={{
-                  headerShown: false,
-                  animationEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="homescreen"
-                component={HomeScreen}
-                options={{
-                  headerShown: false,
-                  animationEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="profile"
-                component={Profile}
-                options={{
-                  headerShown: false,
-                  animationEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="articles"
-                component={Product}
-                options={{
-                  headerShown: false,
-                  animationEnabled: false,
-                }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
+          <PaperProvider>
+            <NavigationContainer ref={navigationRef}>
+              <Stack.Navigator initialRouteName="login">
+                <Stack.Screen
+                  name="login"
+                  component={Login}
+                  options={{
+                    headerShown: false,
+                    animationEnabled: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="homescreen"
+                  component={HomeScreen}
+                  options={{
+                    headerShown: false,
+                    animationEnabled: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="profile"
+                  component={Profile}
+                  options={{
+                    headerShown: false,
+                    animationEnabled: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="articles"
+                  component={Product}
+                  options={{
+                    headerShown: false,
+                    animationEnabled: false,
+                  }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </PaperProvider>
         </LoadingProvider>
       </DarkModeProvider>
-    </PaperProvider>
+    </NativeBaseProvider>
   );
 };
 

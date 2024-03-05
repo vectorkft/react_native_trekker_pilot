@@ -6,7 +6,7 @@ import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
 import {ZArticleDTOOutput2} from '../../../shared/dto/article.dto';
 // import {BarCodeScanner} from 'expo-barcode-scanner';
 import CardComponentNotFound from '../components/card-component-not-found';
-import Vbutton from '../components/Vbutton';
+import VButton from '../components/VButton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
@@ -110,10 +110,10 @@ const Product = (): JSX.Element => {
         placeholder="Keresés..."
         keyboardType="numeric"
         autoFocus
-        // onFocus={() => Keyboard.dismiss()}
+        onFocus={() => Keyboard.dismiss()}
       />
       {/*{scanned && (*/}
-      {/*  <Vbutton*/}
+      {/*  <VButton*/}
       {/*    label={'Camera'}*/}
       {/*    enabled={true}*/}
       {/*    onClick={() => {*/}
@@ -122,11 +122,11 @@ const Product = (): JSX.Element => {
       {/*    }}*/}
       {/*  />*/}
       {/*)}*/}
-      <Vbutton
+      <VButton
         buttonProps={{
           title: 'Keresés',
           onPress: () => onChangeHandler,
-          color: isDarkMode? Colors.lighter : Colors.darker,
+          color: isDarkMode ? Colors.lighter : Colors.darker,
         }}
       />
       {result && 'cikkszam' in result && (
