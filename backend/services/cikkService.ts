@@ -5,7 +5,6 @@ import {
     ArticleDTOOutput,
     ArticleListOutput,
     ZArticleDTOOutput,
-    ZcikkEANSchemaInput,
 } from "../../shared/dto/article.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 

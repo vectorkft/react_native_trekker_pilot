@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArticleListOutput = exports.cikkSzamSchemaInput = exports.cikkEANSchemaInput = exports.ArticleDTOOutput3 = exports.ArticleDataOutput = exports.ArticleDTOOutput2 = exports.ArticleDTOOutput = void 0;
+exports.ArticleListOutput = exports.cikkSzamSchemaInput = exports.cikkEANSchemaInput = exports.ArticleDataOutput = exports.ArticleDTOOutput2 = exports.ArticleDTOOutput = void 0;
 const zod_1 = require("zod");
 const luhn_validation_1 = require("luhn-validation");
 exports.ArticleDTOOutput = zod_1.z.object({
@@ -18,7 +18,6 @@ exports.ArticleDataOutput = zod_1.z.object({
     title: zod_1.z.string(),
     value: zod_1.z.string(),
 });
-exports.ArticleDTOOutput3 = zod_1.z.array(exports.ArticleDataOutput);
 exports.cikkEANSchemaInput = zod_1.z.object({
     eankod: zod_1.z.number().refine(value => value.toString().length === 13, 'Az EAN kód pontosan 13 karakter hosszú kell legyen!.')
         .refine(value => (0, luhn_validation_1.ean)(value), 'Nem valid EAN kód'),
