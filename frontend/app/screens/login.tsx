@@ -40,7 +40,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
     setRememberMe,
   } = useLoginState();
   const {storedUsername} = useStoredUsername();
-  const isFocused = useFocus(storedUsername);
+  const {isFocused, setIsFocused} = useFocus(storedUsername);
   const passwordInput = useRef<TextInput | null>(null);
   const {loading, setLoadingState} = LoadingService.useLoading();
   const {setId, setRefreshToken, setAccessToken, setIsLoggedIn} =
@@ -86,6 +86,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       setId(loginSuccess.userId);
       setIsLoggedIn(true);
       setErrorMessage(null);
+      setIsFocused(false);
       navigation.navigate('homescreen');
       return 'Sikeres bejelentkezés!';
     } finally {

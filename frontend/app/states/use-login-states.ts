@@ -57,5 +57,5 @@ export const useFocus = (storedUsername: string | null) => {
     }
   }, [storedUsername]);
 
-  return isFocused;
+  return {isFocused,setIsFocused};
 };
