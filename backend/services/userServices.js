@@ -97,7 +97,7 @@ function registerUser(name, password) {
                     pw: password,
                 },
             });
-            const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', username: name, password: password });
+            const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', name: name, password: password });
             return body;
             //return new registerDTO('User registration successful', name, password)
         }

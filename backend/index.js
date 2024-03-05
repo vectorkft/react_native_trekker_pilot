@@ -98,7 +98,7 @@ app.post('/protected', TokenMiddleware_1.verifyToken, (req, res) => {
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
-        const body = yield userserv.registerUser(req.body.name, req.body.pw);
+        const body = yield userserv.registerUser(validData.name, validData.pw);
         if ('message' in body && body.message === 'Username already exists' /*body instanceof MessageDTO*/) {
             return res.status(409).json(body);
         }
@@ -134,10 +134,10 @@ app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
-app.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/getCikkByEAN', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(article_dto_1.cikkEANSchemaInput, req.body);
-        const body = yield cikkserv.getCikkByEanKod(validData.eankod);
+        const body = yield cikkserv.getCikkByEanKod2(validData.eankod);
         if (body instanceof cikkNotFoundDTO_1.CikkNotFoundDTO) {
             return res.status(204).json(body);
         }
@@ -205,15 +205,6 @@ app.post('/deleteUser', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(v
         return res.status(404).send('Something went wrong: ' + err);
     }
 }));
-app.post('/login2', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const body = yield userserv.loginUser(req.body.name, req.body.pw);
-        if (body === 'Wrong username or password') {
-            return res.status(401).json(body);
-        }
-        return res.status(200).json(body);
-    }
-    catch (err) {
-        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
-    }
-}));
+// app.post('/login2', async (req: Request, res: Response) => {
+//
+// })

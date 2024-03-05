@@ -18,12 +18,12 @@ import {userSchemaInput} from "../shared/dto/user.dto";
 
 
 
-
 const app = express();
 const HTTP_PORT = 8000;
 (BigInt.prototype as any).toJSON = function () {
     return this.toString();
 };
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -81,7 +81,7 @@ app.post('/protected',verifyToken, (req,res) => {
 app.post('/register', async (req: Request, res: Response) => {
     try {
         const validData= await zParse(userSchemaInput,req.body);
-        const body=await userserv.registerUser(req.body.name, req.body.pw);
+        const body=await userserv.registerUser(validData.name, validData.pw);
         if('message' in body && body.message === 'Username already exists'/*body instanceof MessageDTO*/) {
             return res.status(409 ).json(body);
         }
@@ -123,10 +123,10 @@ app.post('/getCikk', async (req: Request, res: Response)=>{
     }
 })
 
-app.post('/getCikkByEAN',async (req: Request, res: Response)=>{
+app.post('/getCikkByEAN',verifyToken ,async (req: Request, res: Response)=>{
     try{
         const validData=await zParse(cikkEANSchemaInput,req.body);
-        const body= await cikkserv.getCikkByEanKod(validData.eankod);
+        const body= await cikkserv.getCikkByEanKod2(validData.eankod);
         if(body instanceof CikkNotFoundDTO){
             return res.status(204).json(body);
 
@@ -197,19 +197,6 @@ app.post('/deleteUser',verifyToken, async(req: Request, res: Response) => {
 
 })
 
-app.post('/login2', async (req: Request, res: Response) => {
-
-    try {
-        const body=await userserv.loginUser(req.body.name, req.body.pw);
-        if(body==='Wrong username or password'){
-            return res.status(401).json(body)
-        }
-        return res.status(200).json(body);
-    } catch (err: any) {
-        return res.status(400).json(ZodDTO.fromZodError(err));
-    }
-
-
-
-
-})
+// app.post('/login2', async (req: Request, res: Response) => {
+//
+// })
