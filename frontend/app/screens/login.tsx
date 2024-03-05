@@ -1,5 +1,5 @@
 import React, {JSX, useRef} from 'react';
-import {View, Text, TextInput, Switch} from 'react-native';
+import {View, Text, TextInput} from 'react-native';
 import {LoginService} from '../services/login.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RouterProps} from '../interfaces/navigation-props';
@@ -8,7 +8,6 @@ import {formStylesheet} from '../styles/form.stylesheet';
 import {parseZodError} from '../../../shared/services/zod-dto.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import Vbutton from '../components/Vbutton';
-import BackButton from '../components/back-button-component';
 import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
 import {
@@ -19,7 +18,8 @@ import {
 import Loading from '../components/loading';
 import AlertComponent from '../components/alert';
 import {useAlert} from '../states/use-alert';
-import {Colors} from "react-native/Libraries/NewAppScreen";
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {Checkbox} from 'react-native-paper';
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {
@@ -102,49 +102,49 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
           onClose={hideError}
         />
       )}
-      <View style={formStylesheet.form}>
+      <View style={formStylesheet.inputContainer}>
         <Text style={formStylesheet.label}>Felhasználónév</Text>
         <TextInput
           autoFocus={isFocused && !storedUsername}
           style={formStylesheet.input}
           placeholder="Add meg a felhasználónevedet"
-          placeholderTextColor="grey"
+          placeholderTextColor={isDarkMode ? '#fff' : '#000'}
           value={username}
           onChangeText={setUsername}
           onSubmitEditing={() => passwordInput.current?.focus()}
           blurOnSubmit={false}
         />
+      </View>
+      <View style={formStylesheet.inputContainer}>
         <Text style={formStylesheet.label}>Jelszó</Text>
         <TextInput
           autoFocus={isFocused && !!storedUsername}
           style={formStylesheet.input}
           placeholder="Add meg a jelszavadat"
-          placeholderTextColor="grey"
+          placeholderTextColor={isDarkMode ? '#fff' : '#000'}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
           ref={passwordInput}
           onSubmitEditing={handleFormSubmit}
         />
-        <View style={formStylesheet.rememberMe}>
-          <Switch
-            trackColor={{false: '#c4c2c2', true: '#8f8b8b'}}
-            thumbColor={'#000000'}
-            onValueChange={setRememberMe}
-            value={rememberMe}
-          />
-          <Text style={formStylesheet.label}>Emlékezz rám</Text>
-        </View>
-        <Vbutton
-            buttonProps={{
-              title: "Bejelentkezés",
-              onPress: handleFormSubmit,
-              disabled:!username ||!password,
-              color: isDarkMode? Colors.black : Colors.white
-            }}
-        />
       </View>
-      <BackButton navigation={navigation} />
+      <View style={formStylesheet.rememberMe}>
+        <Checkbox
+          status={rememberMe ? 'checked' : 'unchecked'}
+          onPress={() => setRememberMe(!rememberMe)}
+          color={rememberMe ? '#00EDAE' : '#c4c2c2'}
+        />
+        <Text style={formStylesheet.label}>Emlékezz rám</Text>
+      </View>
+      <Vbutton
+        buttonProps={{
+          title: 'Bejelentkezés',
+          onPress: handleFormSubmit,
+          disabled: !username || !password,
+          color: '#00EDAE',
+        }}
+      />
     </View>
   );
 };

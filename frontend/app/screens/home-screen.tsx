@@ -22,6 +22,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
     if (logoutSuccess) {
       setIsLoggedIn(false);
       setLoadingState(false);
+      navigation.navigate('login');
       return 'Sikeres kijelentkezés!';
     }
   };
@@ -37,31 +38,23 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
           ? darkModeContent.darkContainer
           : darkModeContent.lightContainer
       }>
-      {isLoggedIn ? (
+      {isLoggedIn && (
         <View>
           <Vbutton
             buttonProps={{
               title: 'Profil',
               onPress: () => navigation.navigate('profile'),
-              color: isDarkMode ? Colors.black : Colors.white,
+              color: isDarkMode ? Colors.lighter : Colors.darker,
             }}
           />
           <Vbutton
             buttonProps={{
               title: 'Kijelentkezés',
               onPress: handleLogout,
-              color: isDarkMode ? Colors.black : Colors.white,
+              color: isDarkMode ? Colors.lighter : Colors.darker,
             }}
           />
         </View>
-      ) : (
-        <Vbutton
-          buttonProps={{
-            title: 'Bejelentkezés',
-            onPress: () => navigation.navigate('login'),
-            color: isDarkMode ? Colors.black : Colors.white,
-          }}
-        />
       )}
       <View style={darkModeContent.switchMode}>
         <Text

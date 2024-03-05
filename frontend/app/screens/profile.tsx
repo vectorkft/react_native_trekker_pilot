@@ -75,14 +75,14 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
               buttonProps={{
                 title: 'Kijelentkezés',
                 onPress: handleLogout,
-                color: isDarkMode? Colors.black : Colors.white,
+                color: isDarkMode? Colors.lighter : Colors.darker,
               }}
           />
           <Vbutton
               buttonProps={{
                 title: 'Cikkek',
                 onPress: () => navigation.navigate('articles'),
-                color: isDarkMode? Colors.black : Colors.white,
+                color: isDarkMode? Colors.lighter : Colors.darker,
               }}
           />
         </View>

@@ -22,18 +22,18 @@ const App = () => {
       <DarkModeProvider>
         <LoadingProvider>
           <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator>
+            <Stack.Navigator initialRouteName="login">
               <Stack.Screen
-                name="homescreen"
-                component={HomeScreen}
+                name="login"
+                component={Login}
                 options={{
                   headerShown: false,
                   animationEnabled: false,
                 }}
               />
               <Stack.Screen
-                name="login"
-                component={Login}
+                name="homescreen"
+                component={HomeScreen}
                 options={{
                   headerShown: false,
                   animationEnabled: false,

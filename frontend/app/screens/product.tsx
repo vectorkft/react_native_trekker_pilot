@@ -126,7 +126,7 @@ const Product = (): JSX.Element => {
         buttonProps={{
           title: 'Keresés',
           onPress: () => onChangeHandler,
-          color: isDarkMode ? Colors.black : Colors.white,
+          color: isDarkMode? Colors.lighter : Colors.darker,
         }}
       />
       {result && 'cikkszam' in result && (
