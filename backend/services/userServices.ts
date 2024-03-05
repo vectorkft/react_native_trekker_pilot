@@ -75,7 +75,7 @@ export async function registerUser(name: string, password: string) {
                     pw: password,
                 },
             })
-        const body:ZuserRegisterDTOOutput=await zParse(userRegisterDTOOutput,{message:'User registration successful',username:name,password:password});
+        const body:ZuserRegisterDTOOutput=await zParse(userRegisterDTOOutput,{message:'User registration successful',name:name,password:password});
         return body;
         //return new registerDTO('User registration successful', name, password)
 

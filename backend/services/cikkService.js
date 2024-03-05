@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
+exports.getCikkByEanKod2 = exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
 const cikkNotFoundDTO_1 = require("../dto/cikkNotFoundDTO");
 const article_dto_1 = require("../../shared/dto/article.dto");
@@ -58,3 +58,48 @@ function getCikkByEanKod(eankod) {
     });
 }
 exports.getCikkByEanKod = getCikkByEanKod;
+function getCikkByEanKod2(eankod) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cikk = yield prisma.cikk.findMany({
+                where: {
+                    eankod: eankod
+                }
+            });
+            if (cikk.length === 0) {
+                return new cikkNotFoundDTO_1.CikkNotFoundDTO('Not found', eankod);
+            }
+            const result = {
+                data: [],
+                count: 0
+            };
+            for (let i = 0; i < cikk.length; i++) {
+                const temp = [
+                    article_dto_1.ArticleDataOutput.parse({
+                        key: 'cikkszam',
+                        title: 'Cikkszám',
+                        value: cikk[i].cikkszam.toString(),
+                    }),
+                    article_dto_1.ArticleDataOutput.parse({
+                        key: 'cikknev',
+                        title: 'Cikknév',
+                        value: cikk[i].cikknev.toString(),
+                    }),
+                    article_dto_1.ArticleDataOutput.parse({
+                        key: 'eankod',
+                        title: 'EAN Kód',
+                        value: cikk[i].eankod.toString(),
+                    }),
+                ];
+                result.data.push(...temp);
+                result.count += 1;
+            }
+            return article_dto_1.ArticleListOutput.parse(result);
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+    });
+}
+exports.getCikkByEanKod2 = getCikkByEanKod2;
