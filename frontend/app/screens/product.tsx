@@ -9,9 +9,9 @@ import VButton from '../components/VButton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
-
 import Sound from 'react-native-sound';
 import VCamera from '../components/VCamera';
+import VCameraIconButton from '../components/VCamera-icon-button';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -76,9 +76,15 @@ const Product = (): JSX.Element => {
       }
     }, 100);
   };
+  //ezt majd kikéne szervezni
   const handleOnClose = () => {
     setIsCameraActive(false);
     setScanned(true);
+  };
+  //ezt is
+  const clickCamera = () => {
+    setIsCameraActive(true);
+    setScanned(false);
   };
   if (isCameraActive) {
     return (
@@ -104,55 +110,28 @@ const Product = (): JSX.Element => {
         autoFocus
         onFocus={() => Keyboard.dismiss()}
       />
-      {scanned && (
-          <VButton
-              buttonPropsNativeElement={{
-                title: 'Camera',
-                titleStyle: {
-                  fontFamily: 'Roboto',
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: isDarkMode ? '#fff' : '#000',
-                  textAlign: 'center',
-                },
-                buttonStyle: {
-                  backgroundColor: '#00EDAE',
-                  height: 50,
-                  marginTop: 15,
-                  marginBottom: 15,
-                  borderRadius: 10,
-                  width: '60%',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                },
-                onPress: () => {
-                  setScanned(false);
-                  setIsCameraActive(true);
-                },
-              }}
-          />
-      )}
+      {scanned && <VCameraIconButton onPress={clickCamera} />}
       <VButton
-          buttonPropsNativeElement={{
-            title: 'Keresés',
-            titleStyle: {
-              fontFamily: 'Roboto',
-              fontSize: 20,
-              fontWeight: '700',
-              color: isDarkMode ? '#fff' : '#000',
-              textAlign: 'center',
-            },
-            buttonStyle: {
-              backgroundColor: '#00EDAE',
-              height: 50,
-              marginTop: 5,
-              borderRadius: 10,
-              width: '60%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            },
-            onPress: () => onChangeHandler,
-          }}
+        buttonPropsNativeElement={{
+          title: 'Keresés',
+          titleStyle: {
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            fontWeight: '700',
+            color: isDarkMode ? '#fff' : '#000',
+            textAlign: 'center',
+          },
+          buttonStyle: {
+            backgroundColor: '#00EDAE',
+            height: 50,
+            marginTop: 5,
+            borderRadius: 10,
+            width: '60%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          },
+          onPress: () => onChangeHandler,
+        }}
       />
       {result && 'cikkszam' in result && (
         <View>
