@@ -1,6 +1,6 @@
-import {Button} from 'react-native';
+import {Button} from 'react-native-elements';
 import React from 'react';
 
 export interface ButtonProps {
-  buttonProps: React.ComponentProps<typeof Button>;
+  buttonPropsNativeElement: React.ComponentProps<typeof Button>;
 }

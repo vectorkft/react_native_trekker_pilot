@@ -8,7 +8,6 @@ import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
 import {LoadingService} from '../services/loading.service';
 import VLoading from '../components/VLoading';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -40,20 +39,53 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
       }>
       {isLoggedIn && (
         <View>
-          <VButton
-            buttonProps={{
-              title: 'Profil',
-              onPress: () => navigation.navigate('profile'),
-              color: isDarkMode ? Colors.lighter : Colors.darker,
-            }}
-          />
-          <VButton
-            buttonProps={{
-              title: 'Kijelentkezés',
-              onPress: handleLogout,
-              color: isDarkMode ? Colors.lighter : Colors.darker,
-            }}
-          />
+          <View>
+            <VButton
+              buttonPropsNativeElement={{
+                title: 'Profil',
+                titleStyle: {
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: isDarkMode ? '#fff' : '#000',
+                  textAlign: 'center',
+                },
+                buttonStyle: {
+                  backgroundColor: '#00EDAE',
+                  height: 50,
+                  marginBottom: 15,
+                  borderRadius: 10,
+                  width: '80%',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                },
+                onPress: () => navigation.navigate('profile'),
+              }}
+            />
+          </View>
+          <View>
+            <VButton
+              buttonPropsNativeElement={{
+                title: 'Kijelentkezés',
+                titleStyle: {
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: isDarkMode ? '#fff' : '#000',
+                },
+                buttonStyle: {
+                  backgroundColor: '#00EDAE',
+                  height: 50,
+                  marginBottom: 15,
+                  borderRadius: 10,
+                  width: '80%',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                },
+                onPress: handleLogout,
+              }}
+            />
+          </View>
         </View>
       )}
     </View>
