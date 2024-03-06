@@ -60,9 +60,12 @@ app.post('/login', async (req: Request, res: Response) => {
         const validData= await zParse(userSchemaInput,req.body);
         const body=await userserv.loginUser(validData.name,validData.pw);
         if(body==='Wrong username or password'){
-            return res.status(401).json(body)
+            return res.status(401).json(body);
         }
-        return res.status(200).json(body)
+        if(body==='Username not found'){
+            return res.status(401).json(body);
+        }
+        return res.status(200).json(body);
     } catch (err: any) {
         return res.status(400).send(ZodDTO.fromZodError(err));
     }
@@ -196,7 +199,7 @@ app.post('/deleteUser',verifyToken, async(req: Request, res: Response) => {
     }
 
 })
-
+//új dolgok tesztelésére van
 // app.post('/login2', async (req: Request, res: Response) => {
 //
 // })

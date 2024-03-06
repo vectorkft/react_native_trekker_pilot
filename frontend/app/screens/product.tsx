@@ -4,13 +4,15 @@ import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
 import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
 import {ZArticleDTOOutput2} from '../../../shared/dto/article.dto';
-// import {BarCodeScanner} from 'expo-barcode-scanner';
 import CardComponentNotFound from '../components/card-component-not-found';
 import VButton from '../components/VButton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+
+import Sound from 'react-native-sound';
+import VCamera from '../components/VCamera';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -21,33 +23,31 @@ const Product = (): JSX.Element => {
     ZArticleDTOOutput2 | false | Response
   >();
   const {isDarkMode} = DarkModeService.useDarkMode();
+  const [isCameraActive, setIsCameraActive] = React.useState(false);
+  const [scanned, setScanned] = React.useState(true);
 
-  // const [scanned, setScanned] = useState(true);
-  // // const [text, setText] = useState('Not yet scanned');
-  // // const [hasPermission, setHasPermission] = useState(null);
-  // const [isCameraActive, setIsCameraActive] = useState(false);
+  let beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('Hiba történt a hangfájl betöltésekor', error);
+      return;
+    }
+  });
 
-  // useEffect(() => {
-  //   const getBarCodeScannerPermissions = async () => {
-  //     const {status} = await BarCodeScanner.requestPermissionsAsync();
-  //     setHasPermission(status === 'granted');
-  //   };
-  //
-  //   getBarCodeScannerPermissions().catch(error => console.log(error));
-  // }, []);
-
-  // const handleBarCodeScanned = ({type, data}) => {
-  //   setScanned(true);
-  //   onChangeHandler(data);
-  //   setIsCameraActive(false);
-  // };
-
-  // if (hasPermission === null) {
-  //   return <Text>Requesting for camera permission</Text>;
-  // }
-  // if (hasPermission === false) {
-  //   return <Text>No access to camera</Text>;
-  // }
+  const onBarCodeRead = (scanResult: any) => {
+    if (scanResult.data != null) {
+      if (!scanned) {
+        onChangeHandler(scanResult.data);
+        setScanned(true);
+        setIsCameraActive(false);
+        beep.play(success => {
+          if (!success) {
+            console.log('A hang nem játszódott le');
+          }
+        });
+      }
+    }
+    return;
+  };
 
   const onChangeHandler = (value: number) => {
     clearTimeout(timeout.current);
@@ -77,29 +77,22 @@ const Product = (): JSX.Element => {
       }
     }, 100);
   };
+  const handleOnClose = () => {
+    setIsCameraActive(false);
+    setScanned(true);
+  };
+  if (isCameraActive) {
+    return (
+      <VCamera
+        onScan={onBarCodeRead}
+        isCameraActive={isCameraActive}
+        onClose={handleOnClose}
+      />
+    );
+  }
 
   return (
     <View style={articleStyles.container}>
-      {/*<FontAwesome name="rocket" size={30} color="#900" />*/}
-      {/*{isCameraActive && (*/}
-      {/*  <View style={camera.container}>*/}
-      {/*    <BarCodeScanner*/}
-      {/*      onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}*/}
-      {/*      style={StyleSheet.absoluteFillObject}*/}
-      {/*    />*/}
-      {/*    <View style={{position: 'absolute', top: 0, right: 0, padding: 20}}>*/}
-      {/*      <Ionicons*/}
-      {/*        name="md-close"*/}
-      {/*        size={50}*/}
-      {/*        color="white"*/}
-      {/*        onPress={() => {*/}
-      {/*          setIsCameraActive(false);*/}
-      {/*          setScanned(true);*/}
-      {/*        }}*/}
-      {/*      />*/}
-      {/*    </View>*/}
-      {/*  </View>*/}
-      {/*)}*/}
       <TextInput
         style={articleStyles.input}
         onChangeText={(value: any) => {
@@ -112,23 +105,25 @@ const Product = (): JSX.Element => {
         autoFocus
         onFocus={() => Keyboard.dismiss()}
       />
-      {/*{scanned && (*/}
-      {/*  <VButton*/}
-      {/*    label={'Camera'}*/}
-      {/*    enabled={true}*/}
-      {/*    onClick={() => {*/}
-      {/*      setScanned(false);*/}
-      {/*      setIsCameraActive(true);*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*)}*/}
-      {/*<VButton*/}
-      {/*  buttonProps={{*/}
-      {/*    title: 'Keresés',*/}
-      {/*    onPress: () => onChangeHandler,*/}
-      {/*    color: isDarkMode ? Colors.lighter : Colors.darker,*/}
-      {/*  }}*/}
-      {/*/>*/}
+      {scanned && (
+        <VButton
+          buttonProps={{
+            title: 'Camera',
+            onPress: () => {
+              setScanned(false);
+              setIsCameraActive(true);
+            },
+            color: isDarkMode ? Colors.lighter : Colors.darker,
+          }}
+        />
+      )}
+      <VButton
+        buttonProps={{
+          title: 'Keresés',
+          onPress: () => onChangeHandler,
+          color: isDarkMode ? Colors.lighter : Colors.darker,
+        }}
+      />
       {result && 'cikkszam' in result && (
         <View>
           <CardComponentSuccess title={'Találatok'} content={result} />
