@@ -14,13 +14,13 @@ import {
   useNavigationFocus,
   useStoredUsername,
 } from '../states/use-login-states';
-import VLoading from '../components/VLoading';
 import VAlert from '../components/VAlert';
 import {useAlert} from '../states/use-alert';
 import {CheckBox, Input, Text, Switch} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
+import LoadingScreen from './loading-screen';
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
@@ -88,7 +88,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
   };
 
   if (loading) {
-    return <VLoading isDarkModeOn={isDarkMode} />;
+    return <LoadingScreen />;
   }
 
   return (

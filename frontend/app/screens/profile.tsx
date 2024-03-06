@@ -10,8 +10,7 @@ import {DarkModeService} from '../services/dark-mode.service';
 import VButton from '../components/VButton';
 import VBackButton from '../components/VBackButton';
 import {LoadingService} from '../services/loading.service';
-import VLoading from '../components/VLoading';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import LoadingScreen from './loading-screen';
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
   const {setIsLoggedIn, isLoggedIn} = useStore.getState();
@@ -38,9 +37,6 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setProfileData]);
 
-  if (loading) {
-    return <VLoading isDarkModeOn={isDarkMode} />;
-  }
   const handleLogout = async () => {
     setLoadingState(true);
     const logoutSuccess = await LoginService.handleLogout();
@@ -51,6 +47,10 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
       return 'Sikeres kijelentkezés!';
     }
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <View

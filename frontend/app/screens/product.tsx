@@ -102,39 +102,12 @@ const Product = (): JSX.Element => {
         placeholder="Keresés..."
         keyboardType="numeric"
         autoFocus
-        onFocus={() => Keyboard.dismiss()}
+        // onFocus={() => Keyboard.dismiss()}
       />
       {scanned && (
-          <VButton
-              buttonPropsNativeElement={{
-                title: 'Camera',
-                titleStyle: {
-                  fontFamily: 'Roboto',
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: isDarkMode ? '#fff' : '#000',
-                  textAlign: 'center',
-                },
-                buttonStyle: {
-                  backgroundColor: '#00EDAE',
-                  height: 50,
-                  marginTop: 15,
-                  marginBottom: 15,
-                  borderRadius: 10,
-                  width: '60%',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                },
-                onPress: () => {
-                  setScanned(false);
-                  setIsCameraActive(true);
-                },
-              }}
-          />
-      )}
-      <VButton
+        <VButton
           buttonPropsNativeElement={{
-            title: 'Keresés',
+            title: 'Camera',
             titleStyle: {
               fontFamily: 'Roboto',
               fontSize: 20,
@@ -145,14 +118,41 @@ const Product = (): JSX.Element => {
             buttonStyle: {
               backgroundColor: '#00EDAE',
               height: 50,
-              marginTop: 5,
+              marginTop: 15,
+              marginBottom: 15,
               borderRadius: 10,
               width: '60%',
               marginLeft: 'auto',
               marginRight: 'auto',
             },
-            onPress: () => onChangeHandler,
+            onPress: () => {
+              setScanned(false);
+              setIsCameraActive(true);
+            },
           }}
+        />
+      )}
+      <VButton
+        buttonPropsNativeElement={{
+          title: 'Keresés',
+          titleStyle: {
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            fontWeight: '700',
+            color: isDarkMode ? '#fff' : '#000',
+            textAlign: 'center',
+          },
+          buttonStyle: {
+            backgroundColor: '#00EDAE',
+            height: 50,
+            marginTop: 5,
+            borderRadius: 10,
+            width: '60%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          },
+          onPress: () => onChangeHandler,
+        }}
       />
       {result && 'cikkszam' in result && (
         <View>
