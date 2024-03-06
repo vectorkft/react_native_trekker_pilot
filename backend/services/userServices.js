@@ -51,6 +51,17 @@ function loginUser(name, password) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const username = yield prisma.user.findFirst({
+                where: { name: name }
+            });
+            if (!username) {
+                return 'Username not found';
+            }
+        }
+        catch (err) {
+            return 'Something went wrong ' + err;
+        }
+        try {
             // UserSchema.parse({name: name, pw: password});
             const user = yield prisma.user.findFirst({
                 where: { name: name, pw: password }

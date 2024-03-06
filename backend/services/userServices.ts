@@ -23,6 +23,16 @@ const prisma = new PrismaClient()
 
 
 export async function loginUser(name: string, password: string) {
+    try{
+        const username= await prisma.user.findFirst({
+            where: {name :name}
+        })
+        if(!username){
+            return 'Username not found';
+        }
+    } catch (err){
+        return 'Something went wrong '+err;
+    }
 
     try {
         // UserSchema.parse({name: name, pw: password});

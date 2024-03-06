@@ -86,6 +86,9 @@ app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (body === 'Wrong username or password') {
             return res.status(401).json(body);
         }
+        if (body === 'Username not found') {
+            return res.status(401).json(body);
+        }
         return res.status(200).json(body);
     }
     catch (err) {
@@ -205,6 +208,7 @@ app.post('/deleteUser', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(v
         return res.status(404).send('Something went wrong: ' + err);
     }
 }));
+//új dolgok tesztelésére van
 // app.post('/login2', async (req: Request, res: Response) => {
 //
 // })
