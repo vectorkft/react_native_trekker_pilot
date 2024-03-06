@@ -9,7 +9,6 @@ import VButton from '../components/VButton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import Sound from 'react-native-sound';
 import VCamera from '../components/VCamera';
@@ -106,23 +105,54 @@ const Product = (): JSX.Element => {
         onFocus={() => Keyboard.dismiss()}
       />
       {scanned && (
-        <VButton
-          buttonProps={{
-            title: 'Camera',
-            onPress: () => {
-              setScanned(false);
-              setIsCameraActive(true);
-            },
-            color: isDarkMode ? Colors.lighter : Colors.darker,
-          }}
-        />
+          <VButton
+              buttonPropsNativeElement={{
+                title: 'Camera',
+                titleStyle: {
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: isDarkMode ? '#fff' : '#000',
+                  textAlign: 'center',
+                },
+                buttonStyle: {
+                  backgroundColor: '#00EDAE',
+                  height: 50,
+                  marginTop: 15,
+                  marginBottom: 15,
+                  borderRadius: 10,
+                  width: '60%',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                },
+                onPress: () => {
+                  setScanned(false);
+                  setIsCameraActive(true);
+                },
+              }}
+          />
       )}
       <VButton
-        buttonProps={{
-          title: 'Keresés',
-          onPress: () => onChangeHandler,
-          color: isDarkMode ? Colors.lighter : Colors.darker,
-        }}
+          buttonPropsNativeElement={{
+            title: 'Keresés',
+            titleStyle: {
+              fontFamily: 'Roboto',
+              fontSize: 20,
+              fontWeight: '700',
+              color: isDarkMode ? '#fff' : '#000',
+              textAlign: 'center',
+            },
+            buttonStyle: {
+              backgroundColor: '#00EDAE',
+              height: 50,
+              marginTop: 5,
+              borderRadius: 10,
+              width: '60%',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            },
+            onPress: () => onChangeHandler,
+          }}
       />
       {result && 'cikkszam' in result && (
         <View>
