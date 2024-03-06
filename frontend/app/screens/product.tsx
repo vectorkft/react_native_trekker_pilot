@@ -1,5 +1,5 @@
 import React, {JSX} from 'react';
-import {View, TextInput, Alert, Keyboard, StyleSheet} from 'react-native';
+import {View, TextInput, Alert, Keyboard} from 'react-native';
 import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
 import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
@@ -10,10 +10,9 @@ import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {RNCamera} from 'react-native-camera';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {IconButton} from 'native-base';
-import {backButtonStyles} from '../styles/back-button-component.stylesheet';
+
+import Sound from 'react-native-sound';
+import VCamera from '../components/VCamera';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -27,12 +26,24 @@ const Product = (): JSX.Element => {
   const [isCameraActive, setIsCameraActive] = React.useState(false);
   const [scanned, setScanned] = React.useState(true);
 
-  const onBarCodeRead = scanResult => {
+  let beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('Hiba történt a hangfájl betöltésekor', error);
+      return;
+    }
+  });
+
+  const onBarCodeRead = (scanResult: any) => {
     if (scanResult.data != null) {
       if (!scanned) {
         onChangeHandler(scanResult.data);
         setScanned(true);
         setIsCameraActive(false);
+        beep.play(success => {
+          if (!success) {
+            console.log('A hang nem játszódott le');
+          }
+        });
       }
     }
     return;
@@ -66,32 +77,17 @@ const Product = (): JSX.Element => {
       }
     }, 100);
   };
+  const handleOnClose = () => {
+    setIsCameraActive(false);
+    setScanned(true);
+  };
   if (isCameraActive) {
     return (
-      <View style={StyleSheet.absoluteFillObject}>
-        <RNCamera
-          onBarCodeRead={isCameraActive ? onBarCodeRead : undefined}
-          style={StyleSheet.absoluteFillObject}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
-          autoFocus={RNCamera.Constants.AutoFocus.on}
-          zoom={0}
-        />
-        <IconButton
-          style={backButtonStyles.backButton}
-          icon={
-            <Icon
-              name="close"
-              size={30}
-              color={isDarkMode ? '#ffffff' : '#000000'}
-            />
-          }
-          onPress={() => {
-            setIsCameraActive(false);
-            setScanned(true);
-          }}
-        />
-      </View>
+      <VCamera
+        onScan={onBarCodeRead}
+        isCameraActive={isCameraActive}
+        onClose={handleOnClose}
+      />
     );
   }
 
