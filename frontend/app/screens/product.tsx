@@ -1,5 +1,5 @@
 import React, {JSX} from 'react';
-import {View, TextInput, Alert, Keyboard} from 'react-native';
+import {View, Alert, Keyboard} from 'react-native';
 import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
 import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
@@ -12,6 +12,7 @@ import CardComponentSuccess from '../components/card-component';
 import Sound from 'react-native-sound';
 import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
+import VInput from '../components/VInput';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -95,20 +96,33 @@ const Product = (): JSX.Element => {
       />
     );
   }
+  const onChangeInput = (value: any) => {
+    onChangeHandler(value);
+    setSearchQuery(searchQuery);
+  };
+  const onChangeInputWhenEnabled = (text: string) => {
+    setSearchQuery(text);
+  };
 
   return (
     <View style={articleStyles.container}>
-      <TextInput
-        style={articleStyles.input}
-        onChangeText={(value: any) => {
-          onChangeHandler(value);
-          setSearchQuery(searchQuery);
-        }}
+      {/*<TextInput*/}
+      {/*  style={articleStyles.input}*/}
+      {/*  onChangeText={(value: any) => {*/}
+      {/*    onChangeHandler(value);*/}
+      {/*    setSearchQuery(searchQuery);*/}
+      {/*  }}*/}
+      {/*  value={searchQuery}*/}
+      {/*  placeholder="Keresés..."*/}
+      {/*  keyboardType="numeric"*/}
+      {/*  autoFocus*/}
+      {/*  onFocus={() => Keyboard.dismiss()}*/}
+      {/*/>*/}
+      <VInput
         value={searchQuery}
-        placeholder="Keresés..."
-        keyboardType="numeric"
-        autoFocus
-        onFocus={() => Keyboard.dismiss()}
+        readOnly={false}
+        onChangeWhenReadOnly={onChangeInput}
+        onChangeWhenEditable={onChangeInputWhenEnabled}
       />
       {scanned && <VCameraIconButton onPress={clickCamera} />}
       <VButton
@@ -130,7 +144,10 @@ const Product = (): JSX.Element => {
             marginLeft: 'auto',
             marginRight: 'auto',
           },
-          onPress: () => onChangeHandler,
+          onPress: () => {
+            onChangeHandler(Number(searchQuery));
+            setSearchQuery('');
+          },
         }}
       />
       {result && 'cikkszam' in result && (
