@@ -122,13 +122,13 @@ const Product = (): JSX.Element => {
       {/*    }}*/}
       {/*  />*/}
       {/*)}*/}
-      <VButton
-        buttonProps={{
-          title: 'Keresés',
-          onPress: () => onChangeHandler,
-          color: isDarkMode ? Colors.lighter : Colors.darker,
-        }}
-      />
+      {/*<VButton*/}
+      {/*  buttonProps={{*/}
+      {/*    title: 'Keresés',*/}
+      {/*    onPress: () => onChangeHandler,*/}
+      {/*    color: isDarkMode ? Colors.lighter : Colors.darker,*/}
+      {/*  }}*/}
+      {/*/>*/}
       {result && 'cikkszam' in result && (
         <View>
           <CardComponentSuccess title={'Találatok'} content={result} />

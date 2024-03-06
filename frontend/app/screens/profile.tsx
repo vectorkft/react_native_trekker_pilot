@@ -60,31 +60,68 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
           : darkModeContent.lightContainer
       }>
       {isLoggedIn && (
-        <View style={{alignItems: 'center'}}>
+        <View>
           {profileData && 'username' in profileData && (
-            <Text
-              style={
-                isDarkMode
-                  ? darkModeContent.lightTitle
-                  : darkModeContent.darkTitle
-              }>
-              Üdvözöllek a profilon {profileData.username}!
-            </Text>
+            <View>
+              <Text
+                style={
+                  isDarkMode
+                    ? darkModeContent.lightTitle
+                    : darkModeContent.darkTitle
+                }>
+                Üdvözöllek a profilon {profileData.username}!
+              </Text>
+            </View>
           )}
-          <VButton
-            buttonProps={{
-              title: 'Kijelentkezés',
-              onPress: handleLogout,
-              color: isDarkMode ? Colors.lighter : Colors.darker,
-            }}
-          />
-          <VButton
-            buttonProps={{
-              title: 'Cikkek',
-              onPress: () => navigation.navigate('articles'),
-              color: isDarkMode ? Colors.lighter : Colors.darker,
-            }}
-          />
+          <View>
+            <VButton
+              buttonPropsNativeElement={{
+                title: 'Cikkek',
+                titleStyle: {
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: isDarkMode ? '#fff' : '#000',
+                  textAlign: 'center',
+                },
+                buttonStyle: {
+                  backgroundColor: '#00EDAE',
+                  height: 50,
+                  marginBottom: 15,
+                  marginTop: 15,
+                  borderRadius: 10,
+                  width: '60%',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                },
+                onPress: () => navigation.navigate('articles'),
+              }}
+            />
+          </View>
+          <View>
+            <VButton
+              buttonPropsNativeElement={{
+                title: 'Kijelentkezés',
+                titleStyle: {
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: isDarkMode ? '#fff' : '#000',
+                  textAlign: 'center',
+                },
+                buttonStyle: {
+                  backgroundColor: '#00EDAE',
+                  height: 50,
+                  marginBottom: 15,
+                  borderRadius: 10,
+                  width: '60%',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                },
+                onPress: handleLogout,
+              }}
+            />
+          </View>
         </View>
       )}
       <VBackButton navigation={navigation} />

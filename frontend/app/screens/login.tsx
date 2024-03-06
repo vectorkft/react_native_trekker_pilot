@@ -7,30 +7,30 @@ import {parseZodError} from '../../../shared/services/zod-dto.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
-import {Switch, TextInput} from 'react-native';
+import {TextInput, View} from 'react-native';
 import {
   useFocus,
   useLoginState,
+  useNavigationFocus,
   useStoredUsername,
 } from '../states/use-login-states';
 import VLoading from '../components/VLoading';
 import VAlert from '../components/VAlert';
 import {useAlert} from '../states/use-alert';
-import {
-  Box,
-  VStack,
-  FormControl,
-  Input,
-  Button,
-  Text,
-  Heading,
-  Checkbox,
-} from 'native-base';
+import {CheckBox, Input, Text, Switch} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {View} from 'react-native';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
+import VButton from '../components/VButton';
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
+  const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
+  const {loading, setLoadingState} = LoadingService.useLoading();
+  const passwordInput = useRef<TextInput | null>(null);
+  const {storedUsername} = useStoredUsername();
+  const {isFocused, setIsFocused} = useFocus(storedUsername);
+  const {setId, setRefreshToken, setAccessToken, setIsLoggedIn} =
+    useStore.getState();
+  const [navState] = useNavigationFocus(navigation, setIsFocused);
   const {
     username,
     setUsername,
@@ -38,14 +38,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
     setPassword,
     rememberMe,
     setRememberMe,
-  } = useLoginState();
-  const {storedUsername} = useStoredUsername();
-  const {isFocused, setIsFocused} = useFocus(storedUsername);
-  const passwordInput = useRef<TextInput | null>(null);
-  const {loading, setLoadingState} = LoadingService.useLoading();
-  const {setId, setRefreshToken, setAccessToken, setIsLoggedIn} =
-    useStore.getState();
-  const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
+  } = useLoginState(navState);
   const {errorMessage, setErrorMessage} = useAlert();
 
   const handleFormSubmit = async () => {
@@ -107,93 +100,109 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       {errorMessage && (
         <VAlert type="error" title={'Hibás belépés!'} message={errorMessage} />
       )}
-      <Box
-        flex={1}
-        bg={isDarkMode ? Colors.darker : Colors.lighter}
-        alignItems="center"
-        justifyContent="center">
-        <Box safeArea p="2" py="8" w="90%" maxW="290">
-          <Heading
-            size="2xl"
-            fontWeight="bold"
-            color={isDarkMode ? Colors.white : Colors.black}>
-            Bejelentkezés
-          </Heading>
-          <VStack space={3} mt="5">
-            <FormControl>
-              <FormControl.Label>
-                <Text
-                  fontSize={'xl'}
-                  fontWeight={'bold'}
-                  color={isDarkMode ? Colors.white : Colors.black}>
-                  Felhasználónév*
-                </Text>
-              </FormControl.Label>
-              <Input
-                value={username}
-                onChangeText={setUsername}
-                autoFocus={isFocused && !storedUsername}
-                placeholder="Add meg a felhasználónevedet"
-                onSubmitEditing={() => passwordInput.current?.focus()}
-                blurOnSubmit={false}
-                color={isDarkMode ? Colors.white : Colors.black}
-                placeholderTextColor={isDarkMode ? Colors.white : Colors.black}
-                borderColor={isDarkMode ? Colors.white : Colors.black}
-                _focus={{borderColor: '#00EDAE'}}
-                style={{fontSize: 15}}
-              />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>
-                <Text
-                  fontSize={'xl'}
-                  fontWeight={'bold'}
-                  color={isDarkMode ? Colors.white : Colors.black}>
-                  Jelszó*
-                </Text>
-              </FormControl.Label>
-              <Input
-                ref={passwordInput}
-                type="password"
-                value={password}
-                onChangeText={setPassword}
-                autoFocus={isFocused && !!storedUsername}
-                placeholder="Add meg a jelszavadat"
-                placeholderTextColor={isDarkMode ? Colors.white : Colors.black}
-                color={isDarkMode ? Colors.white : Colors.black}
-                onSubmitEditing={handleFormSubmit}
-                borderColor={isDarkMode ? Colors.white : Colors.black}
-                _focus={{borderColor: '#00EDAE'}}
-                style={{fontSize: 15}}
-              />
-            </FormControl>
-            <Checkbox
-              value="rememberMe"
-              isChecked={rememberMe}
-              onChange={isChecked => setRememberMe(isChecked)}
-              colorScheme={rememberMe ? 'green' : 'gray'}>
-              <Text
-                fontSize="lg"
-                fontWeight="bold"
-                color={isDarkMode ? Colors.white : Colors.black}>
-                Emlékezz rám
-              </Text>
-            </Checkbox>
-            <Button
-              mt="2"
-              bg={'#00EDAE'}
-              onPress={handleFormSubmit}
-              isDisabled={!username || !password}>
-              <Text
-                fontSize="lg"
-                fontWeight="bold"
-                color={isDarkMode ? Colors.white : Colors.black}>
-                Bejelentkezés
-              </Text>
-            </Button>
-          </VStack>
-        </Box>
-      </Box>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <Text
+          style={{
+            fontFamily: 'Roboto',
+            fontSize: 30,
+            fontWeight: 'bold',
+            color: isDarkMode ? 'white' : 'black',
+          }}>
+          Bejelentkezés
+        </Text>
+        <View style={{marginTop: '5%', width: '90%'}}>
+          <Input
+            value={username}
+            onChangeText={setUsername}
+            autoFocus={isFocused && !storedUsername}
+            placeholder="Felhasználónév"
+            onSubmitEditing={() => passwordInput.current?.focus()}
+            blurOnSubmit={false}
+            placeholderTextColor={isDarkMode ? '#5b5959' : '#a9a4a4'}
+            containerStyle={{
+              borderRadius: 10,
+              backgroundColor: isDarkMode ? '#343333' : '#dcdcdc',
+              height: 50,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+            inputContainerStyle={{borderBottomWidth: 0}}
+            selectionColor={isDarkMode ? '#fff' : '#000'}
+            inputStyle={{
+              color: isDarkMode ? '#fff' : '#000',
+              textAlignVertical: 'center',
+            }}
+          />
+          <Input
+            ref={passwordInput}
+            secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
+            autoFocus={isFocused && !!storedUsername}
+            placeholder="Jelszó"
+            placeholderTextColor={isDarkMode ? '#5b5959' : '#a9a4a4'}
+            containerStyle={{
+              marginTop: 10,
+              borderRadius: 10,
+              backgroundColor: isDarkMode ? '#343333' : '#dcdcdc',
+              height: 50,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+            inputContainerStyle={{borderBottomWidth: 0}}
+            selectionColor={isDarkMode ? '#fff' : '#000'}
+            inputStyle={{
+              color: isDarkMode ? '#fff' : '#000',
+              textAlignVertical: 'center',
+            }}
+            onSubmitEditing={handleFormSubmit}
+          />
+          <CheckBox
+            title="Emlékezz rám"
+            checkedColor="#00EDAE"
+            uncheckedColor={isDarkMode ? 'white' : 'black'}
+            containerStyle={{
+              backgroundColor: 'transparent',
+              borderWidth: 0,
+              alignSelf: 'flex-start',
+              marginLeft: -8,
+            }}
+            textStyle={{color: isDarkMode ? 'white' : 'black', fontSize: 15}}
+            checked={rememberMe}
+            onPress={() => setRememberMe(!rememberMe)}
+          />
+          <VButton
+            buttonPropsNativeElement={{
+              title: 'Bejelentkezés',
+              titleStyle: {
+                fontFamily: 'Roboto',
+                fontSize: 20,
+                fontWeight: '700',
+                color: isDarkMode ? '#fff' : '#000',
+              },
+              buttonStyle: {
+                backgroundColor: '#00EDAE',
+                height: 50,
+                borderRadius: 10,
+              },
+              onPress: handleFormSubmit,
+              disabled: !username || !password,
+            }}
+          />
+        </View>
+      </View>
       <View style={darkModeContent.switchMode}>
         <Text
           style={
