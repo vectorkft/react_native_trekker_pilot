@@ -1,8 +1,8 @@
 import React, {JSX} from 'react';
-import {View, Alert, Keyboard} from 'react-native';
+import {View} from 'react-native';
 import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
-import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
+import {parseZodError} from '../../../shared/services/zod-dto.service';
 import {ZArticleDTOOutput2} from '../../../shared/dto/article.dto';
 import CardComponentNotFound from '../components/card-component-not-found';
 import VButton from '../components/VButton';
@@ -13,6 +13,10 @@ import Sound from 'react-native-sound';
 import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
 import VInput from '../components/VInput';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {ZodError} from 'zod';
+import {useAlert} from '../states/use-alert';
+import VAlert from '../components/VAlert';
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -25,6 +29,7 @@ const Product = (): JSX.Element => {
   const {isDarkMode} = DarkModeService.useDarkMode();
   const [isCameraActive, setIsCameraActive] = React.useState(false);
   const [scanned, setScanned] = React.useState(true);
+  const {errorMessage, setErrorMessage} = useAlert();
 
   let beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
     if (error) {
@@ -55,24 +60,28 @@ const Product = (): JSX.Element => {
     timeout.current = setTimeout(async () => {
       const eanNumber = Number(value);
 
+      const {isValid, error} = (await ProductsService.validateForm({
+        eankod: eanNumber,
+      })) as {isValid: boolean; error: ZodError};
+
       if (isNaN(eanNumber)) {
-        Alert.alert('Hiba', 'Kérjük, adjon meg egy érvényes számot.');
+        setErrorMessage('Kérjük, adjon meg egy érvényes számot.');
       } else {
         try {
+          if (!isValid) {
+            const msg = await parseZodError(error);
+            return setErrorMessage(msg);
+          }
+
           const response = await ProductsService.getArticlesByEAN({
             eankod: eanNumber,
           });
+
           setResult(response);
           setSearchQueryState(value);
-
-          if (response && 'status' in response) {
-            const msg = await parseResponseMessages(response);
-            Alert.alert('Hiba!', msg);
-          }
-
-          Keyboard.dismiss();
-        } catch (error: any) {
-          console.log('Hiba történt', error);
+          console.log(searchQueryState);
+        } catch (errors: any) {
+          console.log('Hiba történt', errors);
         }
       }
     }, 100);
@@ -105,25 +114,26 @@ const Product = (): JSX.Element => {
   };
 
   return (
-    <View style={articleStyles.container}>
-      {/*<TextInput*/}
-      {/*  style={articleStyles.input}*/}
-      {/*  onChangeText={(value: any) => {*/}
-      {/*    onChangeHandler(value);*/}
-      {/*    setSearchQuery(searchQuery);*/}
-      {/*  }}*/}
-      {/*  value={searchQuery}*/}
-      {/*  placeholder="Keresés..."*/}
-      {/*  keyboardType="numeric"*/}
-      {/*  autoFocus*/}
-      {/*  onFocus={() => Keyboard.dismiss()}*/}
-      {/*/>*/}
-      <VInput
-        value={searchQuery}
-        readOnly={false}
-        onChangeWhenReadOnly={onChangeInput}
-        onChangeWhenEditable={onChangeInputWhenEnabled}
-      />
+    <View
+      style={[
+        articleStyles.container,
+        {backgroundColor: isDarkMode ? Colors.darker : Colors.lighter},
+      ]}>
+      {errorMessage && (
+        <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
+      )}
+      <View style={{marginTop: '5%', width: '90%'}}>
+        <VInput
+          inputProps={{
+            value: searchQuery,
+            showSoftInputOnFocus: true,
+            autoFocus: true,
+            onChangeText: onChangeInputWhenEnabled,
+            placeholder: 'Keresés...',
+            keyboardType: 'numeric',
+          }}
+        />
+      </View>
       {scanned && <VCameraIconButton onPress={clickCamera} />}
       <VButton
         buttonPropsNativeElement={{

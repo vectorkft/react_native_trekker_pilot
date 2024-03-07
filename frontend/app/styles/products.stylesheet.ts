@@ -2,9 +2,9 @@ import {StyleSheet} from 'react-native';
 
 export const articleStyles = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: '10%',
   },
   input: {
     height: 40,
@@ -13,6 +13,7 @@ export const articleStyles = StyleSheet.create({
     width: '80%',
     marginBottom: 10,
     padding: 10,
+    marginTop: 20,
   },
   card: {
     backgroundColor: '#fff',

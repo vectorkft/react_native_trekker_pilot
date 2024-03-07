@@ -21,7 +21,6 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
 import LoadingScreen from './loading-screen';
-
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
   const {loading, setLoadingState} = LoadingService.useLoading();
