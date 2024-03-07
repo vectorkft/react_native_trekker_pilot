@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RequestInitFactory} from '../factory/request-init-factory';
 import {tokenHandlingService} from './token-handling.service';
 import {
@@ -9,17 +8,18 @@ import {
 } from '../../../shared/dto/user-login.dto';
 import {zParse} from '../../../shared/services/zod-dto.service';
 import {ValidateForm} from '../interfaces/validate-form';
+import {MMKV} from "react-native-mmkv";
 
 export const LoginService = {
-  loadUsernameAndRememberMe: async () => {
-    const [savedUsername, savedRememberMe] = await AsyncStorage.multiGet([
-      'username',
-      'rememberMe',
-    ]);
-    return {
-      username: savedUsername[1] ? savedUsername[1] : '',
-      rememberMe: savedRememberMe[1] ? JSON.parse(savedRememberMe[1]) : false,
-    };
+  loadUsernameAndRememberMe: () => {
+    const storage = new MMKV({
+      id: 'app',
+    });
+
+    const username = storage.getString('username') || '';
+    const rememberMe = storage.getBoolean('rememberMe') || false;
+
+    return {username, rememberMe};
   },
 
   validateForm: async (formData: ZUserLoginDTOInput): Promise<ValidateForm> => {
@@ -77,7 +77,7 @@ export const LoginService = {
     };
 
     try {
-      const result = await RequestInitFactory.doRequest('/logout', options);
+      const result = await RequestInitFactory.doRequest('/protected/logout', options);
 
       if (result.status === 200) {
         return true;

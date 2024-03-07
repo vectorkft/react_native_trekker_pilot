@@ -5,7 +5,6 @@ import {profileService} from '../services/profile.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {LoginService} from '../services/login.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import {ProfileData} from '../interfaces/profile-data';
 import {DarkModeService} from '../services/dark-mode.service';
 import VButton from '../components/VButton';
 import VBackButton from '../components/VBackButton';
@@ -14,7 +13,6 @@ import LoadingScreen from './loading-screen';
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
   const {setIsLoggedIn, isLoggedIn} = useStore.getState();
-  const [profileData, setProfileData] = useState<ProfileData | Response>();
   const {loading, setLoadingState} = LoadingService.useLoading();
   const {isDarkMode} = DarkModeService.useDarkMode();
 
@@ -23,9 +21,8 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
     setLoadingState(true);
     profileService
       .handleUserProfileRequest()
-      .then(profile => {
+      .then(() => {
         if (!cancelled) {
-          setProfileData(profile);
           setLoadingState(false);
         }
       })
@@ -34,8 +31,7 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setProfileData]);
+  }, []);
 
   const handleLogout = async () => {
     setLoadingState(true);
@@ -61,18 +57,6 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
       }>
       {isLoggedIn && (
         <View>
-          {profileData && 'username' in profileData && (
-            <View>
-              <Text
-                style={
-                  isDarkMode
-                    ? darkModeContent.lightTitle
-                    : darkModeContent.darkTitle
-                }>
-                Üdvözöllek a profilon {profileData.username}!
-              </Text>
-            </View>
-          )}
           <View>
             <VButton
               buttonPropsNativeElement={{
@@ -90,7 +74,7 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
                   marginBottom: 15,
                   marginTop: 15,
                   borderRadius: 10,
-                  width: '60%',
+                  width: '80%',
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 },
@@ -114,7 +98,7 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
                   height: 50,
                   marginBottom: 15,
                   borderRadius: 10,
-                  width: '60%',
+                  width: '80%',
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 },

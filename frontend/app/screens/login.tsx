@@ -1,6 +1,5 @@
 import React, {JSX, useRef} from 'react';
 import {LoginService} from '../services/login.service';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RouterProps} from '../interfaces/navigation-props';
 import {useStore} from '../states/zustand-states';
 import {parseZodError} from '../../../shared/services/zod-dto.service';
@@ -9,10 +8,7 @@ import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
 import {TextInput, View} from 'react-native';
 import {
-  useFocus,
   useLoginState,
-  useNavigationFocus,
-  useStoredUsername,
 } from '../states/use-login-states';
 import VAlert from '../components/VAlert';
 import {useAlert} from '../states/use-alert';
@@ -21,15 +17,13 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
 import LoadingScreen from './loading-screen';
+import {MMKV} from "react-native-mmkv";
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
   const {loading, setLoadingState} = LoadingService.useLoading();
   const passwordInput = useRef<TextInput | null>(null);
-  const {storedUsername} = useStoredUsername();
-  const {isFocused, setIsFocused} = useFocus(storedUsername);
-  const {setId, setRefreshToken, setAccessToken, setIsLoggedIn} =
+  const {setId, setRefreshToken, setAccessToken, setIsLoggedIn, isLoggedIn} =
     useStore.getState();
-  const [navState] = useNavigationFocus(navigation, setIsFocused);
   const {
     username,
     setUsername,
@@ -37,8 +31,12 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
     setPassword,
     rememberMe,
     setRememberMe,
-  } = useLoginState(navState);
+  } = useLoginState();
   const {errorMessage, setErrorMessage} = useAlert();
+
+    const storage = new MMKV({
+        id: 'app',
+    });
 
   const handleFormSubmit = async () => {
     try {
@@ -63,22 +61,20 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       }
 
       if (rememberMe) {
-        await AsyncStorage.multiSet([
-          ['username', username],
-          ['rememberMe', JSON.stringify(true)],
-        ]);
+          storage.set('username', username);
+          storage.set('rememberMe', true);
+          setUsername(username);
       } else {
-        await AsyncStorage.removeItem('username');
-        await AsyncStorage.setItem('rememberMe', JSON.stringify(false));
+          storage.delete('username');
+          storage.set('rememberMe', false);
+          setUsername('');
       }
-      setUsername('');
       setPassword('');
       setAccessToken(loginSuccess.accessToken);
       setRefreshToken(loginSuccess.refreshToken);
       setId(loginSuccess.userId);
       setIsLoggedIn(true);
       setErrorMessage(null);
-      setIsFocused(false);
       navigation.navigate('homescreen');
       return 'Sikeres bejelentkezés!';
     } finally {
@@ -113,7 +109,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
           <Input
             value={username}
             onChangeText={setUsername}
-            autoFocus={isFocused && !storedUsername}
+            autoFocus={isLoggedIn ? false : !username}
             placeholder="Felhasználónév"
             onSubmitEditing={() => passwordInput.current?.focus()}
             blurOnSubmit={false}
@@ -143,7 +139,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
             secureTextEntry={true}
             value={password}
             onChangeText={setPassword}
-            autoFocus={isFocused && !!storedUsername}
+            autoFocus={isLoggedIn ? false : !!username}
             placeholder="Jelszó"
             placeholderTextColor={isDarkMode ? '#5b5959' : '#a9a4a4'}
             containerStyle={{
