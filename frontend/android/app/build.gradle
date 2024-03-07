@@ -101,6 +101,12 @@ android {
         versionCode 1
         versionName "1.0"
          missingDimensionStrategy 'react-native-camera', 'general'
+
+         externalNativeBuild {
+                     cmake {
+                         version "3.22.1"
+                     }
+                 }
     }
 
     splits {

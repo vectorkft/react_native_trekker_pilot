@@ -21,8 +21,10 @@ import {
   useOnBarCodeRead,
   useOnChangeHandler
 } from "../states/use-camera-states";
+import VBackButton from "../components/VBackButton";
+import {RouterProps} from "../interfaces/navigation-props";
 
-const Product = (): JSX.Element => {
+const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeService.useDarkMode();
   const beep = useBeepSound();
 
@@ -61,7 +63,7 @@ const Product = (): JSX.Element => {
       {errorMessage && (
         <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
       )}
-      <View style={{marginTop: '5%', width: '90%'}}>
+      <View style={{marginTop: '15%', width: '90%'}}>
         <VInput
           inputProps={{
             value: searchQuery,
@@ -111,6 +113,7 @@ const Product = (): JSX.Element => {
           <CardComponentNotFound title={'Not Found'} ean={searchQueryState} />
         </View>
       )}
+      <VBackButton navigation={navigation}/>
     </View>
   );
 };
