@@ -17,6 +17,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {ZodError} from 'zod';
 import {useAlert} from '../states/use-alert';
 import VAlert from '../components/VAlert';
+import {useCamera, useInputChange} from "../states/use-camera-states";
 
 const Product = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -27,75 +28,78 @@ const Product = (): JSX.Element => {
     ZArticleDTOOutput2 | false | Response
   >();
   const {isDarkMode} = DarkModeService.useDarkMode();
-  const [isCameraActive, setIsCameraActive] = React.useState(false);
-  const [scanned, setScanned] = React.useState(true);
   const {errorMessage, setErrorMessage} = useAlert();
+  const { isCameraActive, scanned, handleOnClose, clickCamera, setScanned, setIsCameraActive } = useCamera();
 
-  let beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
-    if (error) {
-      console.log('Hiba történt a hangfájl betöltésekor', error);
-      return;
-    }
-  });
 
-  const onBarCodeRead = (scanResult: any) => {
-    if (scanResult.data != null) {
-      if (!scanned) {
-        onChangeHandler(scanResult.data);
-        setScanned(true);
-        setIsCameraActive(false);
-        beep.play(success => {
-          if (!success) {
-            console.log('A hang nem játszódott le');
-          }
-        });
-      }
-    }
-    return;
+  const beep = React.useMemo(
+    () =>
+      new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
+        if (error) {
+          console.log('Hiba történt a hangfájl betöltésekor', error);
+        }
+      }),
+    [],
+  );
+
+  const validateForm = async (value: number) => {
+    const {isValid, error} = (await ProductsService.validateForm({
+      eankod: value,
+    })) as {isValid: boolean; error: ZodError};
+    return {isValid, error};
   };
 
-  const onChangeHandler = (value: number) => {
-    clearTimeout(timeout.current);
-    setValue(value);
-    timeout.current = setTimeout(async () => {
-      const eanNumber = Number(value);
+  const getArticlesByEAN = async (value: number) => {
+    return await ProductsService.getArticlesByEAN({eankod: value});
+  };
 
-      const {isValid, error} = (await ProductsService.validateForm({
-        eankod: eanNumber,
-      })) as {isValid: boolean; error: ZodError};
+  const onChangeHandler = React.useCallback(
+    (value: number) => {
+      clearTimeout(timeout.current);
+      setValue(value);
+      timeout.current = setTimeout(async () => {
+        const eanNumber = Number(value);
+        if (isNaN(eanNumber)) {
+          setErrorMessage('Kérjük, adjon meg egy érvényes számot.');
+          return;
+        }
 
-      if (isNaN(eanNumber)) {
-        setErrorMessage('Kérjük, adjon meg egy érvényes számot.');
-      } else {
+        const {isValid, error} = await validateForm(eanNumber);
+
+        if (!isValid) {
+          const msg = await parseZodError(error);
+          setErrorMessage(msg);
+          return;
+        }
+
         try {
-          if (!isValid) {
-            const msg = await parseZodError(error);
-            return setErrorMessage(msg);
-          }
-
-          const response = await ProductsService.getArticlesByEAN({
-            eankod: eanNumber,
-          });
-
+          const response = await getArticlesByEAN(eanNumber);
           setResult(response);
           setSearchQueryState(value);
-          console.log(searchQueryState);
         } catch (errors: any) {
           console.log('Hiba történt', errors);
         }
-      }
-    }, 100);
-  };
-  //ezt majd kikéne szervezni
-  const handleOnClose = () => {
-    setIsCameraActive(false);
-    setScanned(true);
-  };
-  //ezt is
-  const clickCamera = () => {
-    setIsCameraActive(true);
-    setScanned(false);
-  };
+      }, 100);
+    },
+    [validateForm, getArticlesByEAN],
+  );
+
+  const { onChangeInput, onChangeInputWhenEnabled } = useInputChange(onChangeHandler, setSearchQuery);
+
+  const onBarCodeRead = React.useCallback(
+      (scanResult: any) => {
+        if (scanResult.data != null && !scanned) {
+          onChangeHandler(scanResult.data);
+          setScanned(true);
+          setIsCameraActive(false);
+          beep.play(success => {
+            if (!success) console.log('A hang nem játszódott le');
+          });
+        }
+      },
+      [beep, onChangeHandler, scanned],
+  );
+
   if (isCameraActive) {
     return (
       <VCamera
@@ -105,13 +109,6 @@ const Product = (): JSX.Element => {
       />
     );
   }
-  const onChangeInput = (value: any) => {
-    onChangeHandler(value);
-    setSearchQuery(searchQuery);
-  };
-  const onChangeInputWhenEnabled = (text: string) => {
-    setSearchQuery(text);
-  };
 
   return (
     <View
