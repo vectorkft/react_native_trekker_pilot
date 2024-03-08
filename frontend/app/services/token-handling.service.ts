@@ -2,7 +2,10 @@ import {useStore} from '../states/zustand-states';
 import jwtDecode from 'jwt-decode';
 import {DecodedToken} from '../interfaces/decoded-token';
 import {RequestInitFactory} from '../factory/request-init-factory';
-import {parseZodError, zParse} from '../../../shared/services/zod-dto.service';
+import {
+  parseZodError,
+  validateZDTOForm,
+} from '../../../shared/services/zod-dto.service';
 import {
   TokenDTOInput,
   TokenDTOOutput,
@@ -10,7 +13,6 @@ import {
   ZTokenDTOOutput,
 } from '../../../shared/dto/token.dto';
 import {NavigationService} from './navigation.service';
-import {ValidateForm} from '../interfaces/validate-form';
 import {ZodError} from 'zod';
 
 const isTokenExpired = (token: string | null): boolean => {
@@ -31,28 +33,6 @@ const isTokenExpired = (token: string | null): boolean => {
   }
 };
 
-const validateBody = async (
-  formData: ZTokenDTOInput,
-): Promise<ValidateForm> => {
-  try {
-    const body: ZTokenDTOInput = await zParse(TokenDTOInput, formData);
-    console.log(body);
-  } catch (error) {
-    console.log(error);
-    if (error instanceof ZodError) {
-      return {
-        isValid: false,
-        error: error,
-      };
-    }
-  }
-
-  return {
-    error: null,
-    isValid: true,
-  };
-};
-
 const refreshAccessToken = async (
   input: ZTokenDTOInput,
 ): Promise<ZTokenDTOOutput | undefined> => {
@@ -62,20 +42,11 @@ const refreshAccessToken = async (
   };
 
   try {
-    const result = await RequestInitFactory.doRequest('/refresh', options);
-
-    if (result.status === 200) {
-      try {
-        const parsedToken: ZTokenDTOOutput = await zParse(
-          TokenDTOOutput,
-          result,
-        );
-        console.log('New Valid Token Generated');
-        return parsedToken;
-      } catch (error) {
-        console.log('Hiba: ', error);
-      }
-    }
+    return await RequestInitFactory.doRequest(
+      '/token/refresh',
+      options,
+      TokenDTOOutput,
+    );
   } catch (error) {
     console.log('Hiba történt az API hívás során:', error);
   }
@@ -90,7 +61,7 @@ export const tokenHandlingService = {
       token = accessToken;
     } else {
       if (isTokenExpired(refreshToken)) {
-        const {isValid, error} = await validateBody({
+        const {isValid, error} = await validateZDTOForm(TokenDTOInput, {
           refreshToken: refreshToken,
         });
         if (isValid) {

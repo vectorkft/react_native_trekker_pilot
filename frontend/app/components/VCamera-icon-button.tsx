@@ -1,19 +1,21 @@
+import {Button, Icon} from 'react-native-elements';
 import {DarkModeService} from '../services/dark-mode.service';
-import {IconButton} from 'native-base';
-import Icon from 'react-native-vector-icons/AntDesign';
 
 const VCameraIconButton = ({onPress}: any) => {
   const {isDarkMode} = DarkModeService.useDarkMode();
+
   return (
-    <IconButton
+    <Button
       icon={
         <Icon
+          type="antdesign"
           name="camera"
           size={50}
           color={isDarkMode ? '#ffffff' : '#000000'}
         />
       }
       onPress={onPress}
+      type="clear"
     />
   );
 };

@@ -1,92 +1,73 @@
 import React, {JSX} from 'react';
-import {View, Alert, Keyboard} from 'react-native';
+import {View} from 'react-native';
 import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
-import {parseResponseMessages} from '../../../shared/services/zod-dto.service';
-import {ZArticleDTOOutput2} from '../../../shared/dto/article.dto';
+import {
+  parseZodError,
+  validateZDTOForm,
+} from '../../../shared/services/zod-dto.service';
 import CardComponentNotFound from '../components/card-component-not-found';
 import VButton from '../components/VButton';
 import DataTable from '../components//data-table';
 import {DarkModeService} from '../services/dark-mode.service';
 import CardComponentSuccess from '../components/card-component';
-import Sound from 'react-native-sound';
 import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
 import VInput from '../components/VInput';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {ZodError} from 'zod';
+import VAlert from '../components/VAlert';
+import {
+  useBeepSound,
+  useCamera,
+  useInputChange,
+  useOnBarCodeRead,
+  useOnChangeHandler,
+} from '../states/use-camera-states';
+import VBackButton from '../components/VBackButton';
+import {RouterProps} from '../interfaces/navigation-props';
+import {cikkEANSchemaInput} from '../../../shared/dto/article.dto';
 
-const Product = (): JSX.Element => {
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchQueryState, setSearchQueryState] = React.useState(0);
-  const [_value, setValue] = React.useState(0);
-  const timeout = React.useRef(0);
-  const [result, setResult] = React.useState<
-    ZArticleDTOOutput2 | false | Response
-  >();
+const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeService.useDarkMode();
-  const [isCameraActive, setIsCameraActive] = React.useState(false);
-  const [scanned, setScanned] = React.useState(true);
+  const beep = useBeepSound();
 
-  let beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
-    if (error) {
-      console.log('Hiba történt a hangfájl betöltésekor', error);
-      return;
-    }
-  });
-
-  const onBarCodeRead = (scanResult: any) => {
-    if (scanResult.data != null) {
-      if (!scanned) {
-        onChangeHandler(scanResult.data);
-        setScanned(true);
-        setIsCameraActive(false);
-        beep.play(success => {
-          if (!success) {
-            console.log('A hang nem játszódott le');
-          }
-        });
-      }
-    }
-    return;
+  const validateForm = async (value: number) => {
+    const {isValid, error} = (await validateZDTOForm(cikkEANSchemaInput, {
+      eankod: value,
+    })) as {isValid: boolean; error: ZodError};
+    return {isValid, error};
   };
 
-  const onChangeHandler = (value: number) => {
-    clearTimeout(timeout.current);
-    setValue(value);
-    timeout.current = setTimeout(async () => {
-      const eanNumber = Number(value);
-
-      if (isNaN(eanNumber)) {
-        Alert.alert('Hiba', 'Kérjük, adjon meg egy érvényes számot.');
-      } else {
-        try {
-          const response = await ProductsService.getArticlesByEAN({
-            eankod: eanNumber,
-          });
-          setResult(response);
-          setSearchQueryState(value);
-
-          if (response && 'status' in response) {
-            const msg = await parseResponseMessages(response);
-            Alert.alert('Hiba!', msg);
-          }
-
-          Keyboard.dismiss();
-        } catch (error: any) {
-          console.log('Hiba történt', error);
-        }
-      }
-    }, 100);
+  const getArticlesByEAN = async (value: number) => {
+    return await ProductsService.getArticlesByEAN({eankod: value});
   };
-  //ezt majd kikéne szervezni
-  const handleOnClose = () => {
-    setIsCameraActive(false);
-    setScanned(true);
-  };
-  //ezt is
-  const clickCamera = () => {
-    setIsCameraActive(true);
-    setScanned(false);
-  };
+
+  const [
+    errorMessage,
+    searchQueryState,
+    changeHandlerResult,
+    onChangeHandler,
+    setErrorMessage,
+  ] = useOnChangeHandler(validateForm, parseZodError, getArticlesByEAN);
+  const {onChangeInput, onChangeInputWhenEnabled, searchQuery, setSearchQuery} =
+    useInputChange(onChangeHandler);
+  const {
+    isCameraActive,
+    scanned,
+    handleOnClose,
+    clickCamera,
+    setScanned,
+    setIsCameraActive,
+  } = useCamera(setErrorMessage);
+  const onBarCodeRead = useOnBarCodeRead(
+    onChangeHandler,
+    scanned,
+    setScanned,
+    setIsCameraActive,
+    beep,
+  );
+
   if (isCameraActive) {
     return (
       <VCamera
@@ -96,34 +77,28 @@ const Product = (): JSX.Element => {
       />
     );
   }
-  const onChangeInput = (value: any) => {
-    onChangeHandler(value);
-    setSearchQuery(searchQuery);
-  };
-  const onChangeInputWhenEnabled = (text: string) => {
-    setSearchQuery(text);
-  };
 
   return (
-    <View style={articleStyles.container}>
-      {/*<TextInput*/}
-      {/*  style={articleStyles.input}*/}
-      {/*  onChangeText={(value: any) => {*/}
-      {/*    onChangeHandler(value);*/}
-      {/*    setSearchQuery(searchQuery);*/}
-      {/*  }}*/}
-      {/*  value={searchQuery}*/}
-      {/*  placeholder="Keresés..."*/}
-      {/*  keyboardType="numeric"*/}
-      {/*  autoFocus*/}
-      {/*  onFocus={() => Keyboard.dismiss()}*/}
-      {/*/>*/}
-      <VInput
-        value={searchQuery}
-        readOnly={false}
-        onChangeWhenReadOnly={onChangeInput}
-        onChangeWhenEditable={onChangeInputWhenEnabled}
-      />
+    <View
+      style={[
+        articleStyles.container,
+        {backgroundColor: isDarkMode ? Colors.darker : Colors.lighter},
+      ]}>
+      {errorMessage && (
+        <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
+      )}
+      <View style={{marginTop: '15%', width: '90%'}}>
+        <VInput
+          inputProps={{
+            value: searchQuery,
+            showSoftInputOnFocus: true,
+            autoFocus: true,
+            onChangeText: onChangeInputWhenEnabled,
+            placeholder: 'Keresés...',
+            keyboardType: 'numeric',
+          }}
+        />
+      </View>
       {scanned && <VCameraIconButton onPress={clickCamera} />}
       <VButton
         buttonPropsNativeElement={{
@@ -144,23 +119,28 @@ const Product = (): JSX.Element => {
             marginLeft: 'auto',
             marginRight: 'auto',
           },
+          disabled: !searchQuery,
           onPress: () => {
             onChangeHandler(Number(searchQuery));
             setSearchQuery('');
           },
         }}
       />
-      {result && 'cikkszam' in result && (
+      {changeHandlerResult && 'cikkszam' in changeHandlerResult && (
         <View>
-          <CardComponentSuccess title={'Találatok'} content={result} />
-          <DataTable data={result} />
+          <CardComponentSuccess
+            title={'Találatok'}
+            content={changeHandlerResult}
+          />
+          <DataTable data={changeHandlerResult} />
         </View>
       )}
-      {result === false && (
+      {changeHandlerResult === false && (
         <View>
           <CardComponentNotFound title={'Not Found'} ean={searchQueryState} />
         </View>
       )}
+      <VBackButton navigation={navigation} />
     </View>
   );
 };

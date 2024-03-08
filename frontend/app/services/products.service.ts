@@ -33,7 +33,7 @@ export const ProductsService = {
 
     try {
       const response = await RequestInitFactory.doRequest(
-        '/getCikkByEAN',
+        '/protected/getCikkByEAN',
         options,
       );
       return await handleResponseStatus(response);

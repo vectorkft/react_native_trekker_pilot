@@ -1,4 +1,5 @@
 import {AnyZodObject, z, ZodError} from "zod";
+import {ValidateForm} from "../../frontend/app/interfaces/validate-form"
 
 export async function zParse<T extends AnyZodObject>(
     schema: T,
@@ -25,19 +26,25 @@ export async function parseZodError(error: ZodError) : Promise<string> {
     }
 }
 
-export async function parseResponseMessages(response: Response) : Promise<string> {
+export async function validateZDTOForm<T extends AnyZodObject>(
+    schema: T,
+    formData: z.infer<T>,
+): Promise<ValidateForm> {
     try {
-        let messages = [];
-        for (let key in response) {
-            if (response[key].message) {
-                messages.push(response[key].message);
-            }
-        }
-        return messages.join(', ');
-    } catch (e) {
-        console.log('Hiba a válaszüzenetek feldolgozásakor:', e);
-        return '';
+        const body: z.infer<T> = await zParse(schema, formData);
+        console.log(body);
+    } catch (error: any) {
+        console.log(error);
+        return {
+            isValid: false,
+            error: error,
+        };
     }
+
+    return {
+        error: null,
+        isValid: true,
+    };
 }
 
 

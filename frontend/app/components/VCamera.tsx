@@ -1,14 +1,10 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {Icon, Button} from 'react-native-elements';
-import {backButtonStyles} from '../styles/back-button-component.stylesheet';
-import {DarkModeService} from '../services/dark-mode.service';
 import {CameraScannerProps} from '../interfaces/vcamera-props';
 
 const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
-  const {isDarkMode} = DarkModeService.useDarkMode();
-
   return (
     <View style={StyleSheet.absoluteFillObject}>
       <RNCamera
@@ -20,16 +16,13 @@ const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
         zoom={0}
       />
       <Button
-        buttonStyle={backButtonStyles.backButton}
+        containerStyle={{position: 'absolute', top: 0, left: 0}}
         icon={
-          <Icon
-            name="close"
-            size={30}
-            color={isDarkMode ? '#ffffff' : '#000000'}
-          />
+          <Icon type="antdesign" name="close" size={40} color={'#ffffff'} />
         }
+        buttonStyle={{backgroundColor: 'transparent'}}
         onPress={onClose}
-        type="clear"
+        TouchableComponent={TouchableOpacity}
       />
     </View>
   );

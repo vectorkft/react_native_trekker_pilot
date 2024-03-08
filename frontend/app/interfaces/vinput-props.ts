@@ -1,6 +1,6 @@
+import React from 'react';
+import {Input} from 'react-native-elements';
+
 export interface VinputProps {
-  value: string;
-  onChangeWhenReadOnly: (text: string) => void;
-  onChangeWhenEditable: (text: string) => void;
-  readOnly: boolean;
+  inputProps: React.ComponentProps<typeof Input>;
 }
