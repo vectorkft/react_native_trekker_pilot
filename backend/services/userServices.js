@@ -54,7 +54,7 @@ function loginUser(userInput) {
         if (!user) {
             return yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginFailedOutput, { errormessage: 'Wrong username or Password' });
         }
-        const now = Math.floor(Date.now() / 1000); // Datum.getTime() megegyezik a Date.now()-val
+        const now = Math.floor(Date.now() / 1000);
         const token = jsonwebtoken_1.default.sign({ name: user.name, pw: user.id, id: user.id, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: (_b = process.env.ACCESS_TOKEN_EXPIRE) !== null && _b !== void 0 ? _b : '30min' });
         const refreshToken = jsonwebtoken_1.default.sign({ name: user.name, pw: user.pw, id: user.id, tokenType: 'refreshToken' }, (_c = process.env.JWT_SECRET_KEY) !== null && _c !== void 0 ? _c : '', { expiresIn: (_d = process.env.REFRESH_TOKEN_EXPIRE) !== null && _d !== void 0 ? _d : '1h' });
         yield tokenService.addTokenAtLogin({ accessToken: token }, { refreshToken }, { userId: user.id });
