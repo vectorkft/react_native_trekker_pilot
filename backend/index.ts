@@ -13,8 +13,8 @@ import {CikkNotFoundDTO} from "./dto/cikkNotFoundDTO";
 import {cikkEANSchemaInput, cikkSzamSchemaInput} from "../shared/dto/article.dto";
 import {zParse} from "../shared/services/zod-dto.service"
 import {RefreshBodySchemaInput} from "../shared/dto/refresh.token.dto";
-import {MessageDTO} from "./dto/messageDTO";
 import {userSchemaInput} from "../shared/dto/user.dto";
+
 
 
 
@@ -23,13 +23,14 @@ const HTTP_PORT = 8000;
 (BigInt.prototype as any).toJSON = function () {
     return this.toString();
 };
-
-
+const protectedRouter = express.Router();
+protectedRouter.use(verifyToken);
+app.use('/protected', protectedRouter);
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json(), Logger);
-
+protectedRouter.use(bodyParser.json());
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
@@ -51,40 +52,30 @@ app.get('/', ( req: Request, res: Response,) => {
 
     };
 
-    return res.status(400).send('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+    return res.status(200).send('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
 });
 
 app.post('/login', async (req: Request, res: Response) => {
 
     try {
         const validData= await zParse(userSchemaInput,req.body);
-        const body=await userserv.loginUser(validData.name,validData.pw);
-        if(body==='Wrong username or password'){
-            return res.status(401).json(body);
-        }
-        if(body==='Username not found'){
+        const body=await userserv.loginUser(validData);
+        if("errormessage" in body){
             return res.status(401).json(body);
         }
         return res.status(200).json(body);
     } catch (err: any) {
         return res.status(400).send(ZodDTO.fromZodError(err));
     }
-
-
-
 })
 
-app.post('/protected',verifyToken, (req,res) => {
-
-    return res.status(200).json({ message: 'Protected route accessed' });
-})
 
 
 
 app.post('/register', async (req: Request, res: Response) => {
     try {
         const validData= await zParse(userSchemaInput,req.body);
-        const body=await userserv.registerUser(validData.name, validData.pw);
+        const body=await userserv.registerUser(validData);
         if('message' in body && body.message === 'Username already exists'/*body instanceof MessageDTO*/) {
             return res.status(409 ).json(body);
         }
@@ -101,11 +92,7 @@ cron.schedule("* * * * *", deleteExpiredTokens_new);
 
 
 // Státusz ellenőrzések, nem fontos
-app.get('/version', (res: Response) => {
-    return res.status(200).json({
-        message: '1'
-    })
-})
+
 app.all('/check', (res: Response) => {
     return res.status(200).json({
         message: 'Server is running'
@@ -115,22 +102,46 @@ app.all('/check', (res: Response) => {
 app.post('/getCikk', async (req: Request, res: Response)=>{
     try{
         const validData = await zParse(cikkSzamSchemaInput,req.body);
-        const body= await cikkserv.getCikkByCikkszam(validData.cikkszam);
+        const body= await cikkserv.getCikkByCikkszam(validData);
         if(body==="Not found"){
-           return res.status(404).json({message:'Not found'})
+            return res.status(204).json({message: 'Not found'});
         }
         return res.status(200).json(body);
     } catch (err){
-        console.error(err);
         return res.status(400).json(ZodDTO.fromZodError(err));
     }
 })
 
-app.post('/getCikkByEAN',verifyToken ,async (req: Request, res: Response)=>{
+
+
+
+app.post('/refresh', async (req : Request, res : Response) => {
+    try {
+        const validData = await zParse(RefreshBodySchemaInput, req.body);
+        const body = await tokenserv.refreshToken_new({ refreshToken: validData.refreshToken });
+        if('errorMessage' in body){
+            //Ha van errorMessage akkor rossz a token amit kaptunk
+            return res.status(403).json(body);
+        }
+        return res.status(200).json(body);
+    } catch (e) {
+        //ha zodError van
+        return res.status(400).json(ZodDTO.fromZodError(e));
+
+    }
+})
+//// PROTECTED ENDPOINTS BELOW TODO KISZERVEZNI KÜLÖNBE
+protectedRouter.post('/protected', (req,res) => {
+
+    return res.status(200).json({ message: 'Protected route accessed' });
+})
+
+protectedRouter.post('/getCikkByEAN',async (req: Request, res: Response)=>{
     try{
+
         const validData=await zParse(cikkEANSchemaInput,req.body);
-        const body= await cikkserv.getCikkByEanKod2(validData.eankod);
-        if(body instanceof CikkNotFoundDTO){
+        const body= await cikkserv.getCikkByEanKod(validData);
+        if(!body){
             return res.status(204).json(body);
 
         }
@@ -143,36 +154,22 @@ app.post('/getCikkByEAN',verifyToken ,async (req: Request, res: Response)=>{
 
 })
 
-
-app.post('/refresh', async (req : Request, res : Response) => {
-    try {
-        const validData= await zParse(RefreshBodySchemaInput,req.body);
-        const body = await tokenserv.refreshToken_new(validData.refreshToken);
-        if(body instanceof MessageDTO){
-            return res.status(403).json(body);
-        }
-        return res.status(200).json(body);
-    } catch (e) {
-        return res.status(403).json(ZodDTO.fromZodError(e));
-    }
-})
-
-app.get('/logout',verifyToken, async (req: Request, res : Response) =>{
+protectedRouter.get('/logout', async (req: Request, res : Response) =>{
     const authHeader = req.headers.authorization??'';
-    const accesToken = authHeader.split(' ')[1];
+    const accessToken = authHeader.split(' ')[1];
     try {
-        await tokenserv.deleteTokensByLogout_new(accesToken);
+        await tokenserv.deleteTokensByLogout_new({ accessToken: accessToken });
         return res.status(200).json('Logout successful');
     }catch (e) {
         return res.status(403).json('err' + e);
     }
 })
 
-app.post('/profile',verifyToken,async (req: Request, res: Response)=>{
+protectedRouter.post('/profile',async (req: Request, res: Response)=>{
     const authHeader = req.headers.authorization??'';
     const accessToken = authHeader.split(' ')[1];
     try{
-        const body=await userserv.getUserById_new(accessToken);
+        const body=await userserv.getUserById_new({accessToken: accessToken});
         if(!body){
             return res.status(404).send('User not found');
         }
@@ -184,22 +181,24 @@ app.post('/profile',verifyToken,async (req: Request, res: Response)=>{
 
 })
 
-app.post('/deleteUser',verifyToken, async(req: Request, res: Response) => {
+protectedRouter.post('/deleteUser', async(req: Request, res: Response) => {
     const authHeader = req.headers.authorization??'';
     const accessToken = authHeader.split(' ')[1];
     try{
-        const body=await userserv.deleteUserByIdFromToken(accessToken);
-        if(!body){
-            return res.status(404).send('User not found');
+        const body=await userserv.deleteUserByIdFromToken({accessToken: accessToken});
+        if('errormessage' in body){
+            return res.status(404).send(body);
         }
         return res.status(200).json(body)
     } catch (err){
         console.error(err);
-        return res.status(404).send('Something went wrong: ' + err);
+        return res.status(500).send('Something went wrong: ' + err);
     }
 
 })
 //új dolgok tesztelésére van
-// app.post('/login2', async (req: Request, res: Response) => {
-//
-// })
+// protectedRouter.post('/login2', async (req: Request, res: Response) => {
+//     const body =req.body;
+//     console.log('Body: '+body);
+//     return res.status(200).json(body);
+// });

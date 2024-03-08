@@ -3,6 +3,7 @@ import {NextFunction, Request, Response} from 'express';
 import dotenv from 'dotenv';
 import {PrismaClient} from "@prisma/client";
 const prisma = new PrismaClient()
+import * as tokenService from "../services/tokenServices"
 
 
 dotenv.config()
@@ -12,12 +13,7 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
     const secretKey=process.env.JWT_SECRET_KEY ?? ''
     if (authHeader) {
         const token = authHeader.split(' ')[1];
-        const dbCheck= await prisma.tokens_v1.findFirst({
-            where: {
-                accessToken: token
-            }
-        })
-        if(!dbCheck){
+        if(!await tokenService.isAccessTokenInDatabase({accessToken: token})){
             console.log('Invalid token');
             return res.sendStatus(403);
         }

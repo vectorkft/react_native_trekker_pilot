@@ -45,20 +45,22 @@ const tokenServices_1 = require("./services/tokenServices");
 const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
 const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
 const zodDTO_1 = require("./dto/zodDTO");
-const cikkNotFoundDTO_1 = require("./dto/cikkNotFoundDTO");
 const article_dto_1 = require("../shared/dto/article.dto");
 const zod_dto_service_1 = require("../shared/services/zod-dto.service");
 const refresh_token_dto_1 = require("../shared/dto/refresh.token.dto");
-const messageDTO_1 = require("./dto/messageDTO");
 const user_dto_1 = require("../shared/dto/user.dto");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 BigInt.prototype.toJSON = function () {
     return this.toString();
 };
+const protectedRouter = express_1.default.Router();
+protectedRouter.use(TokenMiddleware_1.verifyToken);
+app.use('/protected', protectedRouter);
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 // parse application/json
 app.use(body_parser_1.default.json(), LogMiddleWare_1.Logger);
+protectedRouter.use(body_parser_1.default.json());
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
@@ -77,16 +79,13 @@ app.get('/', (req, res) => {
             currentTime: 1708335670
         },
     };
-    return res.status(400).send('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+    return res.status(200).send('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
 });
 app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
-        const body = yield userserv.loginUser(validData.name, validData.pw);
-        if (body === 'Wrong username or password') {
-            return res.status(401).json(body);
-        }
-        if (body === 'Username not found') {
+        const body = yield userserv.loginUser(validData);
+        if ("errormessage" in body) {
             return res.status(401).json(body);
         }
         return res.status(200).json(body);
@@ -95,13 +94,10 @@ app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
-app.post('/protected', TokenMiddleware_1.verifyToken, (req, res) => {
-    return res.status(200).json({ message: 'Protected route accessed' });
-});
 app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
-        const body = yield userserv.registerUser(validData.name, validData.pw);
+        const body = yield userserv.registerUser(validData);
         if ('message' in body && body.message === 'Username already exists' /*body instanceof MessageDTO*/) {
             return res.status(409).json(body);
         }
@@ -113,11 +109,6 @@ app.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
-app.get('/version', (res) => {
-    return res.status(200).json({
-        message: '1'
-    });
-});
 app.all('/check', (res) => {
     return res.status(200).json({
         message: 'Server is running'
@@ -126,22 +117,40 @@ app.all('/check', (res) => {
 app.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(article_dto_1.cikkSzamSchemaInput, req.body);
-        const body = yield cikkserv.getCikkByCikkszam(validData.cikkszam);
+        const body = yield cikkserv.getCikkByCikkszam(validData);
         if (body === "Not found") {
-            return res.status(404).json({ message: 'Not found' });
+            return res.status(204).json({ message: 'Not found' });
         }
         return res.status(200).json(body);
     }
     catch (err) {
-        console.error(err);
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
-app.post('/getCikkByEAN', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
+        const body = yield tokenserv.refreshToken_new({ refreshToken: validData.refreshToken });
+        if ('errorMessage' in body) {
+            //Ha van errorMessage akkor rossz a token amit kaptunk
+            return res.status(403).json(body);
+        }
+        return res.status(200).json(body);
+    }
+    catch (e) {
+        //ha zodError van
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(e));
+    }
+}));
+//// PROTECTED ENDPOINTS BELOW TODO KISZERVEZNI KÜLÖNBE
+protectedRouter.post('/protected', (req, res) => {
+    return res.status(200).json({ message: 'Protected route accessed' });
+});
+protectedRouter.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(article_dto_1.cikkEANSchemaInput, req.body);
-        const body = yield cikkserv.getCikkByEanKod2(validData.eankod);
-        if (body instanceof cikkNotFoundDTO_1.CikkNotFoundDTO) {
+        const body = yield cikkserv.getCikkByEanKod(validData);
+        if (!body) {
             return res.status(204).json(body);
         }
         return res.status(200).json(body);
@@ -151,37 +160,24 @@ app.post('/getCikkByEAN', TokenMiddleware_1.verifyToken, (req, res) => __awaiter
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
-app.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
-        const body = yield tokenserv.refreshToken_new(validData.refreshToken);
-        if (body instanceof messageDTO_1.MessageDTO) {
-            return res.status(403).json(body);
-        }
-        return res.status(200).json(body);
-    }
-    catch (e) {
-        return res.status(403).json(zodDTO_1.ZodDTO.fromZodError(e));
-    }
-}));
-app.get('/logout', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+protectedRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
-    const accesToken = authHeader.split(' ')[1];
+    const accessToken = authHeader.split(' ')[1];
     try {
-        yield tokenserv.deleteTokensByLogout_new(accesToken);
+        yield tokenserv.deleteTokensByLogout_new({ accessToken: accessToken });
         return res.status(200).json('Logout successful');
     }
     catch (e) {
         return res.status(403).json('err' + e);
     }
 }));
-app.post('/profile', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+protectedRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const authHeader = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
     const accessToken = authHeader.split(' ')[1];
     try {
-        const body = yield userserv.getUserById_new(accessToken);
+        const body = yield userserv.getUserById_new({ accessToken: accessToken });
         if (!body) {
             return res.status(404).send('User not found');
         }
@@ -192,23 +188,25 @@ app.post('/profile', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void
         return res.status(404).send('Something went wrong: ' + err);
     }
 }));
-app.post('/deleteUser', TokenMiddleware_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+protectedRouter.post('/deleteUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
     const authHeader = (_c = req.headers.authorization) !== null && _c !== void 0 ? _c : '';
     const accessToken = authHeader.split(' ')[1];
     try {
-        const body = yield userserv.deleteUserByIdFromToken(accessToken);
-        if (!body) {
-            return res.status(404).send('User not found');
+        const body = yield userserv.deleteUserByIdFromToken({ accessToken: accessToken });
+        if ('errormessage' in body) {
+            return res.status(404).send(body);
         }
         return res.status(200).json(body);
     }
     catch (err) {
         console.error(err);
-        return res.status(404).send('Something went wrong: ' + err);
+        return res.status(500).send('Something went wrong: ' + err);
     }
 }));
 //új dolgok tesztelésére van
-// app.post('/login2', async (req: Request, res: Response) => {
-//
-// })
+// protectedRouter.post('/login2', async (req: Request, res: Response) => {
+//     const body =req.body;
+//     console.log('Body: '+body);
+//     return res.status(200).json(body);
+// });

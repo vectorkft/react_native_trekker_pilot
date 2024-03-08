@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,32 +31,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.refreshToken_new = exports.addTokenAtLogin = void 0;
+exports.isAccessTokenInDatabase = exports.refreshToken_new = exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
-const messageDTO_1 = require("../dto/messageDTO");
 const prisma = new client_1.PrismaClient();
 function addTokenAtLogin(accessToken, refreshToken, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
-        const decodedRefreshToken = jsonwebtoken_1.default.decode(refreshToken);
+        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
+        const decodedRefreshToken = jsonwebtoken_1.default.decode(refreshToken.refreshToken);
         if (!decodedRefreshToken || !decodedAccessToken) {
             throw new Error('Cannot decode token');
         }
         try {
             yield prisma.tokens_v1.create({
                 data: {
-                    accessToken: accessToken,
+                    accessToken: accessToken.accessToken,
                     accessExpireDate: decodedAccessToken.exp,
-                    refreshToken: refreshToken,
+                    refreshToken: refreshToken.refreshToken,
                     refreshExpireDate: decodedRefreshToken.exp,
-                    userId: userId
+                    userId: userId.userId
                 }
             });
             console.log('Tokens added');
@@ -44,43 +63,6 @@ function addTokenAtLogin(accessToken, refreshToken, userId) {
     });
 }
 exports.addTokenAtLogin = addTokenAtLogin;
-function refreshToken_new(refreshToken) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const expireDate = Math.floor(Date.now() / 1000) + 30;
-        const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
-        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            jsonwebtoken_1.default.verify(refreshToken, secretKey, (err, payload) => __awaiter(this, void 0, void 0, function* () {
-                if (err) {
-                    console.log('Invalid token ' + err);
-                    resolve(new messageDTO_1.MessageDTO('Invalid token ' + err));
-                }
-                else {
-                    const newAccessToken = jsonwebtoken_1.default.sign({ name: payload.name, pw: payload.pw, id: payload.id }, secretKey, { expiresIn: "30s" });
-                    try {
-                        yield prisma.tokens_v1.updateMany({
-                            where: {
-                                userId: payload.id
-                            },
-                            data: {
-                                accessToken: newAccessToken,
-                                accessExpireDate: expireDate
-                            },
-                        });
-                        console.log('Access token successfully refreshed');
-                        const body = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
-                        resolve(body);
-                    }
-                    catch (err) {
-                        console.log('An error occurred during refreshing the access token');
-                        resolve(new messageDTO_1.MessageDTO('Invalid token'));
-                    }
-                }
-            }));
-        }));
-    });
-}
-exports.refreshToken_new = refreshToken_new;
 function deleteExpiredTokens_new() {
     return __awaiter(this, void 0, void 0, function* () {
         const currentTime = Math.floor(Date.now() / 1000);
@@ -129,7 +111,7 @@ function deleteTokensByLogout_new(accessToken) {
         try {
             yield prisma.tokens_v1.deleteMany({
                 where: {
-                    accessToken: accessToken
+                    accessToken: accessToken.accessToken
                 }
             });
         }
@@ -144,7 +126,7 @@ function deleteTokensByUserId(userId) {
         try {
             return yield prisma.tokens_v1.deleteMany({
                 where: {
-                    userId: userId
+                    userId: userId.userId
                 }
             });
         }
@@ -153,117 +135,50 @@ function deleteTokensByUserId(userId) {
     });
 }
 exports.deleteTokensByUserId = deleteTokensByUserId;
-// export async function addToken(token: string, userId: number, res : Response, currentTime: number,tokenType: string){
-//     try{
-//         await prisma.tokens.create({
-//             data: {
-//                 token: token,
-//                 user_id: userId,
-//                 created_at: currentTime,
-//                 token_type: tokenType
-//             },
-//         })
-//
-//         console.log(tokenType+' added successfully: '+token);
-//     } catch (err) {
-//         console.log('Something went wrong: ' + err)
-//         return res.status(401).json({
-//             message: 'Something went wrong',
-//             err: err
-//         })
-//     }
-//
-//
-//
-// }
-//
-//
-// export async function deleteExpiredTokens(){
-//     const fiveMinutesAgo = Math.floor((Date.now() - 5 * 60 * 1000) / 1000);
-//     const thirtySecondsAgo = Math.floor((Date.now() - 30 * 1000) / 1000);
-//
-//     const oneDayAgo = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
-//     try {
-//         const deleteExpiredTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 created_at: {
-//                     lt: thirtySecondsAgo
-//                 },
-//                 token_type: 'accessToken'
-//             }
-//         })
-//         const deleteExpiredRefreshTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 created_at: {
-//                     lt: oneDayAgo
-//                 },
-//                 token_type: 'refreshToken'
-//             }
-//         })
-//         console.log('Deleted accessToken(s): ' + deleteExpiredTokens.count + ' Deleted refreshToken(s): '
-//         + deleteExpiredRefreshTokens.count);
-//     } catch (err) {
-//         console.log('Something went wrong when deleting tokens:' + err)
-//     }
-//
-// }
-//
-// export function refreshToken(refreshToken : string , res: Response){
-//     try{
-//         const validateParam=tokenSchema.parse({refreshToken: refreshToken})
-//         const now = Math.floor(new Date().getTime() / 1000);
-//         const secretKey = process.env.JWT_SECRET_KEY ?? ''
-//
-//
-//         jwt.verify(refreshToken, secretKey, async (err: any, payload: any) => {
-//             if (err) {
-//                 console.log('Invalid token ' + err);
-//                 return res.sendStatus(403);
-//             }
-//             if(payload.tokenType!='refreshToken'){
-//                 console.log('You cannot generate new access token with access token');
-//                 return res.status(403).json({
-//                     message: 'You cannot generate new access token with access token'
-//                 });
-//             }
-//             const accessToken=jwt.sign({name: payload.name, pw: payload.pw, id: payload.id},
-//                 process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "30s"});
-//             await addToken(accessToken, payload.id, res, now, 'accessToken');
-//             const body=new RefreshTokenDTO('New access token generated', accessToken)
-//             console.log('New access token generated', accessToken);
-//             return res.status(200).json(body);
-//         })
-//     }catch (err){
-//         console.log(err);
-//         return res.status(401).json({
-//             message: 'Something went wrong',
-//             err: err
-//         })
-//     }
-//
-//
-// }
-// export async function deleteTokensByLogOut(accessToken: string, refreshToken:string){
-//     try {
-//         const deleteExpiredTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 token: accessToken,
-//                 token_type: 'accessToken'
-//             }
-//         })
-//
-//         const deleteExpiredRefreshTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 token: refreshToken,
-//                 token_type: 'refreshToken'
-//             }
-//         })
-//         console.log('Deleted accessToken(s):'+ deleteExpiredTokens.count +'Deleted refreshToken(s): '
-//             + deleteExpiredRefreshTokens.count);
-//
-//
-//     } catch (err) {
-//         console.log('Something went wrong when deleting tokens:' + err)
-//
-//     }
-// }
+function refreshToken_new(refreshToken) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
+        if (!(yield isRefreshTokenInDatabase({ refreshToken: refreshToken.refreshToken }))) {
+            return yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodyErrorMessage, { errorMessage: 'You tried to use AccessToken as RefreshToken' });
+        }
+        const expireDate = Math.floor(Date.now() / 1000) + 30;
+        const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
+        try {
+            const payload = jsonwebtoken_1.default.verify(refreshToken.refreshToken, secretKey);
+            const newAccessToken = jsonwebtoken_1.default.sign({ name: payload.name, pw: payload.pw, id: payload.id }, secretKey, { expiresIn: "30s" });
+            yield prisma.tokens_v1.updateMany({
+                where: { userId: payload.id },
+                data: { accessToken: newAccessToken, accessExpireDate: expireDate },
+            });
+            const body = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
+            return body;
+        }
+        catch (err) {
+            console.log(`An error occurred during refreshing the access token ${err}`);
+            return yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodyErrorMessage, { errorMessage: (err instanceof jsonwebtoken_1.JsonWebTokenError) ? err.message : JSON.stringify(err) });
+        }
+    });
+}
+exports.refreshToken_new = refreshToken_new;
+function isRefreshTokenInDatabase(refreshToken) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Convert the token object to boolean
+        return prisma.tokens_v1.findFirst({
+            where: {
+                refreshToken: refreshToken.refreshToken
+            }
+        }).then(token => !!token);
+    });
+}
+function isAccessTokenInDatabase(accessToken) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Convert the token object to boolean
+        return prisma.tokens_v1.findFirst({
+            where: {
+                accessToken: accessToken.accessToken
+            }
+        }).then(token => !!token);
+    });
+}
+exports.isAccessTokenInDatabase = isAccessTokenInDatabase;
