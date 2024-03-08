@@ -1,14 +1,11 @@
 import {RequestInitFactory} from '../factory/request-init-factory';
 import {tokenHandlingService} from './token-handling.service';
 import {
-  UserLoginDTOInput,
   UserLoginDTOOutput,
   ZUserLoginDTOInput,
   ZUserLoginDTOOutput,
 } from '../../../shared/dto/user-login.dto';
-import {zParse} from '../../../shared/services/zod-dto.service';
-import {ValidateForm} from '../interfaces/validate-form';
-import {MMKV} from "react-native-mmkv";
+import {MMKV} from 'react-native-mmkv';
 
 export const LoginService = {
   loadUsernameAndRememberMe: () => {
@@ -22,27 +19,6 @@ export const LoginService = {
     return {username, rememberMe};
   },
 
-  validateForm: async (formData: ZUserLoginDTOInput): Promise<ValidateForm> => {
-    try {
-      const body: ZUserLoginDTOInput = await zParse(
-        UserLoginDTOInput,
-        formData,
-      );
-      console.log(body);
-    } catch (error: any) {
-      console.log(error);
-      return {
-        error: error,
-        isValid: false,
-      };
-    }
-
-    return {
-      error: null,
-      isValid: true,
-    };
-  },
-
   handleSubmit: async (
     input: ZUserLoginDTOInput,
   ): Promise<ZUserLoginDTOOutput | undefined> => {
@@ -52,19 +28,11 @@ export const LoginService = {
     };
 
     try {
-      const result = await RequestInitFactory.doRequest('/login', options);
-
-      if (result.status === 200) {
-        try {
-          return await zParse(UserLoginDTOOutput, result);
-        } catch (error) {
-          console.log('Hiba:', error);
-        }
-      } else {
-        const res = await result.json();
-        console.log('Hiba:', res.message);
-        return undefined;
-      }
+      return await RequestInitFactory.doRequest(
+        '/user/login',
+        options,
+        UserLoginDTOOutput,
+      );
     } catch (error: any) {
       console.log('Hiba történt!', 'Az API nem elérhető.');
     }
@@ -77,13 +45,15 @@ export const LoginService = {
     };
 
     try {
-      const result = await RequestInitFactory.doRequest('/protected/logout', options);
+      const result = await RequestInitFactory.doRequest(
+        '/protected/user/logout',
+        options,
+      );
 
       if (result.status === 200) {
         return true;
       } else {
-        const res = await result.json();
-        console.log('Hiba:', res.message);
+        console.log('Hiba:', result);
         return false;
       }
     } catch (error: any) {

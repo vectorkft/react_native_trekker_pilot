@@ -1,5 +1,5 @@
-import React, {JSX, useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
+import React, {JSX, useEffect} from 'react';
+import {View} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {profileService} from '../services/profile.service';
 import {RouterProps} from '../interfaces/navigation-props';
@@ -55,6 +55,7 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
           ? darkModeContent.darkContainer
           : darkModeContent.lightContainer
       }>
+      <VBackButton navigation={navigation} />
       {isLoggedIn && (
         <View>
           <View>
@@ -72,7 +73,6 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
                   backgroundColor: '#00EDAE',
                   height: 50,
                   marginBottom: 15,
-                  marginTop: 15,
                   borderRadius: 10,
                   width: '80%',
                   marginLeft: 'auto',
@@ -91,7 +91,6 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
                   fontSize: 20,
                   fontWeight: '700',
                   color: isDarkMode ? '#fff' : '#000',
-                  textAlign: 'center',
                 },
                 buttonStyle: {
                   backgroundColor: '#00EDAE',
@@ -108,7 +107,6 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
           </View>
         </View>
       )}
-      <VBackButton navigation={navigation} />
     </View>
   );
 };

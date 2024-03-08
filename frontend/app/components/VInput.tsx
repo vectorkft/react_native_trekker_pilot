@@ -2,6 +2,7 @@ import React from 'react';
 import {VinputProps} from '../interfaces/vinput-props';
 import {DarkModeService} from '../services/dark-mode.service';
 import {Input} from 'react-native-elements';
+import {VInputComponentStylesheet} from '../styles/vinput-component.stylesheet';
 
 const VInput = ({inputProps}: VinputProps) => {
   const {isDarkMode} = DarkModeService.useDarkMode();
@@ -19,20 +20,10 @@ const VInput = ({inputProps}: VinputProps) => {
       keyboardType={inputProps.keyboardType}
       showSoftInputOnFocus={inputProps.showSoftInputOnFocus}
       autoFocus={inputProps.autoFocus}
-      containerStyle={{
-        marginTop: 10,
-        borderRadius: 10,
-        backgroundColor: isDarkMode ? '#343333' : '#dcdcdc',
-        height: 50,
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-      }}
+      containerStyle={[
+        VInputComponentStylesheet.containerStyle,
+        {backgroundColor: isDarkMode ? '#343333' : '#dcdcdc'},
+      ]}
       inputContainerStyle={{borderBottomWidth: 0}}
       selectionColor={isDarkMode ? '#fff' : '#000'}
       inputStyle={{

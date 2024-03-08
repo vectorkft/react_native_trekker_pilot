@@ -5,26 +5,27 @@ import {Icon, Button} from 'react-native-elements';
 import {CameraScannerProps} from '../interfaces/vcamera-props';
 
 const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
-
-    return (
-        <View style={StyleSheet.absoluteFillObject}>
-            <RNCamera
-                onBarCodeRead={isCameraActive ? onScan : undefined}
-                style={StyleSheet.absoluteFillObject}
-                type={RNCamera.Constants.Type.back}
-                flashMode={RNCamera.Constants.FlashMode.on}
-                autoFocus={RNCamera.Constants.AutoFocus.on}
-                zoom={0}
-            />
-            <Button
-                containerStyle={{position: 'absolute', top: 0, left: 0}}
-                icon={<Icon type='antdesign' name="close" size={40} color={'#ffffff'} />}
-                buttonStyle={{backgroundColor: 'transparent'}}
-                onPress={onClose}
-                TouchableComponent={TouchableOpacity}
-            />
-        </View>
-    );
+  return (
+    <View style={StyleSheet.absoluteFillObject}>
+      <RNCamera
+        onBarCodeRead={isCameraActive ? onScan : undefined}
+        style={StyleSheet.absoluteFillObject}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.on}
+        autoFocus={RNCamera.Constants.AutoFocus.on}
+        zoom={0}
+      />
+      <Button
+        containerStyle={{position: 'absolute', top: 0, left: 0}}
+        icon={
+          <Icon type="antdesign" name="close" size={40} color={'#ffffff'} />
+        }
+        buttonStyle={{backgroundColor: 'transparent'}}
+        onPress={onClose}
+        TouchableComponent={TouchableOpacity}
+      />
+    </View>
+  );
 };
 
 export default VCamera;

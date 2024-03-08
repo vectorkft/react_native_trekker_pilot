@@ -14,7 +14,7 @@ const VBackButton = ({navigation}: RouterProps) => {
       <Icon
         name="left"
         type="antdesign"
-        size={30}
+        size={35}
         color={isDarkMode ? '#ffffff' : '#000000'}
       />
     </TouchableOpacity>

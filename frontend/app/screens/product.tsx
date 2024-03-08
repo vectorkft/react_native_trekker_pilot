@@ -2,7 +2,10 @@ import React, {JSX} from 'react';
 import {View} from 'react-native';
 import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
-import {parseZodError} from '../../../shared/services/zod-dto.service';
+import {
+  parseZodError,
+  validateZDTOForm,
+} from '../../../shared/services/zod-dto.service';
 import CardComponentNotFound from '../components/card-component-not-found';
 import VButton from '../components/VButton';
 import DataTable from '../components//data-table';
@@ -19,17 +22,18 @@ import {
   useCamera,
   useInputChange,
   useOnBarCodeRead,
-  useOnChangeHandler
-} from "../states/use-camera-states";
-import VBackButton from "../components/VBackButton";
-import {RouterProps} from "../interfaces/navigation-props";
+  useOnChangeHandler,
+} from '../states/use-camera-states';
+import VBackButton from '../components/VBackButton';
+import {RouterProps} from '../interfaces/navigation-props';
+import {cikkEANSchemaInput} from '../../../shared/dto/article.dto';
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeService.useDarkMode();
   const beep = useBeepSound();
 
   const validateForm = async (value: number) => {
-    const {isValid, error} = (await ProductsService.validateForm({
+    const {isValid, error} = (await validateZDTOForm(cikkEANSchemaInput, {
       eankod: value,
     })) as {isValid: boolean; error: ZodError};
     return {isValid, error};
@@ -39,10 +43,30 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     return await ProductsService.getArticlesByEAN({eankod: value});
   };
 
-  const [errorMessage, searchQueryState, changeHandlerResult, onChangeHandler, setErrorMessage] = useOnChangeHandler(validateForm, parseZodError, getArticlesByEAN);
-  const { onChangeInput, onChangeInputWhenEnabled, searchQuery, setSearchQuery } = useInputChange(onChangeHandler);
-  const { isCameraActive, scanned, handleOnClose, clickCamera, setScanned, setIsCameraActive } = useCamera(setErrorMessage);
-  const onBarCodeRead = useOnBarCodeRead(onChangeHandler,scanned,setScanned,setIsCameraActive,beep);
+  const [
+    errorMessage,
+    searchQueryState,
+    changeHandlerResult,
+    onChangeHandler,
+    setErrorMessage,
+  ] = useOnChangeHandler(validateForm, parseZodError, getArticlesByEAN);
+  const {onChangeInput, onChangeInputWhenEnabled, searchQuery, setSearchQuery} =
+    useInputChange(onChangeHandler);
+  const {
+    isCameraActive,
+    scanned,
+    handleOnClose,
+    clickCamera,
+    setScanned,
+    setIsCameraActive,
+  } = useCamera(setErrorMessage);
+  const onBarCodeRead = useOnBarCodeRead(
+    onChangeHandler,
+    scanned,
+    setScanned,
+    setIsCameraActive,
+    beep,
+  );
 
   if (isCameraActive) {
     return (
@@ -104,7 +128,10 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
       />
       {changeHandlerResult && 'cikkszam' in changeHandlerResult && (
         <View>
-          <CardComponentSuccess title={'Találatok'} content={changeHandlerResult} />
+          <CardComponentSuccess
+            title={'Találatok'}
+            content={changeHandlerResult}
+          />
           <DataTable data={changeHandlerResult} />
         </View>
       )}
@@ -113,7 +140,7 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
           <CardComponentNotFound title={'Not Found'} ean={searchQueryState} />
         </View>
       )}
-      <VBackButton navigation={navigation}/>
+      <VBackButton navigation={navigation} />
     </View>
   );
 };

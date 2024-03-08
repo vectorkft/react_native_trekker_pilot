@@ -2,22 +2,25 @@ import React, {JSX, useRef} from 'react';
 import {LoginService} from '../services/login.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {useStore} from '../states/zustand-states';
-import {parseZodError} from '../../../shared/services/zod-dto.service';
+import {
+  parseZodError,
+  validateZDTOForm,
+} from '../../../shared/services/zod-dto.service';
 import {DarkModeService} from '../services/dark-mode.service';
 import {ZodError} from 'zod';
 import {LoadingService} from '../services/loading.service';
 import {TextInput, View} from 'react-native';
-import {
-  useLoginState,
-} from '../states/use-login-states';
+import {useLoginState} from '../states/use-login-states';
 import VAlert from '../components/VAlert';
 import {useAlert} from '../states/use-alert';
-import {CheckBox, Input, Text, Switch} from 'react-native-elements';
+import {CheckBox, Text, Switch} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
 import LoadingScreen from './loading-screen';
-import {MMKV} from "react-native-mmkv";
+import {MMKV} from 'react-native-mmkv';
+import {UserLoginDTOInput} from '../../../shared/dto/user-login.dto';
+import VInput from '../components/VInput';
 const Login = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
   const {loading, setLoadingState} = LoadingService.useLoading();
@@ -34,14 +37,14 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
   } = useLoginState();
   const {errorMessage, setErrorMessage} = useAlert();
 
-    const storage = new MMKV({
-        id: 'app',
-    });
+  const storage = new MMKV({
+    id: 'app',
+  });
 
   const handleFormSubmit = async () => {
     try {
       setLoadingState(true);
-      const {isValid, error} = (await LoginService.validateForm({
+      const {isValid, error} = (await validateZDTOForm(UserLoginDTOInput, {
         name: username,
         pw: password,
       })) as {isValid: boolean; error: ZodError};
@@ -61,13 +64,13 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       }
 
       if (rememberMe) {
-          storage.set('username', username);
-          storage.set('rememberMe', true);
-          setUsername(username);
+        storage.set('username', username);
+        storage.set('rememberMe', true);
+        setUsername(username);
       } else {
-          storage.delete('username');
-          storage.set('rememberMe', false);
-          setUsername('');
+        storage.delete('username');
+        storage.set('rememberMe', false);
+        setUsername('');
       }
       setPassword('');
       setAccessToken(loginSuccess.accessToken);
@@ -105,64 +108,27 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
           }}>
           Bejelentkezés
         </Text>
-        <View style={{marginTop: '5%', width: '90%'}}>
-          <Input
-            value={username}
-            onChangeText={setUsername}
-            autoFocus={isLoggedIn ? false : !username}
-            placeholder="Felhasználónév"
-            onSubmitEditing={() => passwordInput.current?.focus()}
-            blurOnSubmit={false}
-            placeholderTextColor={isDarkMode ? '#5b5959' : '#a9a4a4'}
-            containerStyle={{
-              borderRadius: 10,
-              backgroundColor: isDarkMode ? '#343333' : '#dcdcdc',
-              height: 50,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-            inputContainerStyle={{borderBottomWidth: 0}}
-            selectionColor={isDarkMode ? '#fff' : '#000'}
-            inputStyle={{
-              color: isDarkMode ? '#fff' : '#000',
-              textAlignVertical: 'center',
+        <View style={{width: '90%'}}>
+          <VInput
+            inputProps={{
+              value: username,
+              onChangeText: setUsername,
+              autoFocus: isLoggedIn ? false : !username,
+              placeholder: 'Felhasználónév',
+              onSubmitEditing: () => passwordInput.current?.focus(),
+              blurOnSubmit: false,
             }}
           />
-          <Input
-            ref={passwordInput}
-            secureTextEntry={true}
-            value={password}
-            onChangeText={setPassword}
-            autoFocus={isLoggedIn ? false : !!username}
-            placeholder="Jelszó"
-            placeholderTextColor={isDarkMode ? '#5b5959' : '#a9a4a4'}
-            containerStyle={{
-              marginTop: 10,
-              borderRadius: 10,
-              backgroundColor: isDarkMode ? '#343333' : '#dcdcdc',
-              height: 50,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
+          <VInput
+            inputProps={{
+              ref: passwordInput,
+              secureTextEntry: true,
+              value: password,
+              onChangeText: setPassword,
+              autoFocus: isLoggedIn ? false : !!username,
+              placeholder: 'Jelszó',
+              onSubmitEditing: handleFormSubmit,
             }}
-            inputContainerStyle={{borderBottomWidth: 0}}
-            selectionColor={isDarkMode ? '#fff' : '#000'}
-            inputStyle={{
-              color: isDarkMode ? '#fff' : '#000',
-              textAlignVertical: 'center',
-            }}
-            onSubmitEditing={handleFormSubmit}
           />
           <CheckBox
             title="Emlékezz rám"

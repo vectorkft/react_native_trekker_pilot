@@ -9,7 +9,10 @@ export const profileService = {
         accessToken: await tokenHandlingService.getTokenIfValid(),
       };
 
-      return await RequestInitFactory.doRequest('/profile', options);
+      return await RequestInitFactory.doRequest(
+        '/protected/user/profile',
+        options,
+      );
     } catch (error) {
       console.log('Az API nem elérhető.', error);
     }
