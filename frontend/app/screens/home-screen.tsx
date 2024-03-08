@@ -7,7 +7,7 @@ import {RouterProps} from '../interfaces/navigation-props';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
 import {LoadingService} from '../services/loading.service';
-import VLoading from '../components/VLoading';
+import LoadingScreen from './loading-screen';
 
 const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -27,7 +27,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   };
 
   if (loading) {
-    return <VLoading isDarkModeOn={isDarkMode} />;
+    return <LoadingScreen />;
   }
 
   return (

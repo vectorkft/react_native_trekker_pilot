@@ -1,24 +1,23 @@
-import Icon from 'react-native-vector-icons/AntDesign';
+import {Icon} from 'react-native-elements';
 import {RouterProps} from '../interfaces/navigation-props';
 import {DarkModeService} from '../services/dark-mode.service';
 import {backButtonStyles} from '../styles/back-button-component.stylesheet';
-import {IconButton} from 'native-base';
+import {TouchableOpacity} from 'react-native';
 
 const VBackButton = ({navigation}: RouterProps) => {
   const {isDarkMode} = DarkModeService.useDarkMode();
 
   return (
-    <IconButton
+    <TouchableOpacity
       style={backButtonStyles.backButton}
-      icon={
-        <Icon
-          name="left"
-          size={30}
-          color={isDarkMode ? '#ffffff' : '#000000'}
-        />
-      }
-      onPress={() => navigation.goBack()}
-    />
+      onPress={() => navigation.goBack()}>
+      <Icon
+        name="left"
+        type="antdesign"
+        size={30}
+        color={isDarkMode ? '#ffffff' : '#000000'}
+      />
+    </TouchableOpacity>
   );
 };
 

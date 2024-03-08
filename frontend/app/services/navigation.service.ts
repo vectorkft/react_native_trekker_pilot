@@ -1,5 +1,8 @@
-import {navigationRef} from '../App';
 import {useStore} from '../states/zustand-states';
+import React from "react";
+import {NavigationContainerRef} from "@react-navigation/native";
+
+export const navigationRef = React.createRef<NavigationContainerRef>();
 
 const navigate = (routeName: string, params: any = {}) => {
   navigationRef.current?.navigate(routeName, params);

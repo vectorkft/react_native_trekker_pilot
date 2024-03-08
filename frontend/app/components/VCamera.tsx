@@ -1,14 +1,14 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
-import Icon from 'react-native-vector-icons/AntDesign';
+import {Icon, Button} from 'react-native-elements';
 import {backButtonStyles} from '../styles/back-button-component.stylesheet';
-import {IconButton} from 'native-base';
 import {DarkModeService} from '../services/dark-mode.service';
 import {CameraScannerProps} from '../interfaces/vcamera-props';
 
 const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
   const {isDarkMode} = DarkModeService.useDarkMode();
+
   return (
     <View style={StyleSheet.absoluteFillObject}>
       <RNCamera
@@ -19,8 +19,8 @@ const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
         autoFocus={RNCamera.Constants.AutoFocus.on}
         zoom={0}
       />
-      <IconButton
-        style={backButtonStyles.backButton}
+      <Button
+        buttonStyle={backButtonStyles.backButton}
         icon={
           <Icon
             name="close"
@@ -29,6 +29,7 @@ const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
           />
         }
         onPress={onClose}
+        type="clear"
       />
     </View>
   );
