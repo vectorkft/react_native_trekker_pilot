@@ -31,13 +31,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAccessTokenInDatabase = exports.refreshToken_new = exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
+const dotenv_1 = __importDefault(require("dotenv"));
 const prisma = new client_1.PrismaClient();
+dotenv_1.default.config();
 function addTokenAtLogin(accessToken, refreshToken, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
@@ -136,7 +141,7 @@ function deleteTokensByUserId(userId) {
 }
 exports.deleteTokensByUserId = deleteTokensByUserId;
 function refreshToken_new(refreshToken) {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
         if (!(yield isRefreshTokenInDatabase({ refreshToken: refreshToken.refreshToken }))) {
@@ -146,7 +151,7 @@ function refreshToken_new(refreshToken) {
         const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
         try {
             const payload = jsonwebtoken_1.default.verify(refreshToken.refreshToken, secretKey);
-            const newAccessToken = jsonwebtoken_1.default.sign({ name: payload.name, pw: payload.pw, id: payload.id }, secretKey, { expiresIn: "30s" });
+            const newAccessToken = jsonwebtoken_1.default.sign({ name: payload.name, pw: payload.pw, id: payload.id }, secretKey, { expiresIn: (_b = process.env.ACCESS_TOKEN_EXPIRE) !== null && _b !== void 0 ? _b : '30min' });
             yield prisma.tokens_v1.updateMany({
                 where: { userId: payload.id },
                 data: { accessToken: newAccessToken, accessExpireDate: expireDate },

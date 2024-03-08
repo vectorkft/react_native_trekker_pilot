@@ -60,7 +60,7 @@ protectedUserRouter.post('/profile',async (req: Request, res: Response)=>{
         return res.status(200).json(body)
     } catch (err){
         console.error(err);
-        return res.status(404).send('Something went wrong: ' + err);
+        return res.status(400).send('Something went wrong: ' + err);
     }
 
 });

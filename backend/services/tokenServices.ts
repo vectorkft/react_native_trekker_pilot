@@ -11,12 +11,13 @@ import {
     ZrefreshTokenOutput
 } from "../../shared/dto/refresh.token.dto";
 import {ZUserIdInput} from "../../shared/dto/user.dto";
+import dotenv from "dotenv";
 
 
 const prisma = new PrismaClient()
 
 
-
+dotenv.config()
 
 export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshToken: ZrefreshTokenInput, userId: ZUserIdInput){
     const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
@@ -131,7 +132,7 @@ export async function refreshToken_new(refreshToken: ZrefreshTokenInput) {
         const newAccessToken = jwt.sign(
             { name: payload.name, pw: payload.pw, id: payload.id},
             secretKey,
-            { expiresIn: "30s" }
+            { expiresIn: process.env.ACCESS_TOKEN_EXPIRE ?? '30min' }
         );
         await prisma.tokens_v1.updateMany({
             where: { userId: payload.id },

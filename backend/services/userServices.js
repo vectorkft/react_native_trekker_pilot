@@ -46,7 +46,7 @@ const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield prisma.user.findFirst({
             where: { name: userInput.name, pw: userInput.pw }
@@ -55,8 +55,8 @@ function loginUser(userInput) {
             return yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginFailedOutput, { errormessage: 'Wrong username or Password' });
         }
         const now = Math.floor(Date.now() / 1000); // Datum.getTime() megegyezik a Date.now()-val
-        const token = jsonwebtoken_1.default.sign({ name: user.name, pw: user.id, id: user.id, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30min" });
-        const refreshToken = jsonwebtoken_1.default.sign({ name: user.name, pw: user.pw, id: user.id, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1h" });
+        const token = jsonwebtoken_1.default.sign({ name: user.name, pw: user.id, id: user.id, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: (_b = process.env.ACCESS_TOKEN_EXPIRE) !== null && _b !== void 0 ? _b : '30min' });
+        const refreshToken = jsonwebtoken_1.default.sign({ name: user.name, pw: user.pw, id: user.id, tokenType: 'refreshToken' }, (_c = process.env.JWT_SECRET_KEY) !== null && _c !== void 0 ? _c : '', { expiresIn: (_d = process.env.REFRESH_TOKEN_EXPIRE) !== null && _d !== void 0 ? _d : '1h' });
         yield tokenService.addTokenAtLogin({ accessToken: token }, { refreshToken }, { userId: user.id });
         return (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutput, {
             message: 'Login Success, token added successfully',
