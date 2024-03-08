@@ -41,118 +41,70 @@ const tokenServices_1 = require("./tokenServices");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
-const profileDTO_1 = require("../dto/profileDTO");
-const messageDTO_1 = require("../dto/messageDTO");
 const user_dto_1 = require("../../shared/dto/user.dto");
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
-function loginUser(name, password) {
+function loginUser(userInput) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const username = yield prisma.user.findFirst({
-                where: { name: name }
-            });
-            if (!username) {
-                return 'Username not found';
-            }
+        const user = yield prisma.user.findFirst({
+            where: { name: userInput.name, pw: userInput.pw }
+        });
+        if (!user) {
+            return yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginFailedOutput, { errormessage: 'Wrong username or Password' });
         }
-        catch (err) {
-            return 'Something went wrong ' + err;
-        }
-        try {
-            // UserSchema.parse({name: name, pw: password});
-            const user = yield prisma.user.findFirst({
-                where: { name: name, pw: password }
-            });
-            if (user) {
-                const userId = user.id;
-                const now = Math.floor(new Date().getTime() / 1000);
-                const token = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30min" });
-                const refreshToken = jsonwebtoken_1.default.sign({ name: name, pw: password, id: userId, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1h" });
-                yield tokenService.addTokenAtLogin(token, refreshToken, userId);
-                const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutput, { message: 'Login Success, token added successfully', accessToken: token,
-                    refreshToken: refreshToken, userId: userId, currentTime: now });
-                return body;
-                //return new loginDTO('Login Success, token added successfully', token, refreshToken, userId, now);
-            }
-            else {
-                console.log('Wrong username or password');
-                return "Wrong username or password";
-            }
-        }
-        catch (err) {
-            console.log('Invalid parameters ' + err);
-            throw err;
-        }
+        const now = Math.floor(Date.now() / 1000); // Datum.getTime() megegyezik a Date.now()-val
+        const token = jsonwebtoken_1.default.sign({ name: user.name, pw: user.id, id: user.id, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: "30min" });
+        const refreshToken = jsonwebtoken_1.default.sign({ name: user.name, pw: user.pw, id: user.id, tokenType: 'refreshToken' }, (_b = process.env.JWT_SECRET_KEY) !== null && _b !== void 0 ? _b : '', { expiresIn: "1h" });
+        yield tokenService.addTokenAtLogin({ accessToken: token }, { refreshToken }, { userId: user.id });
+        return (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutput, {
+            message: 'Login Success, token added successfully',
+            accessToken: token,
+            refreshToken,
+            userId: user.id,
+            currentTime: now
+        });
     });
 }
 exports.loginUser = loginUser;
-function registerUser(name, password) {
+function registerUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const existed = yield prisma.user.findFirst({
-                where: {
-                    name: name,
-                }
-            });
-            if (existed) {
-                const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: name });
-                //return new MessageDTO('Username already exists');
-                return body;
-            }
-            yield prisma.user.create({
-                data: {
-                    name: name,
-                    pw: password,
-                },
-            });
-            const body = yield (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', name: name, password: password });
-            return body;
-            //return new registerDTO('User registration successful', name, password)
+        const existentUser = yield prisma.user.findFirst({
+            where: { name: user.name }
+        });
+        if (existentUser) {
+            return (0, zod_dto_service_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: user.name });
         }
-        catch (err) {
-            console.log('Invalid parameters' + err);
-            throw err;
-        }
+        yield prisma.user.create({
+            data: { name: user.name, pw: user.pw }
+        });
+        return (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', name: user.name, password: user.pw });
     });
 }
 exports.registerUser = registerUser;
 function getUserById_new(accessToken) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
-        try {
-            const user = yield prisma.user.findFirst({
-                where: { id: decodedAccessToken.id }
-            });
-            if (!user) {
-                return false;
-            }
-            return new profileDTO_1.ProfileDTO((_a = user.name) !== null && _a !== void 0 ? _a : '');
-        }
-        catch (err) {
-            console.log(err);
-        }
+        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
+        return prisma.user.findFirst({
+            where: { id: decodedAccessToken.id }
+        });
     });
 }
 exports.getUserById_new = getUserById_new;
 function deleteUserByIdFromToken(accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
-        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
+        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
         try {
-            const user = yield prisma.user.delete({
+            yield prisma.user.delete({
                 where: { id: decodedAccessToken.id }
             });
-            if (!user) {
-                return false;
-            }
-            yield (0, tokenServices_1.deleteTokensByLogout_new)(accessToken);
-            return new messageDTO_1.MessageDTO('Account has been deleted successfully');
+            yield (0, tokenServices_1.deleteTokensByLogout_new)({ accessToken: accessToken.accessToken });
+            return yield (0, zod_dto_service_1.zParse)(user_dto_1.userDeletedOutPut, { message: 'User deleted successfully' });
         }
         catch (err) {
             console.log(err);
+            return (0, zod_dto_service_1.zParse)(user_dto_1.userDeletedOutPutError, { errormessage: 'User not found' });
         }
     });
 }

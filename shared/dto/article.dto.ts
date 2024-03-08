@@ -18,6 +18,8 @@ export const ArticleDataOutput = z.object({
     value: z.string(),
 });
 
+
+
 export const cikkEANSchemaInput = z.object({
 
     eankod: z.number().refine(value => value.toString().length === 13, 'Az EAN kód pontosan 13 karakter hosszú kell legyen!.')
@@ -37,6 +39,7 @@ export const ArticleListOutput = z.object({
 export type ZArticleDTOOutput2 = z.infer<typeof ArticleDTOOutput2>
 export type ZArticleDTOOutput = z.infer<typeof ArticleDTOOutput>
 export type ZcikkEANSchemaInput = z.infer<typeof cikkEANSchemaInput>
+export type ZcikkSzamSchemaInput = z.infer<typeof cikkSzamSchemaInput>
 
 
 

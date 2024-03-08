@@ -1,10 +1,9 @@
 import {PrismaClient} from "@prisma/client";
-import {CikkNotFoundDTO} from "../dto/cikkNotFoundDTO";
 import {
     ArticleDataOutput,
     ArticleDTOOutput,
     ArticleListOutput,
-    ZArticleDTOOutput,
+    ZcikkEANSchemaInput, ZcikkSzamSchemaInput,
 } from "../../shared/dto/article.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 
@@ -13,91 +12,57 @@ const prisma = new PrismaClient()
 
 
 
-export async function getCikkByCikkszam(cikkszam: number) {
-    try{
-
-
-        const cikk = await prisma.cikk.findFirst({
-            where: {
-                cikkszam: cikkszam
-            }
-        })
-        if(!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod){
-            return "Not found";
+export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
+    const cikk = await prisma.cikk.findFirst({
+        where: {
+            cikkszam: cikkszam.cikkszam
         }
+    })
 
-        const body :ZArticleDTOOutput = await zParse(ArticleDTOOutput,cikk)
-        return body;
-    } catch (err:any) {
-        console.log(err)
-        throw err;
+    if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
+        return "Not found";
     }
 
-
+    return zParse(ArticleDTOOutput, cikk);
 }
 
-export async function getCikkByEanKod(eankod:number){
-    try{
-        const cikk = await prisma.cikk.findFirst({
+
+export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
+    try {
+        const cikk = await prisma.cikk.findMany({
             where: {
-                eankod: eankod
+                eankod: eankod.eankod
             }
-        })
-        if(!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod){
-            return new CikkNotFoundDTO('Not found',eankod);
+        });
+
+        if (cikk.length === 0) {
+            return false;
         }
-        console.log(typeof eankod)
-        const body :ZArticleDTOOutput =await zParse(ArticleDTOOutput,cikk)
 
-        return body;
-
-    } catch (err:any) {
-        console.log(err)
-        throw err;
-    }
-}
-
-export async function getCikkByEanKod2(eankod: number){
-
-    try{
-        const cikk  = await prisma.cikk.findMany({
-            where: {
-                eankod: eankod
-            }
-        })
-        if(cikk.length===0){
-            return new CikkNotFoundDTO('Not found',eankod);
-        }
-        const result: {data:any, count:number} = {
-            data: [],
-            count: 0
-        };
-        for(let i = 0; i < cikk.length; i++){
-            const temp = [
+        const result = {
+            data: cikk.flatMap((cikkElement) => [
                 ArticleDataOutput.parse({
                     key: 'cikkszam',
                     title: 'Cikkszám',
-                    value: cikk[i].cikkszam.toString(),
+                    value: cikkElement.cikkszam.toString(),
                 }),
                 ArticleDataOutput.parse({
                     key: 'cikknev',
                     title: 'Cikknév',
-                    value: cikk[i].cikknev.toString(),
+                    value: cikkElement.cikknev.toString(),
                 }),
                 ArticleDataOutput.parse({
                     key: 'eankod',
                     title: 'EAN Kód',
-                    value: cikk[i].eankod.toString(),
+                    value: cikkElement.eankod.toString(),
                 }),
-            ];
-            result.data.push(...temp);
-            result.count += 1;
+            ]),
+            count: cikk.length
         }
 
         return ArticleListOutput.parse(result);
-
-    } catch (err:any) {
-        console.log(err)
+    }
+    catch (err: unknown) {
         throw err;
     }
 }

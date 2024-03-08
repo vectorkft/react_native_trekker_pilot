@@ -1,11 +1,16 @@
-
 import {PrismaClient} from "@prisma/client";
-import jwt from "jsonwebtoken";
+import jwt, {JsonWebTokenError} from "jsonwebtoken";
 import {JwtPayload} from "../models/JwtPayload";
 
 import {zParse} from "../../shared/services/zod-dto.service";
-import {refreshTokenDTOOutput, ZrefreshTokenOutput} from "../../shared/dto/refresh.token.dto";
-import {MessageDTO} from "../dto/messageDTO";
+import {
+    RefreshBodyErrorMessage,
+    refreshTokenDTOOutput,
+    ZAccessTokenInput,
+    ZrefreshTokenInput,
+    ZrefreshTokenOutput
+} from "../../shared/dto/refresh.token.dto";
+import {ZUserIdInput} from "../../shared/dto/user.dto";
 
 
 const prisma = new PrismaClient()
@@ -13,21 +18,22 @@ const prisma = new PrismaClient()
 
 
 
-export async function addTokenAtLogin(accessToken: string, refreshToken: string, userId: number){
-    const decodedAccessToken = jwt.decode(accessToken) as JwtPayload;
-    const decodedRefreshToken= jwt.decode(refreshToken) as JwtPayload;
+export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshToken: ZrefreshTokenInput, userId: ZUserIdInput){
+    const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
+    const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as JwtPayload;
     if (!decodedRefreshToken || !decodedAccessToken) {
         throw new Error('Cannot decode token');
+
     }
     try{
         await prisma.tokens_v1.create({
             data:
                 {
-                    accessToken: accessToken,
+                    accessToken: accessToken.accessToken,
                     accessExpireDate: decodedAccessToken.exp,
-                    refreshToken: refreshToken,
+                    refreshToken: refreshToken.refreshToken,
                     refreshExpireDate: decodedRefreshToken.exp,
-                    userId: userId
+                    userId: userId.userId
 
                 }
         })
@@ -38,40 +44,7 @@ export async function addTokenAtLogin(accessToken: string, refreshToken: string,
 
 }
 
-export async function refreshToken_new(refreshToken: string){
-    const expireDate= Math.floor(Date.now() / 1000) + 30;
-    const secretKey = process.env.JWT_SECRET_KEY ?? ''
 
-    return new Promise(async (resolve, reject) => {
-        jwt.verify(refreshToken, secretKey, async (err: any, payload: any) => {
-            if (err) {
-                console.log('Invalid token ' + err);
-                resolve(new MessageDTO('Invalid token ' +err));
-            } else {
-                const newAccessToken = jwt.sign({name: payload.name, pw: payload.pw, id: payload.id},
-                    secretKey, { expiresIn: "30s" });
-
-                try {
-                    await prisma.tokens_v1.updateMany({
-                        where: {
-                            userId: payload.id
-                        },
-                        data: {
-                            accessToken: newAccessToken,
-                            accessExpireDate: expireDate
-                        },
-                    })
-                    console.log('Access token successfully refreshed');
-                    const body :ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput,{message:'New access token generated', newAccessToken: newAccessToken});
-                    resolve(body);
-                } catch (err) {
-                    console.log('An error occurred during refreshing the access token');
-                    resolve(new MessageDTO('Invalid token'));
-                }
-            }
-        });
-    });
-}
 
 
 export async function deleteExpiredTokens_new(){
@@ -120,11 +93,11 @@ export async function deleteExpiredTokens_new(){
 
 }
 
-export async function deleteTokensByLogout_new(accessToken:string){
+export async function deleteTokensByLogout_new(accessToken:ZAccessTokenInput){
     try{
        await prisma.tokens_v1.deleteMany({
            where: {
-               accessToken: accessToken
+               accessToken: accessToken.accessToken
            }
        })
     } catch (err){
@@ -134,11 +107,11 @@ export async function deleteTokensByLogout_new(accessToken:string){
 
 }
 
-export async function deleteTokensByUserId(userId:number){
+export async function deleteTokensByUserId(userId:ZUserIdInput){
     try {
         return await prisma.tokens_v1.deleteMany({
             where: {
-                userId: userId
+                userId: userId.userId
             }
         });
     } catch (err){
@@ -146,123 +119,49 @@ export async function deleteTokensByUserId(userId:number){
     }
 }
 
+export async function refreshToken_new(refreshToken: ZrefreshTokenInput) {
+    //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
+    if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
+        return await zParse(RefreshBodyErrorMessage,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
+    }
+    const expireDate= Math.floor(Date.now() / 1000) + 30;
+    const secretKey = process.env.JWT_SECRET_KEY ?? ''
+    try {
+        const payload: any = jwt.verify(refreshToken.refreshToken, secretKey);
+        const newAccessToken = jwt.sign(
+            { name: payload.name, pw: payload.pw, id: payload.id},
+            secretKey,
+            { expiresIn: "30s" }
+        );
+        await prisma.tokens_v1.updateMany({
+            where: { userId: payload.id },
+            data: { accessToken: newAccessToken, accessExpireDate: expireDate },
+        });
+        const body : ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
+        return body;
+    } catch (err) {
+        console.log(`An error occurred during refreshing the access token ${err}`);
+        return await zParse(RefreshBodyErrorMessage,
+            {errorMessage: (err instanceof JsonWebTokenError) ? err.message : JSON.stringify(err)});
+    }
+}
 
 
 
+async function isRefreshTokenInDatabase(refreshToken: ZrefreshTokenInput): Promise<boolean> {
+      // Convert the token object to boolean
+    return prisma.tokens_v1.findFirst({
+        where: {
+            refreshToken: refreshToken.refreshToken
+        }
+    }).then(token => !!token);
+}
 
-
-// export async function addToken(token: string, userId: number, res : Response, currentTime: number,tokenType: string){
-//     try{
-//         await prisma.tokens.create({
-//             data: {
-//                 token: token,
-//                 user_id: userId,
-//                 created_at: currentTime,
-//                 token_type: tokenType
-//             },
-//         })
-//
-//         console.log(tokenType+' added successfully: '+token);
-//     } catch (err) {
-//         console.log('Something went wrong: ' + err)
-//         return res.status(401).json({
-//             message: 'Something went wrong',
-//             err: err
-//         })
-//     }
-//
-//
-//
-// }
-//
-//
-// export async function deleteExpiredTokens(){
-//     const fiveMinutesAgo = Math.floor((Date.now() - 5 * 60 * 1000) / 1000);
-//     const thirtySecondsAgo = Math.floor((Date.now() - 30 * 1000) / 1000);
-//
-//     const oneDayAgo = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
-//     try {
-//         const deleteExpiredTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 created_at: {
-//                     lt: thirtySecondsAgo
-//                 },
-//                 token_type: 'accessToken'
-//             }
-//         })
-//         const deleteExpiredRefreshTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 created_at: {
-//                     lt: oneDayAgo
-//                 },
-//                 token_type: 'refreshToken'
-//             }
-//         })
-//         console.log('Deleted accessToken(s): ' + deleteExpiredTokens.count + ' Deleted refreshToken(s): '
-//         + deleteExpiredRefreshTokens.count);
-//     } catch (err) {
-//         console.log('Something went wrong when deleting tokens:' + err)
-//     }
-//
-// }
-//
-// export function refreshToken(refreshToken : string , res: Response){
-//     try{
-//         const validateParam=tokenSchema.parse({refreshToken: refreshToken})
-//         const now = Math.floor(new Date().getTime() / 1000);
-//         const secretKey = process.env.JWT_SECRET_KEY ?? ''
-//
-//
-//         jwt.verify(refreshToken, secretKey, async (err: any, payload: any) => {
-//             if (err) {
-//                 console.log('Invalid token ' + err);
-//                 return res.sendStatus(403);
-//             }
-//             if(payload.tokenType!='refreshToken'){
-//                 console.log('You cannot generate new access token with access token');
-//                 return res.status(403).json({
-//                     message: 'You cannot generate new access token with access token'
-//                 });
-//             }
-//             const accessToken=jwt.sign({name: payload.name, pw: payload.pw, id: payload.id},
-//                 process.env.JWT_SECRET_KEY ?? '',{ expiresIn: "30s"});
-//             await addToken(accessToken, payload.id, res, now, 'accessToken');
-//             const body=new RefreshTokenDTO('New access token generated', accessToken)
-//             console.log('New access token generated', accessToken);
-//             return res.status(200).json(body);
-//         })
-//     }catch (err){
-//         console.log(err);
-//         return res.status(401).json({
-//             message: 'Something went wrong',
-//             err: err
-//         })
-//     }
-//
-//
-// }
-// export async function deleteTokensByLogOut(accessToken: string, refreshToken:string){
-//     try {
-//         const deleteExpiredTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 token: accessToken,
-//                 token_type: 'accessToken'
-//             }
-//         })
-//
-//         const deleteExpiredRefreshTokens = await prisma.tokens.deleteMany({
-//             where: {
-//                 token: refreshToken,
-//                 token_type: 'refreshToken'
-//             }
-//         })
-//         console.log('Deleted accessToken(s):'+ deleteExpiredTokens.count +'Deleted refreshToken(s): '
-//             + deleteExpiredRefreshTokens.count);
-//
-//
-//     } catch (err) {
-//         console.log('Something went wrong when deleting tokens:' + err)
-//
-//     }
-// }
-
+export async function isAccessTokenInDatabase(accessToken: ZAccessTokenInput): Promise<boolean> {
+    // Convert the token object to boolean
+    return prisma.tokens_v1.findFirst({
+        where: {
+            accessToken: accessToken.accessToken
+        }
+    }).then(token => !!token);
+}
