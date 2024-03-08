@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userAlreadyExistDTOOutput = exports.userSchemaInput = exports.userRegisterDTOOutput = exports.userLoginDTOOutput = void 0;
+exports.userDeletedOutPutError = exports.userDeletedOutPut = exports.userAlreadyExistDTOOutput = exports.userSchemaInput = exports.UserIdInput = exports.userLoginFailedOutput = exports.userRegisterDTOOutput = exports.userLoginDTOOutput = void 0;
 const zod_1 = require("zod");
 exports.userLoginDTOOutput = zod_1.z.object({
     message: zod_1.z.string(),
@@ -14,6 +14,12 @@ exports.userRegisterDTOOutput = zod_1.z.object({
     name: zod_1.z.string(),
     password: zod_1.z.string(),
 });
+exports.userLoginFailedOutput = zod_1.z.object({
+    errormessage: zod_1.z.string(),
+});
+exports.UserIdInput = zod_1.z.object({
+    userId: zod_1.z.number(),
+});
 exports.userSchemaInput = zod_1.z.object({
     name: zod_1.z.string().min(6, { message: "Username must be 6 or more characters long" }),
     pw: zod_1.z.string().min(6, { message: "Password must be 6 or more characters long" }),
@@ -21,4 +27,10 @@ exports.userSchemaInput = zod_1.z.object({
 exports.userAlreadyExistDTOOutput = zod_1.z.object({
     message: zod_1.z.string(),
     name: zod_1.z.string(),
+});
+exports.userDeletedOutPut = zod_1.z.object({
+    message: zod_1.z.string(),
+});
+exports.userDeletedOutPutError = zod_1.z.object({
+    errormessage: zod_1.z.string(),
 });
