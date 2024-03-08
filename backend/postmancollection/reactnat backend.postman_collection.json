@@ -9,6 +9,9 @@
 		{
 			"name": "Login",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -21,11 +24,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/login",
+					"raw": "{{url}}/user/login",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"user",
 						"login"
 					]
 				},
@@ -73,7 +77,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Godzillaasd1QWEEEE\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
+					"raw": "{\r\n    \"name\": \"Komo213a1Aasdqw\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -81,15 +85,16 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/register",
+					"raw": "{{url}}/user/register",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"user",
 						"register"
 					]
 				},
-				"description": "Regisztrációt szolgáló végpont.  \nParaméterek:\n\n- name - felhasználó neve\n- pw - felhasználó jelszava\n    \n\nHa nem valid paramétereket használsz akkor zod error kiirja hogy mit vár. Siker esetén felviszi az adatokat a user táblába.\n\n200 OK - Sikeres regisztráció\n\n400 Akkor a bodyban valamelyik kulcsot elirtad pl name helyett namea"
+				"description": "Regisztrációt szolgáló végpont.  \nParaméterek:\n\n- name - felhasználó neve\n- pw - felhasználó jelszava\n    \n\nHa nem valid paramétereket használsz akkor zod error kiirja hogy mit vár. Siker esetén felviszi az adatokat a user táblába.\n\n200 OK - Sikeres regisztráció\n\n400 Akkor a bodyban valamelyik kulcsot elirtad pl name helyett namea\n\n409 a felhasználó név már létezik"
 			},
 			"response": []
 		},
@@ -100,7 +105,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer ",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjo1MSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4MjA1MTgsImV4cCI6MTcwOTgyMjMxOH0.d3X8DzmLd5cHe9nTCQqM7k4ynA_yrROVr0V1cb7_9lo",
 						"type": "text"
 					}
 				],
@@ -114,11 +119,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/deleteUser",
+					"raw": "{{url}}/protected/deleteUser",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"protected",
 						"deleteUser"
 					]
 				},
@@ -133,7 +139,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\r\n    \"refreshToken\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzA4NDM1OTU0LCJleHAiOjE3MDg1MjIzNTR9.qA0VvUj-mt-8hjdTsTYe0lLX9hzCrlcQhHGgWKHOtaY\"    \r\n    \r\n}",
+					"raw": "{\r\n\r\n    \"refreshToken\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjo1MiwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzA5ODkwMDg5LCJleHAiOjE3MDk4OTM2ODl9.xKjy5TA_PFAUk2yvCBpA_7UVM4ZUPs-MksM9q7FiCfg\"    \r\n    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -141,15 +147,16 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/refresh",
+					"raw": "{{url}}/token/refresh",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"token",
 						"refresh"
 					]
 				},
-				"description": "Ez a végpont szolgál arra hogy új accessTokent generáljunk.  \nParaméterek:\n\n- refreshToken - a bejelentkezésnél generált token\n    \n\nHa nem jó refershTokent adunk meg akkor 403 status kód jön.\n\n200 OK ha jó a token és generálja is az új accessTokent\n\n403 Forbidden ha nem jó a refresh kód amit kapott"
+				"description": "Ez a végpont szolgál arra hogy új accessTokent generáljunk.  \nParaméterek:\n\n- refreshToken - a bejelentkezésnél generált token\n    \n\nHa nem jó refershTokent adunk meg akkor 403 status kód jön.\n\n200 OK ha jó a token és generálja is az új accessTokent\n\n403 Forbidden ha nem jó a refresh kód amit kapott\n\n400 Bad Request jön ha zod error van (ha rosszul küldtük el a bodyban a paramétereket)"
 			},
 			"response": []
 		},
@@ -160,7 +167,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzA4MzQ5NjkwLCJleHAiOjE3MDgzNDk3MjB9.Pw4LmeMUSKEEIrcivD7Uxjl4nRupwW-aPJGYS9xSNlM",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
 						"type": "text"
 					}
 				],
@@ -174,15 +181,17 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/getCikk",
+					"raw": "{{url}}/protected/product/getCikk",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"protected",
+						"product",
 						"getCikk"
 					]
 				},
-				"description": "Cikk lekérdezése cikkszám alapján. Védett végpont tehát a headerben szerepelnie kell egy érvényes accessTokennek.  \nParaméterek:\n\n- cikkszam\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n404 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
+				"description": "Cikk lekérdezése cikkszám alapján. Védett végpont tehát a headerben szerepelnie kell egy érvényes accessTokennek.  \nParaméterek:\n\n- cikkszam\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
 			},
 			"response": []
 		},
@@ -190,10 +199,16 @@
 			"name": "getCikkByEAN",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\r\n\"eankod\": 8886813777511\r\n\r\n}",
+					"raw": "{\r\n  \"eankod\": 4061462985683\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -201,11 +216,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/getCikkByEAN",
+					"raw": "{{url}}/protected/product/getCikkByEAN",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"protected",
+						"product",
 						"getCikkByEAN"
 					]
 				},
@@ -220,13 +237,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDg1MDY5MzQsImV4cCI6MTcwODUwNjk2NH0.cfrl_wfUH0Mio5j5q9eJ6kOnrrzDw-qiVY5MvCd6Q7w",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "\r\n",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -234,15 +251,17 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/profile",
+					"raw": "{{url}}/protected/user/profile",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"protected",
+						"user",
 						"profile"
 					]
 				},
-				"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait."
+				"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait.\n\n200 OK ha szupi az accessToken\n\n403 Forbidden ha nem szupi az accessToken"
 			},
 			"response": []
 		},
@@ -256,13 +275,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDg0NDE4NDgsImV4cCI6MTcwODQ0MTg3OH0.ZgaMSHtwmMpnXm2M-BaS0B-IpreqKIdvcCtsBtvMZJU",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\r\n\"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjoyNCwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzA4NDE4NDU2LCJleHAiOjE3MDg1MDQ4NTZ9.bSBcCibq8D-_KYxuzK0KGt6S8v3ATUgJL8K3kKqOKuM\"\r\n\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -270,15 +289,17 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/logout",
+					"raw": "{{url}}/protected/user/logout",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"protected",
+						"user",
 						"logout"
 					]
 				},
-				"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja."
+				"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja.\n\n200 OK Ha sikeres a kijelentkezés\n\n403 Forbidden ha nem jó az accessToken"
 			},
 			"response": []
 		},
@@ -302,6 +323,39 @@
 					"port": "8000",
 					"path": [
 						"deleteUser2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teszt",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"eankod\": \"4061462985683\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/protected/getCikkByEAN",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"protected",
+						"getCikkByEAN"
 					]
 				}
 			},
@@ -332,6 +386,11 @@
 		{
 			"key": "url",
 			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "token ",
+			"value": "",
 			"type": "string"
 		},
 		{
