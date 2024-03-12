@@ -6,7 +6,7 @@ import {
   parseZodError,
   validateZDTOForm,
 } from '../../../shared/services/zod-dto.service';
-import CardComponentNotFound from '../components/card-component-not-found';
+import VCardNotFound from '../components/VCardNotFound';
 import VButton from '../components/VButton';
 import {DarkModeProviderService} from '../services/context-providers.service';
 import VCamera from '../components/VCamera';
@@ -29,6 +29,7 @@ import {useStore} from '../states/zustand-states';
 import VInternetToast from '../components/VInternetToast';
 import VToast from '../components/VToast';
 import VDataTable from '../components/VDataTable';
+import VCardSuccess from '../components/VCardSucces';
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeProviderService.useDarkMode();
@@ -138,12 +139,13 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
       />
       {changeHandlerResult?.status === 200 && (
         <View>
-          <VDataTable data={changeHandlerResult} />
+          {/*<VDataTable data={changeHandlerResult} />*/}
+          <VCardSuccess title={'Találatok'} content={changeHandlerResult} />
         </View>
       )}
       {changeHandlerResult?.status === 204 && (
         <View>
-          <CardComponentNotFound title={'Not Found'} ean={searchQueryState} />
+          <VCardNotFound title={'Not Found'} ean={searchQueryState} />
         </View>
       )}
       <VBackButton navigation={navigation} />
