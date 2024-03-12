@@ -27,11 +27,11 @@ export async function loginUser(userInput: ZUserSchemaInput) {
     if (!user) {
         return await zParse(userLoginFailedOutput,{errormessage: 'Wrong username or Password'});
     }
-    const now = Math.floor(Date.now() / 1000); // Datum.getTime() megegyezik a Date.now()-val
+    const now = Math.floor(Date.now() / 1000);
     const token = jwt.sign({name: user.name, pw: user.id, id: user.id, tokenType: 'accessToken'},
-        process.env.JWT_SECRET_KEY ?? '', {expiresIn: "30min"});
+        process.env.JWT_SECRET_KEY ?? '', {expiresIn: process.env.ACCESS_TOKEN_EXPIRE ?? '30min'});
     const refreshToken = jwt.sign({name: user.name, pw: user.pw, id: user.id, tokenType: 'refreshToken'},
-        process.env.JWT_SECRET_KEY ?? '', {expiresIn: "1h"});
+        process.env.JWT_SECRET_KEY ?? '', {expiresIn: process.env.REFRESH_TOKEN_EXPIRE ?? '1h'});
 
     await tokenService.addTokenAtLogin({accessToken: token}, {refreshToken}, {userId: user.id});
     return zParse(userLoginDTOOutput, {
