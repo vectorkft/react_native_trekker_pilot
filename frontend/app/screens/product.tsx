@@ -16,12 +16,9 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {ZodError} from 'zod';
 import VAlert from '../components/VAlert';
 import {
-  useBeepSound,
-  useCamera,
   useInputChange,
-  useOnBarCodeRead,
   useOnChangeHandler,
-} from '../states/use-camera-states';
+} from '../states/use-products-states';
 import VBackButton from '../components/VBackButton';
 import {RouterProps} from '../interfaces/navigation-props';
 import {cikkEANSchemaInput} from '../../../shared/dto/article.dto';
@@ -30,22 +27,27 @@ import VInternetToast from '../components/VInternetToast';
 import VToast from '../components/VToast';
 import VDataTable from '../components/VDataTable';
 import VCardSuccess from '../components/VCardSucces';
+import {
+  useBeepSound,
+  useCamera,
+  useOnBarCodeRead,
+} from '../states/user-camera-states';
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeProviderService.useDarkMode();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
+  const [searchQuery, setSearchQuery] = React.useState('');
   const beep = useBeepSound();
 
+  const getArticlesByEAN = async (value: number) => {
+    return await ProductsService.getProductsByEAN({eankod: value});
+  };
   const validateForm = async (value: number) => {
     const {isValid, error} = (await validateZDTOForm(cikkEANSchemaInput, {
       eankod: value,
     })) as {isValid: boolean; error: ZodError};
     return {isValid, error};
-  };
-
-  const getArticlesByEAN = async (value: number) => {
-    return await ProductsService.getProductsByEAN({eankod: value});
   };
 
   const [
@@ -54,9 +56,17 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     changeHandlerResult,
     onChangeHandler,
     setErrorMessage,
-  ] = useOnChangeHandler(validateForm, parseZodError, getArticlesByEAN);
-  const {onChangeInput, onChangeInputWhenEnabled, searchQuery, setSearchQuery} =
-    useInputChange(onChangeHandler);
+  ] = useOnChangeHandler(
+    validateForm,
+    parseZodError,
+    getArticlesByEAN,
+    setSearchQuery,
+  );
+  const {onChangeInput, onChangeInputWhenEnabled} = useInputChange(
+    onChangeHandler,
+    searchQuery,
+    setSearchQuery,
+  );
   const {
     isCameraActive,
     scanned,
@@ -102,9 +112,9 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
         <VInput
           inputProps={{
             value: searchQuery,
-            showSoftInputOnFocus: true,
+            showSoftInputOnFocus: false,
             autoFocus: true,
-            onChangeText: onChangeInputWhenEnabled,
+            onChangeText: onChangeInput,
             placeholder: 'Keresés...',
             keyboardType: 'numeric',
           }}
@@ -126,14 +136,13 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
             height: 50,
             marginTop: 5,
             borderRadius: 10,
-            width: '60%',
+            width: '70%',
             marginLeft: 'auto',
             marginRight: 'auto',
           },
           disabled: !searchQuery || !isConnected,
           onPress: () => {
             onChangeHandler(Number(searchQuery));
-            setSearchQuery('');
           },
         }}
       />
