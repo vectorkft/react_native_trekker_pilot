@@ -1,7 +1,7 @@
-import {AnyZodObject, z, ZodError} from "zod";
+import {AnyZodObject, z, ZodArray, ZodError, ZodObject} from "zod";
 import {ValidateForm} from "../../frontend/app/interfaces/validate-form"
 
-export async function zParse<T extends AnyZodObject>(
+export async function zParse<T extends AnyZodObject | ZodArray<ZodObject<any>>>(
     schema: T,
     data: Request | any,
 ): Promise<z.infer<T>> {

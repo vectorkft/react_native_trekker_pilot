@@ -8,9 +8,7 @@ import {
 } from '../../../shared/services/zod-dto.service';
 import CardComponentNotFound from '../components/card-component-not-found';
 import VButton from '../components/VButton';
-import DataTable from '../components//data-table';
-import {DarkModeService} from '../services/dark-mode.service';
-import CardComponentSuccess from '../components/card-component';
+import {DarkModeProviderService} from '../services/context-providers.service';
 import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
 import VInput from '../components/VInput';
@@ -27,9 +25,15 @@ import {
 import VBackButton from '../components/VBackButton';
 import {RouterProps} from '../interfaces/navigation-props';
 import {cikkEANSchemaInput} from '../../../shared/dto/article.dto';
+import {useStore} from '../states/zustand-states';
+import VInternetToast from '../components/VInternetToast';
+import VToast from '../components/VToast';
+import VDataTable from '../components/VDataTable';
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
-  const {isDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const isConnected = useStore(state => state.isConnected);
+  const wasDisconnected = useStore(state => state.wasDisconnected);
   const beep = useBeepSound();
 
   const validateForm = async (value: number) => {
@@ -40,7 +44,7 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
   };
 
   const getArticlesByEAN = async (value: number) => {
-    return await ProductsService.getArticlesByEAN({eankod: value});
+    return await ProductsService.getProductsByEAN({eankod: value});
   };
 
   const [
@@ -84,6 +88,12 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
         articleStyles.container,
         {backgroundColor: isDarkMode ? Colors.darker : Colors.lighter},
       ]}>
+      <VInternetToast isVisible={!isConnected} />
+      <VToast
+        isVisible={wasDisconnected && isConnected}
+        label={'Sikeres kapcsolat!'}
+        type={'check'}
+      />
       {errorMessage && (
         <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
       )}
@@ -119,23 +129,19 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
             marginLeft: 'auto',
             marginRight: 'auto',
           },
-          disabled: !searchQuery,
+          disabled: !searchQuery || !isConnected,
           onPress: () => {
             onChangeHandler(Number(searchQuery));
             setSearchQuery('');
           },
         }}
       />
-      {changeHandlerResult && 'cikkszam' in changeHandlerResult && (
+      {changeHandlerResult?.status === 200 && (
         <View>
-          <CardComponentSuccess
-            title={'Találatok'}
-            content={changeHandlerResult}
-          />
-          <DataTable data={changeHandlerResult} />
+          <VDataTable data={changeHandlerResult} />
         </View>
       )}
-      {changeHandlerResult === false && (
+      {changeHandlerResult?.status === 204 && (
         <View>
           <CardComponentNotFound title={'Not Found'} ean={searchQueryState} />
         </View>

@@ -10,8 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^6.0.0",
     "@react-navigation/native": "^5.0.0",
-    "@react-navigation/native-stack": "^5.0.0",
     "@react-navigation/stack": "^5.0.0",
     "babel-plugin-module-resolver": "^5.0.0",
     "deprecated-react-native-prop-types": "^5.0.0",
@@ -22,7 +22,6 @@
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.15.0",
     "react-native-mmkv": "^2.12.1",
-    "react-native-paper": "^5.12.3",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^2.0.0",
     "react-native-sound": "^0.11.2",

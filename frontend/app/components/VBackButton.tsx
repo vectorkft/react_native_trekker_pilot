@@ -1,15 +1,18 @@
 import {Icon} from 'react-native-elements';
 import {RouterProps} from '../interfaces/navigation-props';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
 import {backButtonStyles} from '../styles/back-button-component.stylesheet';
 import {TouchableOpacity} from 'react-native';
+import {useStore} from '../states/zustand-states';
 
 const VBackButton = ({navigation}: RouterProps) => {
-  const {isDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {isConnected} = useStore.getState();
 
   return (
     <TouchableOpacity
       style={backButtonStyles.backButton}
+      disabled={!isConnected}
       onPress={() => navigation.goBack()}>
       <Icon
         name="left"

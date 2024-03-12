@@ -1,11 +1,14 @@
 import {Button, Icon} from 'react-native-elements';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
+import {useStore} from '../states/zustand-states';
 
 const VCameraIconButton = ({onPress}: any) => {
-  const {isDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {isConnected} = useStore.getState();
 
   return (
     <Button
+      disabled={!isConnected}
       icon={
         <Icon
           type="antdesign"

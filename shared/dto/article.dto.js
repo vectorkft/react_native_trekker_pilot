@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArticleListOutput = exports.cikkSzamSchemaInput = exports.cikkEANSchemaInput = exports.ArticleDataOutput = exports.ArticleDTOOutput2 = exports.ArticleDTOOutput = void 0;
+exports.ArticleListOutput = exports.cikkSzamSchemaInput = exports.cikkEANSchemaInput = exports.ArticleDataOutput = exports.ArticleDataDTO = exports.ArticleDTOOutput = void 0;
 const zod_1 = require("zod");
 const luhn_validation_1 = require("luhn-validation");
 exports.ArticleDTOOutput = zod_1.z.object({
@@ -8,10 +8,10 @@ exports.ArticleDTOOutput = zod_1.z.object({
     cikknev: zod_1.z.string(),
     eankod: zod_1.z.bigint(),
 });
-exports.ArticleDTOOutput2 = zod_1.z.object({
-    cikkszam: zod_1.z.number(),
-    cikknev: zod_1.z.string(),
-    eankod: zod_1.z.string(),
+exports.ArticleDataDTO = zod_1.z.object({
+    key: zod_1.z.string(),
+    title: zod_1.z.string(),
+    value: zod_1.z.string(),
 });
 exports.ArticleDataOutput = zod_1.z.object({
     key: zod_1.z.string(),

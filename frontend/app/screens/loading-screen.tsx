@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, ActivityIndicator} from 'react-native';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const LoadingScreen = () => {
-  const {isDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
 
   return (
     <View

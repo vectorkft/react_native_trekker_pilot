@@ -19,13 +19,6 @@ export const darkModeContent = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.white,
   },
-  switchMode: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   darkTitle: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -40,5 +33,12 @@ export const darkModeContent = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: Colors.white,
+  },
+  switchMode: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

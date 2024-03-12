@@ -1,18 +1,22 @@
 import {useEffect, useState} from 'react';
 import {LoginService} from '../services/login.service';
-import {LoadingService} from '../services/loading.service';
+import {LoadingProviderService} from '../services/context-providers.service';
+import {LocalStorageService} from '../services/local-storage.service';
 
 export const useLoginState = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(
+    LocalStorageService.getDataString(['username']).username || '',
+  );
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const {setLoadingState} = LoadingService.useLoading();
+  const {setLoadingState} = LoadingProviderService.useLoading();
 
   useEffect(() => {
     setLoadingState(true);
-    const { username, rememberMe } = LoginService.loadUsernameAndRememberMe();
-    setUsername(username);
-    setRememberMe(rememberMe);
+    const {username: loadedUsername, rememberMe: loadedRememberme} =
+      LoginService.loadUsernameAndRememberMe();
+    setUsername(loadedUsername || '');
+    setRememberMe(loadedRememberme || false);
     setLoadingState(false);
   }, []);
 
@@ -22,6 +26,6 @@ export const useLoginState = () => {
     password,
     setPassword,
     rememberMe,
-    setRememberMe
+    setRememberMe,
   };
 };

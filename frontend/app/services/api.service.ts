@@ -2,7 +2,7 @@ import {API_URL} from '../../config';
 import {zParse} from '../../../shared/services/zod-dto.service';
 import {AnyZodObject} from 'zod';
 
-const getClient = (options: any = {}): RequestInit => {
+const createRequestInit = (options: any = {}): RequestInit => {
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -19,14 +19,17 @@ const getClient = (options: any = {}): RequestInit => {
   };
 };
 
-export const RequestInitFactory = {
+export const ApiService = {
   doRequest: async (
     endpoint: string,
     requestOptions: any = {},
     schema?: AnyZodObject,
   ) => {
     const url: string = `${API_URL}${endpoint}`;
-    const response: Response = await fetch(url, getClient(requestOptions));
+    const response: Response = await fetch(
+      url,
+      createRequestInit(requestOptions),
+    );
     let data: any;
     if (response.status !== 204 && response.status !== 403) {
       data = await response.json();

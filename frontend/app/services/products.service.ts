@@ -1,30 +1,15 @@
-import {RequestInitFactory} from '../factory/request-init-factory';
+import {ApiService} from './api.service';
 import {
-  ArticleDTOOutput2,
-  ZArticleDTOOutput2,
+  ArticleListOutput,
+  ZArticleListOutput,
   ZcikkEANSchemaInput,
 } from '../../../shared/dto/article.dto';
-import {zParse} from '../../../shared/services/zod-dto.service';
 import {tokenHandlingService} from './token-handling.service';
-const handleResponseStatus = async (
-  response: any,
-): Promise<ZArticleDTOOutput2 | false | Response | undefined> => {
-  switch (response.status) {
-    case 200:
-      return await zParse(ArticleDTOOutput2, response);
-    case 204:
-      return false;
-    case 400:
-      return response;
-    default:
-      console.log('Ismeretlen státusz: ', response.status);
-  }
-};
 
 export const ProductsService = {
-  getArticlesByEAN: async (
+  getProductsByEAN: async (
     ean: ZcikkEANSchemaInput,
-  ): Promise<ZArticleDTOOutput2 | false | Response | undefined> => {
+  ): Promise<ZArticleListOutput | Response | undefined> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(ean),
@@ -32,11 +17,11 @@ export const ProductsService = {
     };
 
     try {
-      const response = await RequestInitFactory.doRequest(
-        '/protected/getCikkByEAN',
+      return await ApiService.doRequest(
+        '/protected/product/getCikkByEAN',
         options,
+        ArticleListOutput,
       );
-      return await handleResponseStatus(response);
     } catch (e) {
       console.log('Az API nem elérhető', e);
     }

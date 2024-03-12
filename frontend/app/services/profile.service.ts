@@ -1,5 +1,5 @@
 import {tokenHandlingService} from './token-handling.service';
-import {RequestInitFactory} from '../factory/request-init-factory';
+import {ApiService} from './api.service';
 
 export const profileService = {
   handleUserProfileRequest: async () => {
@@ -9,7 +9,7 @@ export const profileService = {
         accessToken: await tokenHandlingService.getTokenIfValid(),
       };
 
-      return await RequestInitFactory.doRequest(
+      return await ApiService.doRequest(
         '/protected/user/profile',
         options,
       );

@@ -6,10 +6,10 @@ export const ArticleDTOOutput = z.object({
     eankod: z.bigint(),
 });
 
-export const ArticleDTOOutput2 = z.object({
-    cikkszam:z.number(),
-    cikknev:z.string(),
-    eankod: z.string(),
+export const ArticleDataDTO = z.object({
+    key: z.string(),
+    title: z.string(),
+    value: z.string(),
 });
 
 export const ArticleDataOutput = z.object({
@@ -36,10 +36,10 @@ export const ArticleListOutput = z.object({
     count: z.number(),
 });
 
-export type ZArticleDTOOutput2 = z.infer<typeof ArticleDTOOutput2>
-export type ZArticleDTOOutput = z.infer<typeof ArticleDTOOutput>
+export type ZArticleDTOOutputData = z.infer<typeof ArticleDataDTO>
 export type ZcikkEANSchemaInput = z.infer<typeof cikkEANSchemaInput>
 export type ZcikkSzamSchemaInput = z.infer<typeof cikkSzamSchemaInput>
+export type ZArticleListOutput = z.infer<typeof ArticleListOutput>
 
 
 

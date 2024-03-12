@@ -5,16 +5,20 @@ import {profileService} from '../services/profile.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {LoginService} from '../services/login.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
 import VButton from '../components/VButton';
 import VBackButton from '../components/VBackButton';
-import {LoadingService} from '../services/loading.service';
+import {LoadingProviderService} from '../services/context-providers.service';
 import LoadingScreen from './loading-screen';
+import VInternetToast from '../components/VInternetToast';
+import VToast from '../components/VToast';
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
   const {setIsLoggedIn, isLoggedIn} = useStore.getState();
-  const {loading, setLoadingState} = LoadingService.useLoading();
-  const {isDarkMode} = DarkModeService.useDarkMode();
+  const isConnected = useStore(state => state.isConnected);
+  const wasDisconnected = useStore(state => state.wasDisconnected);
+  const {loading, setLoadingState} = LoadingProviderService.useLoading();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +59,12 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
           ? darkModeContent.darkContainer
           : darkModeContent.lightContainer
       }>
+      <VInternetToast isVisible={!isConnected} />
+      <VToast
+        isVisible={wasDisconnected && isConnected}
+        label={'Sikeres kapcsolat!'}
+        type={'check'}
+      />
       <VBackButton navigation={navigation} />
       {isLoggedIn && (
         <View>
@@ -78,6 +88,7 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 },
+                disabled: !isConnected,
                 onPress: () => navigation.navigate('articles'),
               }}
             />
@@ -101,6 +112,7 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 },
+                disabled: !isConnected,
                 onPress: handleLogout,
               }}
             />

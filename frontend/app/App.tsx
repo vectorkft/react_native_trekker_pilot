@@ -6,7 +6,6 @@ import Login from './screens/login';
 import {DarkModeProvider} from './providers/dark-mode';
 import Profile from './screens/profile';
 import Product from './screens/product';
-import {PaperProvider} from 'react-native-paper';
 import {LoadingProvider} from './providers/loading';
 import {StackParamList} from './interfaces/stack-param-list';
 import {navigationRef} from './services/navigation.service';
@@ -17,21 +16,19 @@ const App = () => {
   return (
     <DarkModeProvider>
       <LoadingProvider>
-        <PaperProvider>
-          <NavigationContainer ref={navigationRef}>
-            <Stack.Navigator
-              screenOptions={{
-                animationEnabled: false,
-                headerShown: false,
-              }}
-              initialRouteName="login">
-              <Stack.Screen name="login" component={Login} />
-              <Stack.Screen name="homescreen" component={HomeScreen} />
-              <Stack.Screen name="profile" component={Profile} />
-              <Stack.Screen name="articles" component={Product} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </PaperProvider>
+        <NavigationContainer ref={navigationRef}>
+          <Stack.Navigator
+            screenOptions={{
+              animationEnabled: false,
+              headerShown: false,
+            }}
+            initialRouteName="login">
+            <Stack.Screen name="login" component={Login} />
+            <Stack.Screen name="homescreen" component={HomeScreen} />
+            <Stack.Screen name="profile" component={Profile} />
+            <Stack.Screen name="articles" component={Product} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </LoadingProvider>
     </DarkModeProvider>
   );

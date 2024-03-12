@@ -6,9 +6,9 @@ import {
   parseZodError,
   validateZDTOForm,
 } from '../../../shared/services/zod-dto.service';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
 import {ZodError} from 'zod';
-import {LoadingService} from '../services/loading.service';
+import {LoadingProviderService} from '../services/context-providers.service';
 import {TextInput, View} from 'react-native';
 import {useLoginState} from '../states/use-login-states';
 import VAlert from '../components/VAlert';
@@ -18,12 +18,14 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
 import LoadingScreen from './loading-screen';
-import {MMKV} from 'react-native-mmkv';
 import {UserLoginDTOInput} from '../../../shared/dto/user-login.dto';
 import VInput from '../components/VInput';
+import {useNetInfo} from '../states/use-net-info';
+import {LocalStorageService} from '../services/local-storage.service';
+
 const Login = ({navigation}: RouterProps): JSX.Element => {
-  const {isDarkMode, toggleDarkMode} = DarkModeService.useDarkMode();
-  const {loading, setLoadingState} = LoadingService.useLoading();
+  const {isDarkMode, toggleDarkMode} = DarkModeProviderService.useDarkMode();
+  const {loading, setLoadingState} = LoadingProviderService.useLoading();
   const passwordInput = useRef<TextInput | null>(null);
   const {setId, setRefreshToken, setAccessToken, setIsLoggedIn, isLoggedIn} =
     useStore.getState();
@@ -36,14 +38,16 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
     setRememberMe,
   } = useLoginState();
   const {errorMessage, setErrorMessage} = useAlert();
-
-  const storage = new MMKV({
-    id: 'app',
-  });
+  const {mountConnection} = useNetInfo();
 
   const handleFormSubmit = async () => {
     try {
       setLoadingState(true);
+
+      if (!mountConnection) {
+        return setErrorMessage('Ellenőrizd az internetkapcsolatodat!');
+      }
+
       const {isValid, error} = (await validateZDTOForm(UserLoginDTOInput, {
         name: username,
         pw: password,
@@ -64,12 +68,11 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       }
 
       if (rememberMe) {
-        storage.set('username', username);
-        storage.set('rememberMe', true);
+        LocalStorageService.storeData({username: username, rememberMe: true});
         setUsername(username);
       } else {
-        storage.delete('username');
-        storage.set('rememberMe', false);
+        LocalStorageService.deleteData(['username']);
+        LocalStorageService.storeData({rememberMe: false});
         setUsername('');
       }
       setPassword('');

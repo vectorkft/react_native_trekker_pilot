@@ -2,13 +2,13 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import {cardComponentStylesheet} from '../styles/card-component.stylesheet';
 import {CardProps} from '../interfaces/card-props';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
 
 const CardComponentSuccess: React.FC<CardProps> = ({
   title,
   content,
 }: CardProps) => {
-  const {isDarkMode} = DarkModeService.useDarkMode();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
 
   return (
     <View

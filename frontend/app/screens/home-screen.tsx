@@ -2,18 +2,22 @@ import React, {JSX} from 'react';
 import {View} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {LoginService} from '../services/login.service';
-import {DarkModeService} from '../services/dark-mode.service';
+import {DarkModeProviderService} from '../services/context-providers.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import VButton from '../components/VButton';
-import {LoadingService} from '../services/loading.service';
+import {LoadingProviderService} from '../services/context-providers.service';
 import LoadingScreen from './loading-screen';
+import VToast from '../components/VToast';
+import VInternetToast from '../components/VInternetToast';
 
 const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
+  const isConnected = useStore(state => state.isConnected);
+  const wasDisconnected = useStore(state => state.wasDisconnected);
   const {setIsLoggedIn} = useStore.getState();
-  const {isDarkMode} = DarkModeService.useDarkMode();
-  const {loading, setLoadingState} = LoadingService.useLoading();
+  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {loading, setLoadingState} = LoadingProviderService.useLoading();
 
   const handleLogout = async () => {
     setLoadingState(true);
@@ -37,6 +41,12 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
           ? darkModeContent.darkContainer
           : darkModeContent.lightContainer
       }>
+      <VInternetToast isVisible={!isConnected} />
+      <VToast
+        isVisible={wasDisconnected && isConnected}
+        label={'Sikeres kapcsolat!'}
+        type={'check'}
+      />
       {isLoggedIn && (
         <View>
           <View>
@@ -59,6 +69,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 },
+                disabled: !isConnected,
                 onPress: () => navigation.navigate('profile'),
               }}
             />
@@ -82,6 +93,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 },
+                disabled: !isConnected,
                 onPress: handleLogout,
               }}
             />

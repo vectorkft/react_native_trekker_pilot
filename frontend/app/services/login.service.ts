@@ -1,22 +1,23 @@
-import {RequestInitFactory} from '../factory/request-init-factory';
+import {ApiService} from './api.service';
 import {tokenHandlingService} from './token-handling.service';
 import {
   UserLoginDTOOutput,
   ZUserLoginDTOInput,
   ZUserLoginDTOOutput,
 } from '../../../shared/dto/user-login.dto';
-import {MMKV} from 'react-native-mmkv';
+import {LocalStorageService} from './local-storage.service';
 
 export const LoginService = {
-  loadUsernameAndRememberMe: () => {
-    const storage = new MMKV({
-      id: 'app',
-    });
+  loadUsernameAndRememberMe: (): {
+    username: string | undefined;
+    rememberMe: boolean | undefined;
+  } => {
+    const usernameData = LocalStorageService.getDataString(['username']);
+    const username = usernameData ? usernameData.username : '';
+    const rememberMeData = LocalStorageService.getDataBoolean(['rememberMe']);
+    const rememberMe = rememberMeData ? rememberMeData.rememberMe : false;
 
-    const username = storage.getString('username') || '';
-    const rememberMe = storage.getBoolean('rememberMe') || false;
-
-    return {username, rememberMe};
+    return {...{username}, ...{rememberMe}};
   },
 
   handleSubmit: async (
@@ -28,7 +29,7 @@ export const LoginService = {
     };
 
     try {
-      return await RequestInitFactory.doRequest(
+      return await ApiService.doRequest(
         '/user/login',
         options,
         UserLoginDTOOutput,
@@ -45,7 +46,7 @@ export const LoginService = {
     };
 
     try {
-      const result = await RequestInitFactory.doRequest(
+      const result = await ApiService.doRequest(
         '/protected/user/logout',
         options,
       );
