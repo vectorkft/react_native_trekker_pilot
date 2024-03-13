@@ -1,68 +1,66 @@
 import {PrismaClient} from "@prisma/client";
 import {
-    ProductDataOutput,
-    ProductDTOOutput,
-    ProductListOutput,
-    ZProductEANSchemaInput, ZProductNumberSchemaInput,
+    ArticleDataOutput,
+    ArticleListOutput,
+    ZcikkEANSchemaInput, ZcikkSzamSchemaInput,
 } from "../../shared/dto/article.dto";
-import {zParse} from "../../shared/services/zod-dto.service";
 
 const prisma = new PrismaClient()
 
 
 
 
-export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
-    const cikk = await prisma.cikk.findFirst({
+export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
+    const cikk = await prisma.cikk.findMany({
         where: {
             cikkszam: cikkszam.cikkszam
         }
     })
-
-    if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
+    if (cikk.length===0) {
         return "Not found";
     }
+    return processArticles(cikk);
 
-    return zParse(ProductDTOOutput, cikk);
 }
 
 
-export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
+export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
     try {
         const cikk = await prisma.cikk.findMany({
             where: {
                 eankod: eankod.eankod
             }
         });
-
         if (cikk.length === 0) {
             return false;
         }
-
-        const result = {
-            data: cikk.flatMap((cikkElement) => [
-                ProductDataOutput.parse({
-                    key: 'cikkszam',
-                    title: 'Cikkszám',
-                    value: cikkElement.cikkszam.toString(),
-                }),
-                ProductDataOutput.parse({
-                    key: 'cikknev',
-                    title: 'Cikknév',
-                    value: cikkElement.cikknev.toString(),
-                }),
-                ProductDataOutput.parse({
-                    key: 'eankod',
-                    title: 'EAN Kód',
-                    value: cikkElement.eankod.toString(),
-                }),
-            ]),
-            count: cikk.length
-        }
-
-        return ProductListOutput.parse(result);
+        return processArticles(cikk);
     }
     catch (err: unknown) {
         throw err;
     }
+}
+
+const processArticles = (articles: any[]) => {
+    const result = {
+        data: articles.flatMap((articleElement) => [
+            ArticleDataOutput.parse({
+                key: 'cikkszam',
+                title: 'Cikkszám',
+                value: articleElement.cikkszam.toString(),
+            }),
+            ArticleDataOutput.parse({
+                key: 'cikknev',
+                title: 'Cikknév',
+                value: articleElement.cikknev.toString(),
+            }),
+            ArticleDataOutput.parse({
+                key: 'eankod',
+                title: 'EAN Kód',
+                value: articleElement.eankod.toString(),
+            }),
+        ]),
+        count: articles.length
+    }
+    return ArticleListOutput.parse(result);
 }
