@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
-const article_dto_1 = require("../../shared/dto/article.dto");
+const product_dto_1 = require("../../shared/dto/product.dto");
 const prisma = new client_1.PrismaClient();
 function getCikkByCikkszam(cikkszam) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -49,17 +49,17 @@ exports.getCikkByEanKod = getCikkByEanKod;
 const processArticles = (articles) => {
     const result = {
         data: articles.flatMap((articleElement) => [
-            article_dto_1.ArticleDataOutput.parse({
+            product_dto_1.ProductDataOutput.parse({
                 key: 'cikkszam',
                 title: 'Cikkszám',
                 value: articleElement.cikkszam.toString(),
             }),
-            article_dto_1.ArticleDataOutput.parse({
+            product_dto_1.ProductDataOutput.parse({
                 key: 'cikknev',
                 title: 'Cikknév',
                 value: articleElement.cikknev.toString(),
             }),
-            article_dto_1.ArticleDataOutput.parse({
+            product_dto_1.ProductDataOutput.parse({
                 key: 'eankod',
                 title: 'EAN Kód',
                 value: articleElement.eankod.toString(),
@@ -67,5 +67,5 @@ const processArticles = (articles) => {
         ]),
         count: articles.length
     };
-    return article_dto_1.ArticleListOutput.parse(result);
+    return product_dto_1.ProductListOutput.parse(result);
 };
