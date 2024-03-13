@@ -1,11 +1,9 @@
 import {PrismaClient} from "@prisma/client";
 import {
     ArticleDataOutput,
-    ArticleDTOOutput,
     ArticleListOutput,
     ZcikkEANSchemaInput, ZcikkSzamSchemaInput,
 } from "../../shared/dto/article.dto";
-import {zParse} from "../../shared/services/zod-dto.service";
 
 const prisma = new PrismaClient()
 
@@ -13,17 +11,16 @@ const prisma = new PrismaClient()
 
 
 export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
-    const cikk = await prisma.cikk.findFirst({
+    const cikk = await prisma.cikk.findMany({
         where: {
             cikkszam: cikkszam.cikkszam
         }
     })
-
-    if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
+    if (cikk.length===0) {
         return "Not found";
     }
+    return processArticles(cikk);
 
-    return zParse(ArticleDTOOutput, cikk);
 }
 
 
@@ -34,35 +31,36 @@ export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
                 eankod: eankod.eankod
             }
         });
-
         if (cikk.length === 0) {
             return false;
         }
-
-        const result = {
-            data: cikk.flatMap((cikkElement) => [
-                ArticleDataOutput.parse({
-                    key: 'cikkszam',
-                    title: 'Cikkszám',
-                    value: cikkElement.cikkszam.toString(),
-                }),
-                ArticleDataOutput.parse({
-                    key: 'cikknev',
-                    title: 'Cikknév',
-                    value: cikkElement.cikknev.toString(),
-                }),
-                ArticleDataOutput.parse({
-                    key: 'eankod',
-                    title: 'EAN Kód',
-                    value: cikkElement.eankod.toString(),
-                }),
-            ]),
-            count: cikk.length
-        }
-
-        return ArticleListOutput.parse(result);
+        return processArticles(cikk);
     }
     catch (err: unknown) {
         throw err;
     }
+}
+
+const processArticles = (articles: any[]) => {
+    const result = {
+        data: articles.flatMap((articleElement) => [
+            ArticleDataOutput.parse({
+                key: 'cikkszam',
+                title: 'Cikkszám',
+                value: articleElement.cikkszam.toString(),
+            }),
+            ArticleDataOutput.parse({
+                key: 'cikknev',
+                title: 'Cikknév',
+                value: articleElement.cikknev.toString(),
+            }),
+            ArticleDataOutput.parse({
+                key: 'eankod',
+                title: 'EAN Kód',
+                value: articleElement.eankod.toString(),
+            }),
+        ]),
+        count: articles.length
+    }
+    return ArticleListOutput.parse(result);
 }
