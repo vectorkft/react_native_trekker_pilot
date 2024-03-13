@@ -3,9 +3,10 @@ import {zParse} from "../../shared/services/zod-dto.service";
 import {ProductEANSchemaInput, ProductNumberSchemaInput} from "../../shared/dto/product.dto";
 import * as cikkService from "../services/cikkService";
 import {ZodDTO} from "../dto/zodDTO";
+
 export const protectedProductRouter = express.Router();
 
-protectedProductRouter.post('/getCikkByEAN',async (req: Request, res: Response)=>{
+protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response)=>{
     try{
 
         const validData=await zParse(ProductEANSchemaInput,req.body);

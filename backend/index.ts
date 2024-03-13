@@ -15,17 +15,13 @@ const HTTP_PORT = 8000;
 app.use(express.json(), Logger);
 app.use(express.urlencoded({ extended: false }));
 
-// Token verification middleware for protected routes
-protectedUserRouter.use(verifyToken);
-protectedProductRouter.use(verifyToken);
-
 // Public endpoints
 app.use('/user', userRouter);
 app.use('/token', tokenRouter);
 
 // Protected endpoints
-app.use('/protected/user', protectedUserRouter);
-app.use('/protected/product', protectedProductRouter);
+app.use('/protected/user',verifyToken, protectedUserRouter);
+app.use('/protected/product',verifyToken, protectedProductRouter);
 
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);

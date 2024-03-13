@@ -39,15 +39,12 @@ const HTTP_PORT = 8000;
 // Body parsing middleware
 app.use(express_1.default.json(), LogMiddleWare_1.Logger);
 app.use(express_1.default.urlencoded({ extended: false }));
-// Token verification middleware for protected routes
-userRoutes_1.protectedUserRouter.use(TokenMiddleware_1.verifyToken);
-productRoutes_1.protectedProductRouter.use(TokenMiddleware_1.verifyToken);
 // Public endpoints
 app.use('/user', userRoutes_1.userRouter);
 app.use('/token', tokenRoutes_1.tokenRouter);
 // Protected endpoints
-app.use('/protected/user', userRoutes_1.protectedUserRouter);
-app.use('/protected/product', productRoutes_1.protectedProductRouter);
+app.use('/protected/user', TokenMiddleware_1.verifyToken, userRoutes_1.protectedUserRouter);
+app.use('/protected/product', TokenMiddleware_1.verifyToken, productRoutes_1.protectedProductRouter);
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
