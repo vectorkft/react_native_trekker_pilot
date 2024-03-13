@@ -44,7 +44,7 @@ const zodDTO_1 = require("../dto/zodDTO");
 exports.protectedProductRouter = express_1.default.Router();
 exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.cikkEANSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, req.body);
         const body = yield cikkService.getCikkByEanKod(validData);
         if (!body) {
             return res.status(204).json(body);
@@ -58,7 +58,7 @@ exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(voi
 }));
 exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.cikkSzamSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
         const body = yield cikkService.getCikkByCikkszam(validData);
         if (body === "Not found") {
             return res.status(204).json({ message: 'Not found' });

@@ -36,9 +36,6 @@ const tokenRoutes_1 = require("./routes/tokenRoutes");
 const productRoutes_1 = require("./routes/productRoutes");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
-BigInt.prototype.toJSON = function () {
-    return this.toString();
-};
 // Body parsing middleware
 app.use(express_1.default.json(), LogMiddleWare_1.Logger);
 app.use(express_1.default.urlencoded({ extended: false }));

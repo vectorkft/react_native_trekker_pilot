@@ -9,9 +9,7 @@ import {protectedProductRouter} from "./routes/productRoutes";
 
 const app = express();
 const HTTP_PORT = 8000;
-(BigInt.prototype as any).toJSON = function () {
-    return this.toString();
-};
+
 
 // Body parsing middleware
 app.use(express.json(), Logger);
