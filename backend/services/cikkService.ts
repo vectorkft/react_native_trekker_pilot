@@ -1,9 +1,9 @@
 import {PrismaClient} from "@prisma/client";
 import {
-    ArticleDataOutput,
-    ArticleDTOOutput,
-    ArticleListOutput,
-    ZcikkEANSchemaInput, ZcikkSzamSchemaInput,
+    ProductDataOutput,
+    ProductDTOOutput,
+    ProductListOutput,
+    ZProductEANSchemaInput, ZProductNumberSchemaInput,
 } from "../../shared/dto/article.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 
@@ -12,7 +12,7 @@ const prisma = new PrismaClient()
 
 
 
-export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
+export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
     const cikk = await prisma.cikk.findFirst({
         where: {
             cikkszam: cikkszam.cikkszam
@@ -23,11 +23,11 @@ export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
         return "Not found";
     }
 
-    return zParse(ArticleDTOOutput, cikk);
+    return zParse(ProductDTOOutput, cikk);
 }
 
 
-export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
+export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
     try {
         const cikk = await prisma.cikk.findMany({
             where: {
@@ -41,17 +41,17 @@ export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
 
         const result = {
             data: cikk.flatMap((cikkElement) => [
-                ArticleDataOutput.parse({
+                ProductDataOutput.parse({
                     key: 'cikkszam',
                     title: 'Cikkszám',
                     value: cikkElement.cikkszam.toString(),
                 }),
-                ArticleDataOutput.parse({
+                ProductDataOutput.parse({
                     key: 'cikknev',
                     title: 'Cikknév',
                     value: cikkElement.cikknev.toString(),
                 }),
-                ArticleDataOutput.parse({
+                ProductDataOutput.parse({
                     key: 'eankod',
                     title: 'EAN Kód',
                     value: cikkElement.eankod.toString(),
@@ -60,7 +60,7 @@ export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
             count: cikk.length
         }
 
-        return ArticleListOutput.parse(result);
+        return ProductListOutput.parse(result);
     }
     catch (err: unknown) {
         throw err;

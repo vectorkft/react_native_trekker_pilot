@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
-import {cikkEANSchemaInput, cikkSzamSchemaInput} from "../../shared/dto/article.dto";
+import {ProductEANSchemaInput, ProductNumberSchemaInput} from "../../shared/dto/article.dto";
 import * as cikkService from "../services/cikkService";
 import {ZodDTO} from "../dto/zodDTO";
 export const protectedProductRouter = express.Router();
@@ -8,7 +8,7 @@ export const protectedProductRouter = express.Router();
 protectedProductRouter.post('/getCikkByEAN',async (req: Request, res: Response)=>{
     try{
 
-        const validData=await zParse(cikkEANSchemaInput,req.body);
+        const validData=await zParse(ProductEANSchemaInput,req.body);
         const body= await cikkService.getCikkByEanKod(validData);
         if(!body){
             return res.status(204).json(body);
@@ -25,7 +25,7 @@ protectedProductRouter.post('/getCikkByEAN',async (req: Request, res: Response)=
 
 protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
     try{
-        const validData = await zParse(cikkSzamSchemaInput,req.body);
+        const validData = await zParse(ProductNumberSchemaInput,req.body);
         const body= await cikkService.getCikkByCikkszam(validData);
         if(body==="Not found"){
             return res.status(204).json({message: 'Not found'});

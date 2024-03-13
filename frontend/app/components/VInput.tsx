@@ -24,6 +24,7 @@ const VInput = ({inputProps}: VinputProps) => {
         VInputComponentStylesheet.containerStyle,
         {backgroundColor: isDarkMode ? '#343333' : '#dcdcdc'},
       ]}
+      rightIcon={inputProps.rightIcon}
       inputContainerStyle={{borderBottomWidth: 0}}
       selectionColor={isDarkMode ? '#fff' : '#000'}
       inputStyle={{

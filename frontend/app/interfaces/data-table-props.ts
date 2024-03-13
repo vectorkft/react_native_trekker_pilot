@@ -1,5 +1,5 @@
-import {ZArticleListOutput} from '../../../shared/dto/article.dto';
+import {ZProductListOutput} from '../../../shared/dto/article.dto';
 
 export interface DataTableProps {
-  data: ZArticleListOutput;
+  data: ZProductListOutput;
 }

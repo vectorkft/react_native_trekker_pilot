@@ -1,15 +1,16 @@
 import {ApiService} from './api.service';
 import {
-  ArticleListOutput,
-  ZArticleListOutput,
-  ZcikkEANSchemaInput,
+  ProductListOutput,
+  ZProductListOutput,
+  ZProductEANSchemaInput,
+  ZProductNumberSchemaInput,
 } from '../../../shared/dto/article.dto';
 import {tokenHandlingService} from './token-handling.service';
 
 export const ProductsService = {
-  getProductsByEAN: async (
-    ean: ZcikkEANSchemaInput,
-  ): Promise<ZArticleListOutput | Response | undefined> => {
+  getProductByEAN: async (
+    ean: ZProductEANSchemaInput,
+  ): Promise<ZProductListOutput | Response | undefined> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(ean),
@@ -20,10 +21,29 @@ export const ProductsService = {
       return await ApiService.doRequest(
         '/protected/product/getCikkByEAN',
         options,
-        ArticleListOutput,
+        ProductListOutput,
       );
     } catch (e) {
       console.log('Az API nem elérhető', e);
     }
   },
+  // getProductByNumber: async (
+  //   productNumber: ZProductNumberSchemaInput,
+  // ): Promise<ZProductListOutput | Response | undefined> => {
+  //   const options = {
+  //     method: 'POST',
+  //     body: JSON.stringify(productNumber),
+  //     accessToken: await tokenHandlingService.getTokenIfValid(),
+  //   };
+  //
+  //   try {
+  //     return await ApiService.doRequest(
+  //       '/protected/product/getCikk',
+  //       options,
+  //       ProductListOutput,
+  //     );
+  //   } catch (e) {
+  //     console.log('Az API nem elérhető', e);
+  //   }
+  // },
 };

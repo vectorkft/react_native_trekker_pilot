@@ -7,7 +7,6 @@ import {
   validateZDTOForm,
 } from '../../../shared/services/zod-dto.service';
 import VCardNotFound from '../components/VCardNotFound';
-import VButton from '../components/VButton';
 import {DarkModeProviderService} from '../services/context-providers.service';
 import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
@@ -15,13 +14,10 @@ import VInput from '../components/VInput';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {ZodError} from 'zod';
 import VAlert from '../components/VAlert';
-import {
-  useInputChange,
-  useOnChangeHandler,
-} from '../states/use-products-states';
+import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
 import VBackButton from '../components/VBackButton';
 import {RouterProps} from '../interfaces/navigation-props';
-import {cikkEANSchemaInput} from '../../../shared/dto/article.dto';
+import {ProductEANSchemaInput} from '../../../shared/dto/article.dto';
 import {useStore} from '../states/zustand-states';
 import VInternetToast from '../components/VInternetToast';
 import VToast from '../components/VToast';
@@ -31,7 +27,8 @@ import {
   useBeepSound,
   useCamera,
   useOnBarCodeRead,
-} from '../states/user-camera-states';
+} from '../states/use-camera-states';
+import {Icon} from 'react-native-elements';
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeProviderService.useDarkMode();
@@ -39,12 +36,12 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchQuery, setSearchQuery] = React.useState('');
   const beep = useBeepSound();
-
-  const getArticlesByEAN = async (value: number) => {
-    return await ProductsService.getProductsByEAN({eankod: value});
+  const getProductByEAN = async (value: number) => {
+    return await ProductsService.getProductByEAN({eankod: value});
   };
-  const validateForm = async (value: number) => {
-    const {isValid, error} = (await validateZDTOForm(cikkEANSchemaInput, {
+
+  const validateFormEAN = async (value: number) => {
+    const {isValid, error} = (await validateZDTOForm(ProductEANSchemaInput, {
       eankod: value,
     })) as {isValid: boolean; error: ZodError};
     return {isValid, error};
@@ -57,12 +54,12 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     onChangeHandler,
     setErrorMessage,
   ] = useOnChangeHandler(
-    validateForm,
+    validateFormEAN,
     parseZodError,
-    getArticlesByEAN,
+    getProductByEAN,
     setSearchQuery,
   );
-  const {onChangeInput, onChangeInputWhenEnabled} = useInputChange(
+  const {onChangeInput, onChangeInputWhenEnabled, inputRef} = useInputChange(
     onChangeHandler,
     searchQuery,
     setSearchQuery,
@@ -108,44 +105,35 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
       {errorMessage && (
         <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
       )}
-      <View style={{marginTop: '15%', width: '90%'}}>
+      <View style={{marginLeft: '15%', width: '65%'}}>
         <VInput
           inputProps={{
+            ref: inputRef,
             value: searchQuery,
-            showSoftInputOnFocus: false,
-            autoFocus: true,
-            onChangeText: onChangeInput,
+            showSoftInputOnFocus: true,
+            autoFocus: !searchQuery,
+            onChangeText: onChangeInputWhenEnabled,
             placeholder: 'Keresés...',
             keyboardType: 'numeric',
+            rightIcon: (
+              <Icon
+                type="antdesign"
+                name="search1"
+                size={25}
+                color={isDarkMode ? '#ffffff' : '#000000'}
+                disabled={!searchQuery || !isConnected}
+                disabledStyle={{backgroundColor: 'transparent'}}
+                onPress={() => {
+                  onChangeHandler(Number(searchQuery));
+                }}
+              />
+            ),
           }}
         />
       </View>
-      {scanned && <VCameraIconButton onPress={clickCamera} />}
-      <VButton
-        buttonPropsNativeElement={{
-          title: 'Keresés',
-          titleStyle: {
-            fontFamily: 'Roboto',
-            fontSize: 20,
-            fontWeight: '700',
-            color: isDarkMode ? '#fff' : '#000',
-            textAlign: 'center',
-          },
-          buttonStyle: {
-            backgroundColor: '#00EDAE',
-            height: 50,
-            marginTop: 5,
-            borderRadius: 10,
-            width: '70%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          },
-          disabled: !searchQuery || !isConnected,
-          onPress: () => {
-            onChangeHandler(Number(searchQuery));
-          },
-        }}
-      />
+      <View style={{marginLeft: '80%', marginTop: -60}}>
+        {scanned && <VCameraIconButton onPress={clickCamera} />}
+      </View>
       {changeHandlerResult?.status === 200 && (
         <View>
           {/*<VDataTable data={changeHandlerResult} />*/}

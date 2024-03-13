@@ -1,17 +1,25 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ZodError} from 'zod';
 import {debounce} from 'lodash';
+import {TextInput} from 'react-native';
 
 export const useInputChange = (
   onChangeHandler: (value: number) => void,
   searchQuery: string,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 ) => {
+  const inputRef = useRef<TextInput | null>(null);
+
+  useEffect(() => {
+    if (!searchQuery && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [searchQuery]);
+
   const onChangeInput = useCallback(
-    (value: number) => {
-      // Add 'number' as the type of `value`.
-      onChangeHandler(value);
-      setSearchQuery(value.toString()); // Convert the number to a string before setting the search query.
+    (value: string) => {
+      onChangeHandler(Number(value));
+      setSearchQuery(value);
     },
     [onChangeHandler, setSearchQuery],
   );
@@ -24,6 +32,7 @@ export const useInputChange = (
   );
 
   return {
+    inputRef,
     onChangeInput,
     onChangeInputWhenEnabled,
     searchQuery,
@@ -43,15 +52,15 @@ export const useOnChangeHandler = (
 
   const debouncedOnChangeHandler = useRef(
     debounce(async (value: number) => {
-      const eanNumber = Number(value);
       setErrorMessage(null);
 
-      if (isNaN(eanNumber)) {
+      if (isNaN(value)) {
         setErrorMessage('Kérjük, adjon meg egy érvényes számot.');
+        setSearchQuery('');
         return;
       }
       try {
-        const {isValid, error} = await validateForm(eanNumber);
+        const {isValid, error} = await validateForm(value);
 
         if (!isValid) {
           const msg = await parseZodError(error);
@@ -60,14 +69,14 @@ export const useOnChangeHandler = (
           return;
         }
 
-        const response = await getArticlesByEAN(eanNumber);
+        const response = await getArticlesByEAN(value);
         setChangeHandlerResult(response);
         setSearchQueryState(value);
         setSearchQuery('');
       } catch (errors: any) {
         console.log('Hiba történt', errors);
       }
-    }, 1000),
+    }),
   );
 
   const onChangeHandler = useCallback(

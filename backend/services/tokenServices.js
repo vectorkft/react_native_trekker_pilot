@@ -141,8 +141,8 @@ function deleteTokensByUserId(userId) {
 }
 exports.deleteTokensByUserId = deleteTokensByUserId;
 function refreshToken_new(refreshToken) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
         if (!(yield isRefreshTokenInDatabase({ refreshToken: refreshToken.refreshToken }))) {
             return yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodyErrorMessage, { errorMessage: 'You tried to use AccessToken as RefreshToken' });

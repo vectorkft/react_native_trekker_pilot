@@ -24,7 +24,7 @@ function getCikkByCikkszam(cikkszam) {
         if (!cikk || !cikk.cikkszam || !cikk.cikknev || !cikk.eankod) {
             return "Not found";
         }
-        return (0, zod_dto_service_1.zParse)(article_dto_1.ArticleDTOOutput, cikk);
+        return (0, zod_dto_service_1.zParse)(article_dto_1.ProductDTOOutput, cikk);
     });
 }
 exports.getCikkByCikkszam = getCikkByCikkszam;
@@ -41,17 +41,17 @@ function getCikkByEanKod(eankod) {
             }
             const result = {
                 data: cikk.flatMap((cikkElement) => [
-                    article_dto_1.ArticleDataOutput.parse({
+                    article_dto_1.ProductDataOutput.parse({
                         key: 'cikkszam',
                         title: 'Cikkszám',
                         value: cikkElement.cikkszam.toString(),
                     }),
-                    article_dto_1.ArticleDataOutput.parse({
+                    article_dto_1.ProductDataOutput.parse({
                         key: 'cikknev',
                         title: 'Cikknév',
                         value: cikkElement.cikknev.toString(),
                     }),
-                    article_dto_1.ArticleDataOutput.parse({
+                    article_dto_1.ProductDataOutput.parse({
                         key: 'eankod',
                         title: 'EAN Kód',
                         value: cikkElement.eankod.toString(),
@@ -59,7 +59,7 @@ function getCikkByEanKod(eankod) {
                 ]),
                 count: cikk.length
             };
-            return article_dto_1.ArticleListOutput.parse(result);
+            return article_dto_1.ProductListOutput.parse(result);
         }
         catch (err) {
             throw err;
