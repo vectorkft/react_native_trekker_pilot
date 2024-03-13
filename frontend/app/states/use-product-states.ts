@@ -41,9 +41,11 @@ export const useInputChange = (
 };
 
 export const useOnChangeHandler = (
-  validateForm: (value: number) => Promise<{isValid: boolean; error: ZodError}>,
+  validateFormEAN: (value: number) => Promise<{isValid: boolean; error: ZodError}>,
+  validateFormProductNumber: (value: number) => Promise<{isValid: boolean; error: ZodError}>,
   parseZodError: (error: ZodError) => Promise<string>,
-  getArticlesByEAN: (value: number) => Promise<any>,
+  getProductByEAN: (value: number) => Promise<any>,
+  getProductByNumber: (value: number) => Promise<any>,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -60,17 +62,28 @@ export const useOnChangeHandler = (
         return;
       }
       try {
-        const {isValid, error} = await validateForm(value);
+        const {isValid: isValidEAN, error: errorEAN} = await validateFormEAN(value);
+        const {isValid: isValidProductNumber, error: errorProductNumber} = await validateFormProductNumber(value);
 
-        if (!isValid) {
-          const msg = await parseZodError(error);
-          setErrorMessage(msg);
+
+        if (!isValidEAN && !isValidProductNumber) {
+          const msgEAN = await parseZodError(errorEAN);
+          const msgProductNumber = await parseZodError(errorProductNumber);
+          setErrorMessage(`${msgEAN} ${msgProductNumber}`);
           setSearchQuery('');
           return;
         }
 
-        const response = await getArticlesByEAN(value);
-        setChangeHandlerResult(response);
+        const responseEAN = await getProductByEAN(value);
+
+        if (responseEAN && isValidEAN) {
+          setChangeHandlerResult(responseEAN);
+        } else {
+          const responseProductNumber = await getProductByNumber(value);
+          if (responseProductNumber && isValidProductNumber) {
+            setChangeHandlerResult(responseProductNumber);
+          }
+        }
         setSearchQueryState(value);
         setSearchQuery('');
       } catch (errors: any) {

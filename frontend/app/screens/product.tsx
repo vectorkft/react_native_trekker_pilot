@@ -17,7 +17,7 @@ import VAlert from '../components/VAlert';
 import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
 import VBackButton from '../components/VBackButton';
 import {RouterProps} from '../interfaces/navigation-props';
-import {ProductEANSchemaInput} from '../../../shared/dto/article.dto';
+import {ProductEANSchemaInput, ProductNumberSchemaInput} from '../../../shared/dto/article.dto';
 import {useStore} from '../states/zustand-states';
 import VInternetToast from '../components/VInternetToast';
 import VToast from '../components/VToast';
@@ -40,12 +40,23 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     return await ProductsService.getProductByEAN({eankod: value});
   };
 
+    const getProductByNumber = async (value: number) => {
+        return await ProductsService.getProductByNumber({cikkszam: value});
+    };
+
   const validateFormEAN = async (value: number) => {
     const {isValid, error} = (await validateZDTOForm(ProductEANSchemaInput, {
       eankod: value,
     })) as {isValid: boolean; error: ZodError};
     return {isValid, error};
   };
+
+    const validateFormProductNumber = async (value: number) => {
+        const {isValid, error} = (await validateZDTOForm(ProductNumberSchemaInput, {
+            cikkszam: value,
+        })) as {isValid: boolean; error: ZodError};
+        return {isValid, error};
+    };
 
   const [
     errorMessage,
@@ -55,8 +66,10 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     setErrorMessage,
   ] = useOnChangeHandler(
     validateFormEAN,
+    validateFormProductNumber,
     parseZodError,
     getProductByEAN,
+    getProductByNumber,
     setSearchQuery,
   );
   const {onChangeInput, onChangeInputWhenEnabled, inputRef} = useInputChange(
@@ -140,7 +153,7 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
           <VCardSuccess title={'Találatok'} content={changeHandlerResult} />
         </View>
       )}
-      {changeHandlerResult?.status === 204 && (
+      {changeHandlerResult?.status === 204 &&(
         <View>
           <VCardNotFound title={'Not Found'} ean={searchQueryState} />
         </View>

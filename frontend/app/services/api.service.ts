@@ -45,11 +45,11 @@ export const ApiService = {
         }
       }
     } else if (response.status === 403) {
-      return undefined;
+      return {status: 403, error: 'Forbidden', data: null};
     } else if (response.status === 204) {
-      return null;
+      return {status: 204, data: null};
     } else if (response.status === 401) {
-      return undefined;
+      return {status: 401, error: 'Unauthorized', data: null};
     }
     return {
       ...data,
