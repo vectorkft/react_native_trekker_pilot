@@ -1,5 +1,6 @@
 import {AnyZodObject, z, ZodArray, ZodError, ZodObject} from "zod";
 import {ValidateForm} from "../../frontend/app/interfaces/validate-form"
+import * as Sentry from '@sentry/react';
 
 export async function zParse<T extends AnyZodObject | ZodArray<ZodObject<any>>>(
     schema: T,
@@ -9,7 +10,7 @@ export async function zParse<T extends AnyZodObject | ZodArray<ZodObject<any>>>(
         return schema.parseAsync(data);
     } catch (error) {
         if (error instanceof ZodError) {
-            throw new Error(error.message);
+            Sentry.captureException(new Error(error.message));
         }
         return new Error(JSON.stringify(error));
     }
@@ -21,7 +22,10 @@ export async function parseZodError(error: ZodError) : Promise<string> {
         const messages = msg.map((m: any) => m.message);
         return messages.join(', ');
     } catch (e) {
-        console.log('Hiba a hibaüzenet feldolgozásakor:', e);
+        Sentry.withScope(scope => {
+            scope.setContext('myContext', { info: 'Hiba az üzenet feldolgozásakor' });
+            Sentry.captureException(error);
+        });
         return '';
     }
 }
@@ -32,9 +36,9 @@ export async function validateZDTOForm<T extends AnyZodObject>(
 ): Promise<ValidateForm> {
     try {
         const body: z.infer<T> = await zParse(schema, formData);
-        console.log(body);
+        Sentry.captureMessage("DTO body", body);
     } catch (error: any) {
-        console.log(error);
+        Sentry.captureException(error);
         return {
             isValid: false,
             error: error,

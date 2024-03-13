@@ -14,10 +14,10 @@ import {
 } from '../../../shared/dto/token.dto';
 import {NavigationService} from './navigation.service';
 import {ZodError} from 'zod';
+import * as Sentry from "@sentry/react-native";
 
 const isTokenExpired = (token: string): boolean => {
   if (!token) {
-    console.log('Nincs token.');
     return false;
   }
 
@@ -27,7 +27,7 @@ const isTokenExpired = (token: string): boolean => {
 
     return decoded.exp >= currentTime;
   } catch (error) {
-    console.log('Hiba a token dekódolása közben:', error);
+    Sentry.captureException(error);
     return false;
   }
 };
@@ -47,7 +47,7 @@ const refreshAccessToken = async (
       TokenDTOOutput,
     );
   } catch (error) {
-    console.log('Hiba történt az API hívás során:', error);
+    Sentry.captureException(error);
   }
 };
 
@@ -75,7 +75,7 @@ export const tokenHandlingService = {
         }
       } else {
         const msg = await parseZodError(error);
-        console.log('Nem valid token!', msg);
+        Sentry.setTag('Invalid token', msg);
       }
     }
 

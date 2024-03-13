@@ -6,6 +6,7 @@ import {
   ZProductNumberSchemaInput,
 } from '../../../shared/dto/product.dto';
 import {tokenHandlingService} from './token-handling.service';
+import * as Sentry from "@sentry/react-native";
 
 export const ProductsService = {
   getProductByEAN: async (
@@ -24,7 +25,7 @@ export const ProductsService = {
         ProductListOutput,
       );
     } catch (e) {
-      console.log('Az API nem elérhető', e);
+      Sentry.captureException(e);
     }
   },
   getProductByNumber: async (
@@ -43,7 +44,7 @@ export const ProductsService = {
         ProductListOutput,
       );
     } catch (e) {
-      console.log('Az API nem elérhető', e);
+      Sentry.captureException(e);
     }
   },
 };

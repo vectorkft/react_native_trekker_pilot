@@ -1,5 +1,6 @@
 import {tokenHandlingService} from './token-handling.service';
 import {ApiService} from './api.service';
+import * as Sentry from "@sentry/react-native";
 
 export const profileService = {
   handleUserProfileRequest: async () => {
@@ -14,7 +15,7 @@ export const profileService = {
         options,
       );
     } catch (error) {
-      console.log('Az API nem elérhető.', error);
+      Sentry.captureException(error)
     }
   },
 };

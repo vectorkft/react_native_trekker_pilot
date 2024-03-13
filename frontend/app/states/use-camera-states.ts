@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import Sound from 'react-native-sound';
+import * as Sentry from "@sentry/react-native";
 
 export const useCamera = (
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>,
@@ -34,7 +35,7 @@ export const useBeepSound = () => {
     () =>
       new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
         if (error) {
-          console.log('Hiba történt a hangfájl betöltésekor', error);
+          Sentry.captureException(error);
         }
       }),
     [],
@@ -56,7 +57,7 @@ export const useOnBarCodeRead = (
         setIsCameraActive(false);
         beep.play(success => {
           if (!success) {
-            console.log('A hang nem játszódott le');
+            Sentry.captureMessage('A hang nem játszódott le', "warning");
           }
         });
       }

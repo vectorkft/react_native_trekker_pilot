@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ZodError} from 'zod';
 import {debounce} from 'lodash';
 import {TextInput} from 'react-native';
+import * as Sentry from '@sentry/react';
 
 export const useInputChange = (
   onChangeHandler: (value: number) => void,
@@ -86,8 +87,8 @@ export const useOnChangeHandler = (
         }
         setSearchQueryState(value);
         setSearchQuery('');
-      } catch (errors: any) {
-        console.log('Hiba történt', errors);
+      } catch (e: any) {
+        Sentry.captureException(e);
       }
     }),
   );

@@ -6,6 +6,7 @@ import {
   ZUserLoginDTOOutput,
 } from '../../../shared/dto/user-login.dto';
 import {LocalStorageService} from './local-storage.service';
+import * as Sentry from "@sentry/react-native";
 
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
@@ -35,7 +36,7 @@ export const LoginService = {
         UserLoginDTOOutput,
       );
     } catch (error: any) {
-      console.log('Hiba történt!', 'Az API nem elérhető.');
+      Sentry.captureException(error);
     }
   },
 
@@ -51,14 +52,9 @@ export const LoginService = {
         options,
       );
 
-      if (result.status === 200) {
-        return true;
-      } else {
-        console.log('Hiba:', result);
-        return false;
-      }
+      return result.status === 200;
     } catch (error: any) {
-      console.log('Hiba történt!', 'Az API nem elérhető.', error);
+      Sentry.captureException(error);
     }
   },
 };

@@ -1,6 +1,7 @@
 import {API_URL} from '../../config';
 import {zParse} from '../../../shared/services/zod-dto.service';
 import {AnyZodObject} from 'zod';
+import * as Sentry from "@sentry/react-native";
 
 const createRequestInit = (options: any = {}): RequestInit => {
   const headers = {
@@ -41,7 +42,7 @@ export const ApiService = {
         try {
           data = await zParse(schema, data);
         } catch (error) {
-          console.log('Hiba a válasz feldolgozásakor:', error);
+          Sentry.captureException(error);
         }
       }
     } else if (response.status === 403) {
