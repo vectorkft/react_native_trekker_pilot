@@ -4,7 +4,7 @@ import {
   ZProductListOutput,
   ZProductEANSchemaInput,
   ZProductNumberSchemaInput,
-} from '../../../shared/dto/article.dto';
+} from '../../../shared/dto/product.dto';
 import {tokenHandlingService} from './token-handling.service';
 
 export const ProductsService = {

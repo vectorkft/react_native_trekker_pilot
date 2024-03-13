@@ -3,7 +3,7 @@ import {
     ArticleDataOutput,
     ArticleListOutput,
     ZcikkEANSchemaInput, ZcikkSzamSchemaInput,
-} from "../../shared/dto/article.dto";
+} from "../../shared/dto/product.dto";
 
 const prisma = new PrismaClient()
 

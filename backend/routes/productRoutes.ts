@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
-import {cikkEANSchemaInput, cikkSzamSchemaInput} from "../../shared/dto/article.dto";
+import {cikkEANSchemaInput, cikkSzamSchemaInput} from "../../shared/dto/product.dto";
 import * as cikkService from "../services/cikkService";
 import {ZodDTO} from "../dto/zodDTO";
 export const protectedProductRouter = express.Router();

@@ -17,7 +17,7 @@ import VAlert from '../components/VAlert';
 import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
 import VBackButton from '../components/VBackButton';
 import {RouterProps} from '../interfaces/navigation-props';
-import {ProductEANSchemaInput, ProductNumberSchemaInput} from '../../../shared/dto/article.dto';
+import {ProductEANSchemaInput, ProductNumberSchemaInput} from '../../../shared/dto/product.dto';
 import {useStore} from '../states/zustand-states';
 import VInternetToast from '../components/VInternetToast';
 import VToast from '../components/VToast';

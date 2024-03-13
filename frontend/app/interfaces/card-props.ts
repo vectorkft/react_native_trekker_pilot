@@ -1,4 +1,4 @@
-import {ZProductListOutput} from '../../../shared/dto/article.dto';
+import {ZProductListOutput} from '../../../shared/dto/product.dto';
 
 export interface CardProps {
   title: string;
