@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {LoginService} from '../services/login.service';
-import {LoadingProviderService} from '../services/context-providers.service';
 import {LocalStorageService} from '../services/local-storage.service';
+import DeviceInfo from 'react-native-device-info';
 
 export const useLoginState = () => {
   const [username, setUsername] = useState(
@@ -9,15 +9,16 @@ export const useLoginState = () => {
   );
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const {setLoadingState} = LoadingProviderService.useLoading();
 
   useEffect(() => {
-    setLoadingState(true);
     const {username: loadedUsername, rememberMe: loadedRememberme} =
       LoginService.loadUsernameAndRememberMe();
+    console.log(DeviceInfo.getBrand());
+    DeviceInfo.isKeyboardConnected().then(value => {
+      console.log(value);
+    });
     setUsername(loadedUsername || '');
     setRememberMe(loadedRememberme || false);
-    setLoadingState(false);
   }, []);
 
   return {

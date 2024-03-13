@@ -1,8 +1,8 @@
-import {ZArticleDTOOutputData} from '../../../shared/dto/article.dto';
+import {ZProductListOutput} from '../../../shared/dto/article.dto';
 
 export interface CardProps {
   title: string;
-  content: ZArticleDTOOutputData;
+  content: ZProductListOutput;
 }
 
 export interface CardPropsNotFound {
