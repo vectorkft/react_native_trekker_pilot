@@ -43,8 +43,8 @@ const prisma = new client_1.PrismaClient();
 const tokenService = __importStar(require("../services/tokenServices"));
 dotenv_1.default.config();
 function verifyToken(req, res, next) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        var _a;
         const authHeader = req.headers.authorization;
         const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
         if (authHeader) {

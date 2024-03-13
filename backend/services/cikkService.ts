@@ -1,8 +1,8 @@
 import {PrismaClient} from "@prisma/client";
 import {
-    ArticleDataOutput,
-    ArticleListOutput,
-    ZcikkEANSchemaInput, ZcikkSzamSchemaInput,
+    ProductDataOutput,
+    ProductListOutput,
+    ZProductEANSchemaInput, ZProductNumberSchemaInput,
 } from "../../shared/dto/product.dto";
 
 const prisma = new PrismaClient()
@@ -10,7 +10,7 @@ const prisma = new PrismaClient()
 
 
 
-export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
+export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
     const cikk = await prisma.cikk.findMany({
         where: {
             cikkszam: cikkszam.cikkszam
@@ -24,7 +24,7 @@ export async function getCikkByCikkszam(cikkszam: ZcikkSzamSchemaInput) {
 }
 
 
-export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
+export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
     try {
         const cikk = await prisma.cikk.findMany({
             where: {
@@ -44,17 +44,17 @@ export async function getCikkByEanKod(eankod: ZcikkEANSchemaInput){
 const processArticles = (articles: any[]) => {
     const result = {
         data: articles.flatMap((articleElement) => [
-            ArticleDataOutput.parse({
+            ProductDataOutput.parse({
                 key: 'cikkszam',
                 title: 'Cikkszám',
                 value: articleElement.cikkszam.toString(),
             }),
-            ArticleDataOutput.parse({
+            ProductDataOutput.parse({
                 key: 'cikknev',
                 title: 'Cikknév',
                 value: articleElement.cikknev.toString(),
             }),
-            ArticleDataOutput.parse({
+            ProductDataOutput.parse({
                 key: 'eankod',
                 title: 'EAN Kód',
                 value: articleElement.eankod.toString(),
@@ -62,5 +62,5 @@ const processArticles = (articles: any[]) => {
         ]),
         count: articles.length
     }
-    return ArticleListOutput.parse(result);
+    return ProductListOutput.parse(result);
 }
