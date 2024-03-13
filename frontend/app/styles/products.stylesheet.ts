@@ -4,6 +4,7 @@ export const articleStyles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 });
 

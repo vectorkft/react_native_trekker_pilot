@@ -1,7 +1,7 @@
 import {Icon} from 'react-native-elements';
 import {RouterProps} from '../interfaces/navigation-props';
 import {DarkModeProviderService} from '../services/context-providers.service';
-import {backButtonStyles} from '../styles/vback-button-component.stylesheet';
+import {backButtonStyles} from '../styles/back-button-component.stylesheet';
 import {TouchableOpacity} from 'react-native';
 import {useStore} from '../states/zustand-states';
 
