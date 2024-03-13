@@ -31,7 +31,11 @@ export const ApiService = {
       createRequestInit(requestOptions),
     );
     let data: any;
-    if (response.status !== 204 && response.status !== 403) {
+    if (
+      response.status !== 204 &&
+      response.status !== 403 &&
+      response.status !== 401
+    ) {
       data = await response.json();
       if (schema && response.ok) {
         try {
@@ -44,6 +48,8 @@ export const ApiService = {
       return {status: 403, error: 'Forbidden', data: null};
     } else if (response.status === 204) {
       return {status: 204, data: null};
+    } else if (response.status === 401) {
+      return {status: 401, error: 'Unauthorized', data: null};
     }
     return {
       ...data,
