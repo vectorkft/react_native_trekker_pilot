@@ -101,7 +101,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       {errorMessage && (
         <VAlert type="error" title={'Hibás belépés!'} message={errorMessage} />
       )}
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 1,marginTop: '20%', alignItems: 'center'}}>
         <Text
           style={{
             fontFamily: 'Roboto',

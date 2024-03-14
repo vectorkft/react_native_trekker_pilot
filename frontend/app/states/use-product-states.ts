@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {ZodError} from 'zod';
-import {debounce} from 'lodash';
 import {TextInput} from 'react-native';
 import * as Sentry from '@sentry/react';
+import {ValidateForm} from '../interfaces/validate-form';
 
 export const useInputChange = (
-  onChangeHandler: (value: number) => void,
+  onChangeHandler: (value: string) => void,
   searchQuery: string,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 ) => {
@@ -19,7 +18,7 @@ export const useInputChange = (
 
   const onChangeInput = useCallback(
     (value: string) => {
-      onChangeHandler(Number(value));
+      onChangeHandler(value);
       setSearchQuery(value);
     },
     [onChangeHandler, setSearchQuery],
@@ -42,46 +41,36 @@ export const useInputChange = (
 };
 
 export const useOnChangeHandler = (
-  validateFormEAN: (value: number) => Promise<{isValid: boolean; error: ZodError}>,
-  validateFormProductNumber: (value: number) => Promise<{isValid: boolean; error: ZodError}>,
-  parseZodError: (error: ZodError) => Promise<string>,
-  getProductByEAN: (value: number) => Promise<any>,
-  getProductByNumber: (value: number) => Promise<any>,
+  validateFormArray: (value: string) => Promise<ValidateForm>,
+  getProductByEAN: (value: string) => Promise<any>,
+  getProductByNumber: (value: string) => Promise<any>,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [searchQueryState, setSearchQueryState] = useState<number | string>(0);
   const [changeHandlerResult, setChangeHandlerResult] = useState<any>(null);
 
-  const debouncedOnChangeHandler = useRef(
-    debounce(async (value: number) => {
+  const onChangeHandler = useCallback(
+    async (value: string) => {
       setErrorMessage(null);
 
-      if (isNaN(value)) {
-        setErrorMessage('Kérjük, adjon meg egy érvényes számot.');
-        setSearchQuery('');
-        return;
-      }
       try {
-        const {isValid: isValidEAN, error: errorEAN} = await validateFormEAN(value);
-        const {isValid: isValidProductNumber, error: errorProductNumber} = await validateFormProductNumber(value);
+        const {isValid, error} = await validateFormArray(value);
 
-
-        if (!isValidEAN && !isValidProductNumber) {
-          const msgEAN = await parseZodError(errorEAN);
-          const msgProductNumber = await parseZodError(errorProductNumber);
-          setErrorMessage(`${msgEAN} ${msgProductNumber}`);
+        if (!isValid) {
+          setErrorMessage('Nem megfelelő formátum, ellenőrizd az adatot!');
           setSearchQuery('');
           return;
         }
 
         const responseEAN = await getProductByEAN(value);
 
-        if (responseEAN && isValidEAN) {
+        if (responseEAN && isValid) {
+          console.log('isvalid:', {isValid});
           setChangeHandlerResult(responseEAN);
         } else {
           const responseProductNumber = await getProductByNumber(value);
-          if (responseProductNumber && isValidProductNumber) {
+          if (responseProductNumber && isValid) {
             setChangeHandlerResult(responseProductNumber);
           }
         }
@@ -90,14 +79,8 @@ export const useOnChangeHandler = (
       } catch (e: any) {
         Sentry.captureException(e);
       }
-    }),
-  );
-
-  const onChangeHandler = useCallback(
-    (value: number) => {
-      debouncedOnChangeHandler.current(value);
     },
-    [debouncedOnChangeHandler],
+    [validateFormArray, getProductByEAN, getProductByNumber, setSearchQuery],
   );
 
   return [

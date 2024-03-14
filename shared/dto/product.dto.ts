@@ -9,12 +9,12 @@ export const ProductDataOutput = z.object({
 });
 
 export const ProductEANSchemaInput = z.object({
-    eankod: z.string().refine(value => value.length === 13, 'Az EAN kód pontosan 13 karakter hosszú kell legyen!.')
-        .refine(value => ean(value),'Nem valid EAN kód'),
+    eankod: z.string().refine(value => value.length === 13, 'Az EAN kód pontosan 13 karakter hosszú kell legyen!')
+        .refine(value => ean(Number(value)),'Nem valid EAN kód!'),
 });
 
 export const ProductNumberSchemaInput = z.object({
-    cikkszam: z.string().refine(value => typeof value === 'string', 'Nem szöveget adtál meg!'),
+    cikkszam: z.string().min(1,'Minimum 1 karakter hosszúnak kell lennie a cikkszámnak!').max(21, 'Túl lépted a maximum 21 karaktert!')
 });
 
 export const ProductListOutput = z.object({

@@ -43,7 +43,7 @@ export const useBeepSound = () => {
 };
 
 export const useOnBarCodeRead = (
-  onChangeHandler: (value: number) => void,
+  onChangeHandler: (value: string) => void,
   scanned: boolean,
   setScanned: React.Dispatch<React.SetStateAction<boolean>>,
   setIsCameraActive: React.Dispatch<React.SetStateAction<boolean>>,

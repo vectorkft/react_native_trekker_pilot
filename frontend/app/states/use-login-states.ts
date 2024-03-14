@@ -13,7 +13,7 @@ export const useLoginState = () => {
   useEffect(() => {
     const {username: loadedUsername, rememberMe: loadedRememberme} =
       LoginService.loadUsernameAndRememberMe();
-    console.log(DeviceInfo.getBrand());
+    console.log(DeviceInfo.isKeyboardConnectedSync());
     DeviceInfo.isKeyboardConnected().then(value => {
       console.log(value);
     });
