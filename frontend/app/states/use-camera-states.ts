@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import Sound from 'react-native-sound';
-import * as Sentry from "@sentry/react-native";
+import * as Sentry from '@sentry/react-native';
 
 export const useCamera = (
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>,
@@ -57,7 +57,7 @@ export const useOnBarCodeRead = (
         setIsCameraActive(false);
         beep.play(success => {
           if (!success) {
-            Sentry.captureMessage('A hang nem játszódott le', "warning");
+            Sentry.captureMessage('A hang nem játszódott le', 'warning');
           }
         });
       }

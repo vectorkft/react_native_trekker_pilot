@@ -3,8 +3,7 @@ import {View} from 'react-native';
 import {ProductsService} from '../services/products.service';
 import {articleStyles} from '../styles/products.stylesheet';
 import {
-  parseZodError,
-  validateZDTOForms,
+    validateZDTOForm,
 } from '../../../shared/services/zod-dto.service';
 import VCardNotFound from '../components/VCardNotFound';
 import {DarkModeProviderService} from '../services/context-providers.service';
@@ -12,7 +11,6 @@ import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
 import VInput from '../components/VInput';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {ZodError} from 'zod';
 import VAlert from '../components/VAlert';
 import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
 import VBackButton from '../components/VBackButton';
@@ -32,6 +30,8 @@ import {
   useOnBarCodeRead,
 } from '../states/use-camera-states';
 import {Icon} from 'react-native-elements';
+import {ZodError, ZodIssueCode} from "zod";
+import {ValidateForm} from "../interfaces/validate-form";
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeProviderService.useDarkMode();
@@ -47,16 +47,22 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     return await ProductsService.getProductByNumber({cikkszam: value});
   };
 
-  const validateFormArray = async (value: string) => {
-    const {isValid, error} = (await validateZDTOForms(
-      [ProductEANSchemaInput, ProductNumberSchemaInput],
-      {
-        eankod: value,
-        cikkszam: value,
-      },
-    )) as {isValid: boolean; error: ZodError};
-    return {isValid, error};
-  };
+    const validateFormArray = async (value: string): Promise<ValidateForm> => {
+        const eanValidation = await validateZDTOForm(ProductEANSchemaInput, { eankod: value });
+        if (eanValidation.isValid) {
+            return { ...eanValidation, validType: 'ean' };
+        } else {
+            const numberValidation = await validateZDTOForm(ProductNumberSchemaInput, { cikkszam: value });
+            if (numberValidation.isValid) {
+                return { ...numberValidation, validType: 'number' };
+            }
+        }
+        return { isValid: false, error: new ZodError([{
+                code: ZodIssueCode.custom,
+                message: "Nem megfelelő adat!",
+                path: [],
+            }]), validType: null };
+    };
 
   const [
     errorMessage,
@@ -66,7 +72,6 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     setErrorMessage,
   ] = useOnChangeHandler(
     validateFormArray,
-    // parseZodError,
     getProductByEAN,
     getProductByNumber,
     setSearchQuery,
@@ -124,7 +129,7 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
             value: searchQuery,
             showSoftInputOnFocus: true,
             autoFocus: !searchQuery,
-            onChangeText: onChangeInput,
+            onChangeText: onChangeInputWhenEnabled,
             placeholder: 'Keresés...',
             keyboardType: 'numeric',
             rightIcon: (

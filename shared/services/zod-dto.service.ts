@@ -51,33 +51,6 @@ export async function validateZDTOForm<T extends AnyZodObject>(
     };
 }
 
-export async function validateZDTOForms<T extends AnyZodObject>(
-    schemas: T[],
-    formData: z.infer<T>,
-): Promise<ValidateForm> {
-    let aggregateError: z.ZodError | null = null;
-    for (const schema of schemas) {
-        try {
-            const body: z.infer<T> = await zParse(schema, formData);
-            Sentry.captureMessage("DTO body", body);
-            return {
-                error: null,
-                isValid: true,
-            };
-        } catch (error: any) {
-            Sentry.captureException(error);
-            if (error instanceof z.ZodError) {
-                aggregateError = error;
-            }
-        }
-    }
-
-    return {
-        isValid: false,
-        error: aggregateError,
-    };
-}
-
 
 
 
