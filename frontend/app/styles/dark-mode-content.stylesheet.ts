@@ -4,14 +4,10 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 export const darkModeContent = StyleSheet.create({
   lightContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.lighter,
   },
   darkContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.darker,
   },
   lightTitle: {

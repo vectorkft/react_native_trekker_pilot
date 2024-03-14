@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Modal, StyleSheet, Animated} from 'react-native';
 import {Icon, Button} from 'react-native-elements';
 import {AlertProps} from '../interfaces/alert-props';
+import {VAlertComponentStylesheet} from "../styles/valert-component.stylesheet";
 
 const VAlert: React.FC<AlertProps> = ({type, title, message}) => {
   const backgroundColor =
@@ -21,13 +22,13 @@ const VAlert: React.FC<AlertProps> = ({type, title, message}) => {
     <Modal animationType="slide" transparent={true} visible={visible}>
       <Animated.View
         style={{
-          ...styles.modalView,
+          ...VAlertComponentStylesheet.modalView,
           backgroundColor: backgroundColor,
           opacity: fadeAnim,
         }}>
-        <View style={styles.alertHeader}>
+        <View style={VAlertComponentStylesheet.alertHeader}>
           <Icon name={type} type="material" color="#fff" />
-          <Text style={styles.alertTitle}>{title.toUpperCase()}</Text>
+          <Text style={VAlertComponentStylesheet.alertTitle}>{title.toUpperCase()}</Text>
           <Button
             icon={<Icon name="close" size={18} color="#fff" />}
             type="clear"
@@ -36,34 +37,10 @@ const VAlert: React.FC<AlertProps> = ({type, title, message}) => {
             }}
           />
         </View>
-        <Text style={styles.alertMessage}>{message}</Text>
+        <Text style={VAlertComponentStylesheet.alertMessage}>{message}</Text>
       </Animated.View>
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalView: {
-    margin: 20,
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-  },
-  alertHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  alertTitle: {
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  alertMessage: {
-    marginTop: 15,
-    color: '#fff',
-    textAlign: 'center',
-  },
-});
 
 export default VAlert;

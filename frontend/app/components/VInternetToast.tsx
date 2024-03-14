@@ -9,6 +9,7 @@ import {
 import {VtoastProps} from '../interfaces/vtoast-props';
 import {DarkModeProviderService} from '../services/context-providers.service';
 import {Icon} from 'react-native-elements';
+import {VInternetToastStylesheet} from "../styles/vinternet-toast.stylesheet";
 
 const VInternetToast = ({isVisible}: VtoastProps) => {
   const [slideAnim] = useState(
@@ -27,7 +28,7 @@ const VInternetToast = ({isVisible}: VtoastProps) => {
   return (
     <Animated.View
       style={{
-        ...styles.toast,
+        ...VInternetToastStylesheet.toast,
         transform: [{translateY: slideAnim}],
         backgroundColor: isDarkMode ? '#343333' : '#a9a4a4',
       }}>
@@ -55,26 +56,6 @@ const VInternetToast = ({isVisible}: VtoastProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  toast: {
-    position: 'absolute',
-    width: '90%',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    bottom: 15,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4, // Android árnyékolás
-  },
-});
+
 
 export default VInternetToast;

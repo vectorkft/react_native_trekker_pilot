@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {TextInput} from 'react-native';
 import * as Sentry from '@sentry/react';
 import {ValidateForm} from '../interfaces/validate-form';
-import {ZodError} from "zod";
 
 export const useInputChange = (
   onChangeHandler: (value: string) => void,
@@ -52,37 +51,36 @@ export const useOnChangeHandler = (
   const [changeHandlerResult, setChangeHandlerResult] = useState<any>(null);
 
   const onChangeHandler = useCallback(
-      async (value: string) => {
-        setErrorMessage(null);
+    async (value: string) => {
+      setErrorMessage(null);
 
-        try {
-          const {isValid, error, validType } = await validateFormArray(value);
+      try {
+        const {isValid, error, validType} = await validateFormArray(value);
 
-          if (!isValid) {
-            setErrorMessage('Nem megfelelő formátum, ellenőrizd az adatot!');
-            setSearchQuery('');
-            return;
-          }
-
-          let response;
-          if (validType === 'ean') {
-            response = await getProductByEAN(value);
-          } else if (validType === 'number') {
-            response = await getProductByNumber(value);
-          }
-
-          if (response) {
-            console.log('isvalid:', {isValid});
-            setChangeHandlerResult(response);
-          }
-
-          setSearchQueryState(value);
+        if (!isValid) {
+          setErrorMessage('Nem megfelelő formátum, ellenőrizd az adatot!');
           setSearchQuery('');
-        } catch (e: any) {
-          Sentry.captureException(e);
+          return;
         }
-      },
-      [validateFormArray, getProductByEAN, getProductByNumber, setSearchQuery],
+
+        let response;
+        if (validType === 'ean') {
+          response = await getProductByEAN(value);
+        } else if (validType === 'number') {
+          response = await getProductByNumber(value);
+        }
+
+        if (response) {
+          setChangeHandlerResult(response);
+        }
+
+        setSearchQueryState(value);
+        setSearchQuery('');
+      } catch (e: any) {
+        Sentry.captureException(e);
+      }
+    },
+    [validateFormArray, getProductByEAN, getProductByNumber, setSearchQuery],
   );
 
   return [

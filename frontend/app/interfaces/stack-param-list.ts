@@ -1,6 +1,6 @@
 export type StackParamList = {
-  homescreen: undefined;
-  profile: undefined;
-  articles: undefined;
+  homescreen: {hidebutton?: boolean};
+  profile: {hidebutton?: boolean,hideButtonProfile?: boolean};
+  products: {styleButton?: boolean};
   login: {hideBackButton?: boolean};
 };

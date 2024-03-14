@@ -1,16 +1,12 @@
 import React, {JSX} from 'react';
 import {View} from 'react-native';
 import {ProductsService} from '../services/products.service';
-import {articleStyles} from '../styles/products.stylesheet';
-import {
-    validateZDTOForm,
-} from '../../../shared/services/zod-dto.service';
+import {validateZDTOForm} from '../../../shared/services/zod-dto.service';
 import VCardNotFound from '../components/VCardNotFound';
 import {DarkModeProviderService} from '../services/context-providers.service';
 import VCamera from '../components/VCamera';
 import VCameraIconButton from '../components/VCamera-icon-button';
 import VInput from '../components/VInput';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import VAlert from '../components/VAlert';
 import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
 import VBackButton from '../components/VBackButton';
@@ -30,11 +26,13 @@ import {
   useOnBarCodeRead,
 } from '../states/use-camera-states';
 import {Icon} from 'react-native-elements';
-import {ZodError, ZodIssueCode} from "zod";
-import {ValidateForm} from "../interfaces/validate-form";
+import {ZodError, ZodIssueCode} from 'zod';
+import {ValidateForm} from '../interfaces/validate-form';
+import {darkModeContent} from "../styles/dark-mode-content.stylesheet";
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
   const {isDarkMode} = DarkModeProviderService.useDarkMode();
+    const { setWasDisconnected } = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -47,22 +45,33 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     return await ProductsService.getProductByNumber({cikkszam: value});
   };
 
-    const validateFormArray = async (value: string): Promise<ValidateForm> => {
-        const eanValidation = await validateZDTOForm(ProductEANSchemaInput, { eankod: value });
-        if (eanValidation.isValid) {
-            return { ...eanValidation, validType: 'ean' };
-        } else {
-            const numberValidation = await validateZDTOForm(ProductNumberSchemaInput, { cikkszam: value });
-            if (numberValidation.isValid) {
-                return { ...numberValidation, validType: 'number' };
-            }
-        }
-        return { isValid: false, error: new ZodError([{
-                code: ZodIssueCode.custom,
-                message: "Nem megfelelő adat!",
-                path: [],
-            }]), validType: null };
+  const validateFormArray = async (value: string): Promise<ValidateForm> => {
+    const eanValidation = await validateZDTOForm(ProductEANSchemaInput, {
+      eankod: value,
+    });
+    if (eanValidation.isValid) {
+      return {...eanValidation, validType: 'ean'};
+    } else {
+      const numberValidation = await validateZDTOForm(
+        ProductNumberSchemaInput,
+        {cikkszam: value},
+      );
+      if (numberValidation.isValid) {
+        return {...numberValidation, validType: 'number'};
+      }
+    }
+    return {
+      isValid: false,
+      error: new ZodError([
+        {
+          code: ZodIssueCode.custom,
+          message: 'Nem megfelelő adat!',
+          path: [],
+        },
+      ]),
+      validType: null,
     };
+  };
 
   const [
     errorMessage,
@@ -107,64 +116,68 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
     );
   }
 
-  return (
-    <View
-      style={[
-        articleStyles.container,
-        {backgroundColor: isDarkMode ? Colors.darker : Colors.lighter},
-      ]}>
-      <VInternetToast isVisible={!isConnected} />
-      <VToast
-        isVisible={wasDisconnected && isConnected}
-        label={'Sikeres kapcsolat!'}
-        type={'check'}
-      />
-      {errorMessage && (
-        <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
-      )}
-      <View style={{marginLeft: '15%', width: '65%'}}>
-        <VInput
-          inputProps={{
-            ref: inputRef,
-            value: searchQuery,
-            showSoftInputOnFocus: true,
-            autoFocus: !searchQuery,
-            onChangeText: onChangeInputWhenEnabled,
-            placeholder: 'Keresés...',
-            keyboardType: 'numeric',
-            rightIcon: (
-              <Icon
-                type="antdesign"
-                name="search1"
-                size={25}
-                color={isDarkMode ? '#ffffff' : '#000000'}
-                disabled={!searchQuery || !isConnected}
-                disabledStyle={{backgroundColor: 'transparent'}}
-                onPress={() => {
-                  onChangeHandler(searchQuery);
-                }}
-              />
-            ),
-          }}
-        />
-      </View>
-      <View style={{marginLeft: '80%', marginTop: -60}}>
-        {scanned && <VCameraIconButton onPress={clickCamera} />}
-      </View>
-      {changeHandlerResult?.status === 200 && (
-        <View>
-          {/*<VDataTable data={changeHandlerResult} />*/}
-          <VCardSuccess title={'Találatok'} content={changeHandlerResult} />
+    return (
+        <View
+            style={
+                isDarkMode
+                    ? {...darkModeContent.darkContainer}
+                    : {...darkModeContent.lightContainer}
+            }>
+            <VInternetToast isVisible={!isConnected} />
+            <VToast
+                isVisible={wasDisconnected && isConnected}
+                label={'Sikeres kapcsolat!'}
+                type={'check'}
+                handleEvent={() => setWasDisconnected(false)}
+            />
+            {errorMessage && (
+                <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
+            )}
+            <VBackButton navigation={navigation} />
+            <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+                <View style={{marginLeft: '12%', width: '70%'}}>
+                    <VInput
+                        inputProps={{
+                            ref: inputRef,
+                            value: searchQuery,
+                            showSoftInputOnFocus: true,
+                            autoFocus: !searchQuery,
+                            onChangeText: onChangeInputWhenEnabled,
+                            placeholder: 'Keresés...',
+                            keyboardType: 'numeric',
+                            rightIcon: (
+                                <Icon
+                                    type="antdesign"
+                                    name="search1"
+                                    size={25}
+                                    color={isDarkMode ? '#ffffff' : '#000000'}
+                                    disabled={!searchQuery || !isConnected}
+                                    disabledStyle={{backgroundColor: 'transparent'}}
+                                    onPress={async () => {
+                                        await onChangeHandler(searchQuery);
+                                    }}
+                                />
+                            ),
+                        }}
+                    />
+                </View>
+                <View style={{marginLeft: '80%', marginTop: -60}}>
+                    {scanned && <VCameraIconButton onPress={clickCamera} />}
+                </View>
+                {changeHandlerResult?.status === 200 && (
+                    <View>
+                        <VDataTable data={changeHandlerResult} />
+                        {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
+                    </View>
+                )}
+                {changeHandlerResult?.status === 204 && (
+                    <View>
+                        <VCardNotFound title={'Not Found'} ean={searchQueryState} />
+                    </View>
+                )}
+            </View>
         </View>
-      )}
-      {changeHandlerResult?.status === 204 && (
-        <View>
-          <VCardNotFound title={'Not Found'} ean={searchQueryState} />
-        </View>
-      )}
-      <VBackButton navigation={navigation} />
-    </View>
-  );
+    );
 };
 
 export default Product;

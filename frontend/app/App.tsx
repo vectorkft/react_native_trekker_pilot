@@ -31,7 +31,7 @@ const App = () => {
             <Stack.Screen name="login" component={Login} />
             <Stack.Screen name="homescreen" component={HomeScreen} />
             <Stack.Screen name="profile" component={Profile} />
-            <Stack.Screen name="articles" component={Product} />
+            <Stack.Screen name="products" component={Product} />
           </Stack.Navigator>
         </NavigationContainer>
       </LoadingProvider>

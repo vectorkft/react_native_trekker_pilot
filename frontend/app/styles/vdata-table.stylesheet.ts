@@ -9,7 +9,7 @@ export const VDataTableStylesheet = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: 'row',
-    width: '95%',
+    width: '100%',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     backgroundColor: '#dcdcdc',
@@ -19,7 +19,7 @@ export const VDataTableStylesheet = StyleSheet.create({
   },
   tableContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
   },
@@ -27,5 +27,8 @@ export const VDataTableStylesheet = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     textAlign: 'center',
+    textAlignVertical: 'center',
+    borderRightWidth: 1,
+    fontSize: 15,
   },
 });
