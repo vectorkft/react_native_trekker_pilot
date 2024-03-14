@@ -64,5 +64,8 @@ protectedUserRouter.post('/profile',async (req: Request, res: Response)=>{
     }
 
 });
-
+userRouter.post('/teszt', async(req: Request, res : Response) => {
+    const body= userService.storedProcedureTesting();
+    return res.status(200).json(body);
+});
 export { userRouter, protectedUserRouter };

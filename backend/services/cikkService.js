@@ -15,9 +15,9 @@ const product_dto_1 = require("../../shared/dto/product.dto");
 const prisma = new client_1.PrismaClient();
 function getCikkByCikkszam(cikkszam) {
     return __awaiter(this, void 0, void 0, function* () {
-        const cikk = yield prisma.cikk.findMany({
+        const cikk = yield prisma.raktar_eancikkek.findMany({
             where: {
-                cikkszam: cikkszam.cikkszam
+                etk: cikkszam.cikkszam
             }
         });
         if (cikk.length === 0) {
@@ -30,9 +30,9 @@ exports.getCikkByCikkszam = getCikkByCikkszam;
 function getCikkByEanKod(eankod) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const cikk = yield prisma.cikk.findMany({
+            const cikk = yield prisma.raktar_eancikkek.findMany({
                 where: {
-                    eankod: eankod.eankod
+                    jellemzo: eankod.eankod
                 }
             });
             if (cikk.length === 0) {
@@ -52,17 +52,17 @@ const processArticles = (articles) => {
             product_dto_1.ProductDataOutput.parse({
                 key: 'cikkszam',
                 title: 'Cikkszám',
-                value: articleElement.cikkszam.toString(),
+                value: articleElement.etk,
             }),
             product_dto_1.ProductDataOutput.parse({
                 key: 'cikknev',
                 title: 'Cikknév',
-                value: articleElement.cikknev.toString(),
+                value: articleElement.CIKKNEV1,
             }),
             product_dto_1.ProductDataOutput.parse({
                 key: 'eankod',
                 title: 'EAN Kód',
-                value: articleElement.eankod.toString(),
+                value: articleElement.jellemzo,
             }),
         ]),
         count: articles.length

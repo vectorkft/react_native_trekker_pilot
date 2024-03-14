@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserByIdFromToken = exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
+exports.storedProcedureTesting = exports.deleteUserByIdFromToken = exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
 const tokenService = __importStar(require("./tokenServices"));
 const tokenServices_1 = require("./tokenServices");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -48,7 +48,7 @@ const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
-        const user = yield prisma.user.findFirst({
+        const user = yield prisma.pilot_user.findFirst({
             where: { name: userInput.name, pw: userInput.pw }
         });
         if (!user) {
@@ -70,13 +70,13 @@ function loginUser(userInput) {
 exports.loginUser = loginUser;
 function registerUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const existentUser = yield prisma.user.findFirst({
+        const existentUser = yield prisma.pilot_user.findFirst({
             where: { name: user.name }
         });
         if (existentUser) {
             return (0, zod_dto_service_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: user.name });
         }
-        yield prisma.user.create({
+        yield prisma.pilot_user.create({
             data: { name: user.name, pw: user.pw }
         });
         return (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', name: user.name, password: user.pw });
@@ -86,7 +86,7 @@ exports.registerUser = registerUser;
 function getUserById_new(accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
-        return prisma.user.findFirst({
+        return prisma.pilot_user.findFirst({
             where: { id: decodedAccessToken.id }
         });
     });
@@ -96,7 +96,7 @@ function deleteUserByIdFromToken(accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
         try {
-            yield prisma.user.delete({
+            yield prisma.pilot_user.delete({
                 where: { id: decodedAccessToken.id }
             });
             yield (0, tokenServices_1.deleteTokensByLogout_new)({ accessToken: accessToken.accessToken });
@@ -109,3 +109,10 @@ function deleteUserByIdFromToken(accessToken) {
     });
 }
 exports.deleteUserByIdFromToken = deleteUserByIdFromToken;
+function storedProcedureTesting() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log('Result: ' + (yield prisma.$queryRaw `EXEC CH_LOGIN N'react', N'1433'`));
+        return prisma.$queryRaw `EXEC CH_LOGIN N'sysdba', N'1433'`;
+    });
+}
+exports.storedProcedureTesting = storedProcedureTesting;

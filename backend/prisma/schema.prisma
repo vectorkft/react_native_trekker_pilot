@@ -1,37 +1,117 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "sqlserver"
+  url      = env("MS_SQL_CONNECT")
 }
 
-model Tokens {
-  id         Int     @id @default(autoincrement())
-  token      String?
-  user_id    Int?
-  created_at Int?
-  token_type String?
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model STATION {
+  USERNEV               String?   @unique(map: "aaaaa_PrimaryKey", clustered: true) @db.VarChar(50)
+  EXPORTOS              String    @db.Char(1)
+  BRUTTOS               String    @db.Char(1)
+  ARJOG                 String    @db.Char(1)
+  DEFARTIPUS            Int?
+  DEFRAKTAR             Int?
+  RAKTARAS              String    @db.Char(1)
+  UGYINTEZO             Int?
+  IKTSZEMCSOP           Int?
+  MINDENIRAT            String    @db.Char(1)
+  DESIGN                String    @db.Char(1)
+  HOT1                  String?   @db.Char(50)
+  HOT2                  String?   @db.Char(50)
+  HOT3                  String?   @db.Char(50)
+  HOT4                  String?   @db.Char(50)
+  HOT5                  String?   @db.Char(50)
+  HOT6                  String?   @db.Char(50)
+  HOT7                  String?   @db.Char(50)
+  HOT8                  String?   @db.Char(50)
+  HOT9                  String?   @db.Char(50)
+  UGYINTEZO2            Int?
+  PRIORRAKTAR           Int?
+  MAILUSER              String?   @db.Char(30)
+  MAILPASSWORD          String?   @db.Char(12)
+  DEFPENZTAR            Int?
+  DEFPINDEX             Int?
+  CIKKCSOP              Int?
+  DEFNYELV              String?   @db.VarChar(3)
+  ETK_SORT              String?   @db.VarChar(1)
+  SZSZLA_IGHAT          String?   @db.VarChar(1)
+  BESZTERV_IGHAT        String?   @db.VarChar(1)
+  UGYFELEZHET           String?   @db.VarChar(1)
+  vszla_tart            Int?
+  szszla_tart           Int?
+  kp_szszla_tart        Int?
+  eszla_tart            Int?
+  iszla_tart            Int?
+  kp_szla_tart          Int?
+  MLAP_IGHAT            String?   @db.VarChar(1)
+  MLAP_FDGHAT           String?   @db.VarChar(1)
+  KBIZ_BE_TART          Int?
+  KBIZ_KI_TART          Int?
+  GEPKOD                Int?
+  PrSSz                 Int?
+  TELEP                 Int?
+  S_R_TART              Int?
+  V_R_TART              Int?
+  TS_PRINT              String?   @db.VarChar(1)
+  SA_R_TART             Int?
+  VA_R_TART             Int?
+  MLAP_FDNEZ            String?   @db.VarChar(1)
+  OSSZEGHAT             Float?
+  AJAN_JOVAHAGY         String?   @db.VarChar(1)
+  ELAD_ARJOG            String    @db.VarChar(1)
+  UGYINT_SZCSOP         Int?
+  MLAP_TART             Int?
+  UJPROJEKT_TART        Int?
+  PROJEKT_ALLAPOT       String    @db.VarChar(1)
+  Felvjegy_tart         Int?
+  SZLAFORM              Int?
+  AJOSSZEGHAT           Float?
+  PROJEKT_ELSZAMOL      String    @db.VarChar(1)
+  AJAN_BESZT_VEGLEGESIT String?   @db.VarChar(1)
+  ERT_MOZGNEM           Int?
+  szem_lszgen           String?   @db.Char(1)
+  szem_lszgeni          String?   @db.Char(1)
+  szem_lszlagen         String?   @db.Char(1)
+  szem_lszlageni        String?   @db.Char(1)
+  szem_szgen            Bytes?    @db.Image
+  szem_szgeni           Bytes?    @db.Image
+  szem_szlagen          Bytes?    @db.Image
+  szem_szlageni         Bytes?    @db.Image
+  pw_date               DateTime? @db.DateTime
+  szem_szlawmark        Bytes?    @db.Image
+  szem_lszlawmark       String?   @db.Char(1)
+  eszla2_tart           Int?
+  TUS                   Int?
+  KONTROLLINGOS         Int       @db.TinyInt
+  NYUGTA_TART           Int?
+
+  @@index([USERNEV, TELEP, UGYINTEZO], map: "tttel")
+  @@ignore
+}
+
+model pilot_user {
+  id   Int     @id(map: "PK__pilot_us__3213E83FB5ABB124") @default(autoincrement())
+  name String? @db.NVarChar(Max)
+  pw   String? @db.NVarChar(Max)
 }
 
 model Tokens_v1 {
-  id                Int     @id @default(autoincrement())
-  accessToken       String?
+  id                Int     @id(map: "PK__Tokens_v__3213E83F94511225") @default(autoincrement())
+  accessToken       String? @db.NVarChar(Max)
   accessExpireDate  Int?
-  refreshToken      String?
+  refreshToken      String? @db.NVarChar(Max)
   refreshExpireDate Int?
   userId            Int?
 }
 
-model cikk {
-  cikkszam String @id
-  cikknev  String
-  eankod   String
-}
-
-model user {
-  id   Int     @id @default(autoincrement())
-  name String?
-  pw   String?
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view raktar_eancikkek {
+  jellemzo String @db.VarChar(100)
+  etk      String @unique @db.VarChar(21)
+  CIKKNEV1 String @db.VarChar(97)
 }
