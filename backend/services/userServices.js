@@ -111,7 +111,7 @@ function deleteUserByIdFromToken(accessToken) {
 exports.deleteUserByIdFromToken = deleteUserByIdFromToken;
 function storedProcedureTesting() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('Result: ' + (yield prisma.$queryRaw `EXEC CH_LOGIN N'react', N'1433'`));
+        console.log('Result: ' + (yield prisma.$queryRaw `EXEC CH_LOGIN N'', N'1433'`));
         return prisma.$queryRaw `EXEC CH_LOGIN N'sysdba', N'1433'`;
     });
 }

@@ -50,8 +50,8 @@ const processArticles = (articles) => {
     const result = {
         data: articles.flatMap((articleElement) => [
             product_dto_1.ProductDataOutput.parse({
-                key: 'cikkszam',
-                title: 'Cikkszám',
+                key: 'etk',
+                title: 'ETK',
                 value: articleElement.etk,
             }),
             product_dto_1.ProductDataOutput.parse({
