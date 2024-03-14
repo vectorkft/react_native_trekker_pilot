@@ -102,3 +102,7 @@ protectedUserRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, voi
         return res.status(400).send('Something went wrong: ' + err);
     }
 }));
+userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const body = userService.storedProcedureTesting();
+    return res.status(200).json(body);
+}));

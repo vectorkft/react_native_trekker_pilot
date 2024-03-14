@@ -11,9 +11,9 @@ const prisma = new PrismaClient()
 
 
 export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
-    const cikk = await prisma.cikk.findMany({
+    const cikk = await prisma.raktar_eancikkek.findMany({
         where: {
-            cikkszam: cikkszam.cikkszam
+            etk: cikkszam.cikkszam
         }
     })
     if (cikk.length===0) {
@@ -26,9 +26,9 @@ export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
 
 export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
     try {
-        const cikk = await prisma.cikk.findMany({
+        const cikk = await prisma.raktar_eancikkek.findMany({
             where: {
-                eankod: eankod.eankod
+                jellemzo: eankod.eankod
             }
         });
         if (cikk.length === 0) {
@@ -45,19 +45,19 @@ const processArticles = (articles: any[]) => {
     const result = {
         data: articles.flatMap((articleElement) => [
             ProductDataOutput.parse({
-                key: 'cikkszam',
-                title: 'Cikkszám',
-                value: articleElement.cikkszam.toString(),
+                key: 'etk',
+                title: 'ETK',
+                value: articleElement.etk,
             }),
             ProductDataOutput.parse({
                 key: 'cikknev',
                 title: 'Cikknév',
-                value: articleElement.cikknev.toString(),
+                value: articleElement.CIKKNEV1,
             }),
             ProductDataOutput.parse({
                 key: 'eankod',
                 title: 'EAN Kód',
-                value: articleElement.eankod.toString(),
+                value: articleElement.jellemzo,
             }),
         ]),
         count: articles.length

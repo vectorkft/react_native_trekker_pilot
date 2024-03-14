@@ -8,7 +8,8 @@ import {
     userAlreadyExistDTOOutput,
     userDeletedOutPut,
     userDeletedOutPutError,
-    userLoginDTOOutput, userLoginFailedOutput,
+    userLoginDTOOutput,
+    userLoginFailedOutput,
     userRegisterDTOOutput,
     ZUserSchemaInput
 } from "../../shared/dto/user.dto";
@@ -21,7 +22,7 @@ const prisma = new PrismaClient()
 
 
 export async function loginUser(userInput: ZUserSchemaInput) {
-    const user= await prisma.user.findFirst({
+    const user= await prisma.pilot_user.findFirst({
         where:{ name: userInput.name, pw: userInput.pw}
     });
     if (!user) {
@@ -45,7 +46,7 @@ export async function loginUser(userInput: ZUserSchemaInput) {
 
 export async function registerUser(user: ZUserSchemaInput) {
 
-    const existentUser = await prisma.user.findFirst({
+    const existentUser = await prisma.pilot_user.findFirst({
         where: { name: user.name }
     });
 
@@ -56,7 +57,7 @@ export async function registerUser(user: ZUserSchemaInput) {
         );
     }
 
-    await prisma.user.create({
+    await prisma.pilot_user.create({
         data: { name: user.name, pw: user.pw }
     });
 
@@ -69,7 +70,7 @@ export async function registerUser(user: ZUserSchemaInput) {
 
 export async function getUserById_new(accessToken: ZAccessTokenInput) {
     const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
-    return prisma.user.findFirst({
+    return prisma.pilot_user.findFirst({
         where: {id: decodedAccessToken.id}
     });
 }
@@ -77,7 +78,7 @@ export async function getUserById_new(accessToken: ZAccessTokenInput) {
 export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
     const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
     try{
-        await prisma.user.delete({
+        await prisma.pilot_user.delete({
             where:{id: decodedAccessToken.id}
         })
 
@@ -90,7 +91,10 @@ export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
 
 
 }
-
+export async function storedProcedureTesting(){
+    console.log('Result: ' + await prisma.$queryRaw`EXEC CH_LOGIN N'', N'1433'`);
+    return prisma.$queryRaw`EXEC CH_LOGIN N'sysdba', N'1433'`;
+}
 
 
 
