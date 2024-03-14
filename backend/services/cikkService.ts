@@ -45,8 +45,8 @@ const processArticles = (articles: any[]) => {
     const result = {
         data: articles.flatMap((articleElement) => [
             ProductDataOutput.parse({
-                key: 'cikkszam',
-                title: 'Cikkszám',
+                key: 'etk',
+                title: 'ETK',
                 value: articleElement.etk,
             }),
             ProductDataOutput.parse({

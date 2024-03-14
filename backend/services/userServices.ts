@@ -92,7 +92,7 @@ export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
 
 }
 export async function storedProcedureTesting(){
-    console.log('Result: ' + await prisma.$queryRaw`EXEC CH_LOGIN N'react', N'1433'`);
+    console.log('Result: ' + await prisma.$queryRaw`EXEC CH_LOGIN N'', N'1433'`);
     return prisma.$queryRaw`EXEC CH_LOGIN N'sysdba', N'1433'`;
 }
 
