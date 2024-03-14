@@ -14,8 +14,6 @@ export const useNetInfo = () => {
       networkChange(state.isInternetReachable ?? false);
       if (!(state.isInternetReachable ?? false)) {
         setWasDisconnected(true);
-      } else if (wasDisconnected && isConnected) {
-        setWasDisconnected(false);
       }
     });
 

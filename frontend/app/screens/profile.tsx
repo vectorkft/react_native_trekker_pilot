@@ -6,15 +6,14 @@ import {RouterProps} from '../interfaces/navigation-props';
 import {LoginService} from '../services/login.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {DarkModeProviderService} from '../services/context-providers.service';
-import VButton from '../components/VButton';
-import VBackButton from '../components/VBackButton';
 import {LoadingProviderService} from '../services/context-providers.service';
 import LoadingScreen from './loading-screen';
 import VInternetToast from '../components/VInternetToast';
 import VToast from '../components/VToast';
+import Header from "./header";
 
 const Profile = ({navigation}: RouterProps): JSX.Element => {
-  const {setIsLoggedIn, isLoggedIn} = useStore.getState();
+  const {setIsLoggedIn, setWasDisconnected} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const {loading, setLoadingState} = LoadingProviderService.useLoading();
@@ -37,88 +36,25 @@ const Profile = ({navigation}: RouterProps): JSX.Element => {
     };
   }, []);
 
-  const handleLogout = async () => {
-    setLoadingState(true);
-    const logoutSuccess = await LoginService.handleLogout();
-    if (logoutSuccess) {
-      setIsLoggedIn(false);
-      navigation.navigate('login');
-      setLoadingState(false);
-      return 'Sikeres kijelentkezés!';
-    }
-  };
-
   if (loading) {
     return <LoadingScreen />;
   }
 
   return (
     <View
-      style={
-        isDarkMode
-          ? darkModeContent.darkContainer
-          : darkModeContent.lightContainer
-      }>
+        style={
+          isDarkMode
+              ? {...darkModeContent.darkContainer,alignItems: 'center'}
+              : {...darkModeContent.lightContainer,alignItems: 'center'}
+        }>
+        <Header navigation={navigation}/>
       <VInternetToast isVisible={!isConnected} />
-      <VToast
-        isVisible={wasDisconnected && isConnected}
-        label={'Sikeres kapcsolat!'}
-        type={'check'}
-      />
-      <VBackButton navigation={navigation} />
-      {isLoggedIn && (
-        <View>
-          <View>
-            <VButton
-              buttonPropsNativeElement={{
-                title: 'Cikkek',
-                titleStyle: {
-                  fontFamily: 'Roboto',
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: isDarkMode ? '#fff' : '#000',
-                  textAlign: 'center',
-                },
-                buttonStyle: {
-                  backgroundColor: '#00EDAE',
-                  height: 50,
-                  marginBottom: 15,
-                  borderRadius: 10,
-                  width: '80%',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                },
-                disabled: !isConnected,
-                onPress: () => navigation.navigate('articles'),
-              }}
-            />
-          </View>
-          <View>
-            <VButton
-              buttonPropsNativeElement={{
-                title: 'Kijelentkezés',
-                titleStyle: {
-                  fontFamily: 'Roboto',
-                  fontSize: 20,
-                  fontWeight: '700',
-                  color: isDarkMode ? '#fff' : '#000',
-                },
-                buttonStyle: {
-                  backgroundColor: '#00EDAE',
-                  height: 50,
-                  marginBottom: 15,
-                  borderRadius: 10,
-                  width: '80%',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                },
-                disabled: !isConnected,
-                onPress: handleLogout,
-              }}
-            />
-          </View>
-        </View>
-      )}
+        <VToast
+            isVisible={wasDisconnected && isConnected}
+            label={'Sikeres kapcsolat!'}
+            type={'check'}
+            handleEvent={() => setWasDisconnected(false)}
+        />
     </View>
   );
 };

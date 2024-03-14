@@ -43,7 +43,6 @@ const VDataTable: React.FC<DataTableProps> = ({data}: DataTableProps) => {
                 color: isDarkMode ? '#000' : '#fff',
                 borderRightWidth: index < 2 ? 1 : 0, // az utolsó cellánál nincs jobb oldali vonal
                 borderColor: isDarkMode ? '#000' : '#fff',
-                lineHeight: 30,
               },
             ]}>
             {title}
@@ -68,7 +67,6 @@ const VDataTable: React.FC<DataTableProps> = ({data}: DataTableProps) => {
                     color: isDarkMode ? '#000' : '#fff',
                     borderRightWidth: i < row.length - 1 ? 1 : 0, // az utolsó cellánál nincs jobb oldali vonal
                     borderColor: isDarkMode ? '#000' : '#fff',
-                    lineHeight: 40,
                   },
                 ]}
                 key={i}>

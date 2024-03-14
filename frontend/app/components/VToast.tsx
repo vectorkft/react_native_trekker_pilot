@@ -4,8 +4,9 @@ import {VtoastProps} from '../interfaces/vtoast-props';
 import {DarkModeProviderService} from '../services/context-providers.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {Icon} from 'react-native-elements';
+import {VToastStylesheet} from "../styles/vtoast.stylesheet";
 
-const Toast = ({isVisible, label, type}: VtoastProps) => {
+const Toast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
   const [slideAnim] = useState(
     new Animated.Value(-Dimensions.get('window').height),
   );
@@ -23,7 +24,11 @@ const Toast = ({isVisible, label, type}: VtoastProps) => {
             toValue: -Dimensions.get('window').height,
             duration: 500,
             useNativeDriver: true,
-          }).start();
+          }).start(() => {
+            if (handleEvent){
+              handleEvent();
+            }
+          });
         }, 2000);
 
         return () => clearTimeout(timer);
@@ -34,7 +39,7 @@ const Toast = ({isVisible, label, type}: VtoastProps) => {
   return (
     <Animated.View
       style={{
-        ...styles.toast,
+        ...VToastStylesheet.toast,
         transform: [{translateY: slideAnim}],
         backgroundColor: isDarkMode ? '#343333' : '#a9a4a4',
       }}>
@@ -54,28 +59,5 @@ const Toast = ({isVisible, label, type}: VtoastProps) => {
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  toast: {
-    zIndex: 1,
-    position: 'absolute',
-    width: '90%',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    top: 15,
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-});
 
 export default Toast;

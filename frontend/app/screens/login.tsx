@@ -9,7 +9,7 @@ import {
 import {DarkModeProviderService} from '../services/context-providers.service';
 import {ZodError} from 'zod';
 import {LoadingProviderService} from '../services/context-providers.service';
-import {TextInput, View} from 'react-native';
+import {Image, TextInput, View} from 'react-native';
 import {useLoginState} from '../states/use-login-states';
 import VAlert from '../components/VAlert';
 import {useAlert} from '../states/use-alert';
@@ -81,7 +81,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       setId(loginSuccess.userId);
       setIsLoggedIn(true);
       setErrorMessage(null);
-      navigation.navigate('homescreen');
+      navigation.navigate('homescreen',{hidebutton: true});
       return 'Sikeres bejelentkezés!';
     } finally {
       setLoadingState(false);
@@ -98,10 +98,11 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
         flex: 1,
         backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
       }}>
-      {errorMessage && (
+        <Image source={require('../../assets/img/header.png')} style={{ width: 400 }} />
+        {errorMessage && (
         <VAlert type="error" title={'Hibás belépés!'} message={errorMessage} />
       )}
-      <View style={{flex: 1,marginTop: '20%', alignItems: 'center'}}>
+      <View style={{flex: 1, alignItems: 'center'}}>
         <Text
           style={{
             fontFamily: 'Roboto',
@@ -133,21 +134,42 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
               onSubmitEditing: handleFormSubmit,
             }}
           />
-          <CheckBox
-            title="Emlékezz rám"
-            checkedColor="#00EDAE"
-            uncheckedColor={isDarkMode ? 'white' : 'black'}
-            containerStyle={{
-              backgroundColor: 'transparent',
-              borderWidth: 0,
-              alignSelf: 'flex-start',
-              marginLeft: -8,
-            }}
-            textStyle={{color: isDarkMode ? 'white' : 'black', fontSize: 15}}
-            checked={rememberMe}
-            onPress={() => setRememberMe(!rememberMe)}
-          />
-          <VButton
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <CheckBox
+                    title="Emlékezz rám"
+                    checkedColor="#00EDAE"
+                    uncheckedColor={isDarkMode ? 'white' : 'black'}
+                    containerStyle={{
+                        backgroundColor: 'transparent',
+                        borderWidth: 0,
+                        alignSelf: 'flex-start',
+                        marginLeft: -8,
+                    }}
+                    textStyle={{color: isDarkMode ? 'white' : 'black', fontSize: 15}}
+                    checked={rememberMe}
+                    onPress={() => setRememberMe(!rememberMe)}
+                />
+                <View style={darkModeContent.switchMode}>
+                    <Text
+                        style={
+                            isDarkMode
+                                ? darkModeContent.darkModeText
+                                : darkModeContent.lightModeText
+                        }>
+                        Sötét mód
+                    </Text>
+                    <Switch
+                        trackColor={{
+                            false: isDarkMode ? '#424242' : '#E0E0E0',
+                            true: '#ffffff',
+                        }}
+                        thumbColor={isDarkMode ? '#00EDAE' : '#616161'}
+                        onValueChange={toggleDarkMode}
+                        value={isDarkMode}
+                    />
+                </View>
+            </View>
+            <VButton
             buttonPropsNativeElement={{
               title: 'Bejelentkezés',
               titleStyle: {
@@ -166,25 +188,6 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
             }}
           />
         </View>
-      </View>
-      <View style={darkModeContent.switchMode}>
-        <Text
-          style={
-            isDarkMode
-              ? darkModeContent.darkModeText
-              : darkModeContent.lightModeText
-          }>
-          Sötét mód
-        </Text>
-        <Switch
-          trackColor={{
-            false: isDarkMode ? '#424242' : '#E0E0E0',
-            true: '#ffffff',
-          }}
-          thumbColor={isDarkMode ? '#00EDAE' : '#616161'}
-          onValueChange={toggleDarkMode}
-          value={isDarkMode}
-        />
       </View>
     </View>
   );
