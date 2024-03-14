@@ -15,6 +15,7 @@ import {
 } from "../../shared/dto/user.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 import {ZAccessTokenInput} from "../../shared/dto/refresh.token.dto";
+import {dbConnect} from "./dbConnectService";
 
 
 dotenv.config()
@@ -92,8 +93,23 @@ export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
 
 }
 export async function storedProcedureTesting(){
-    console.log('Result: ' + await prisma.$queryRaw`EXEC CH_LOGIN N'', N'1433'`);
-    return prisma.$queryRaw`EXEC CH_LOGIN N'sysdba', N'1433'`;
+    try{
+        console.log('Result: ');
+        return prisma.$queryRaw`EXEC CH_LOGIN N'react', N'1433'`;
+    } catch (err){
+        console.log(err);
+        return err;
+    }
+
+
+}
+
+export async function createPrismaClient(userInput: ZUserSchemaInput) {
+    const prisma =await dbConnect(userInput);
+    return await prisma.pilot_user.findFirst({
+        where: {name: userInput.name, pw: userInput.pw}
+    });
+
 }
 
 

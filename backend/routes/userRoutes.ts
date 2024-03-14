@@ -65,7 +65,14 @@ protectedUserRouter.post('/profile',async (req: Request, res: Response)=>{
 
 });
 userRouter.post('/teszt', async(req: Request, res : Response) => {
-    const body= userService.storedProcedureTesting();
-    return res.status(200).json(body);
+    try{
+        const validData= await zParse(userSchemaInput,req.body);
+        const body=await userService.createPrismaClient(validData);
+        return res.status(200).json(body);
+    } catch (err){
+        console.log(err)
+        return res.status(400).json(err);
+    }
+
 });
 export { userRouter, protectedUserRouter };

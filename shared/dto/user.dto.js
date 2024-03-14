@@ -22,7 +22,7 @@ exports.UserIdInput = zod_1.z.object({
 });
 exports.userSchemaInput = zod_1.z.object({
     name: zod_1.z.string().min(6, { message: "Username must be 6 or more characters long" }),
-    pw: zod_1.z.string().min(6, { message: "Password must be 6 or more characters long" }),
+    pw: zod_1.z.string().min(1, { message: "Password must be 6 or more characters long" }),
 });
 exports.userAlreadyExistDTOOutput = zod_1.z.object({
     message: zod_1.z.string(),

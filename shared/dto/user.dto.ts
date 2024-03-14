@@ -22,7 +22,7 @@ export const UserIdInput=z.object({
 
 export const userSchemaInput = z.object({
     name: z.string().min(6, { message: "Username must be 6 or more characters long" }),
-    pw: z.string().min(6, { message: "Password must be 6 or more characters long" }),
+    pw: z.string().min(1, { message: "Password must be 6 or more characters long" }),
 });
 
 export const userAlreadyExistDTOOutput = z.object({

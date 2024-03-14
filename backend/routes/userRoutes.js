@@ -103,6 +103,13 @@ protectedUserRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, voi
     }
 }));
 userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = userService.storedProcedureTesting();
-    return res.status(200).json(body);
+    try {
+        const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
+        const body = yield userService.createPrismaClient(validData);
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(400).json(err);
+    }
 }));

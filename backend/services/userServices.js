@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.storedProcedureTesting = exports.deleteUserByIdFromToken = exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
+exports.createPrismaClient = exports.storedProcedureTesting = exports.deleteUserByIdFromToken = exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
 const tokenService = __importStar(require("./tokenServices"));
 const tokenServices_1 = require("./tokenServices");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -43,6 +43,7 @@ const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_dto_1 = require("../../shared/dto/user.dto");
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
+const dbConnectService_1 = require("./dbConnectService");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {
@@ -111,8 +112,23 @@ function deleteUserByIdFromToken(accessToken) {
 exports.deleteUserByIdFromToken = deleteUserByIdFromToken;
 function storedProcedureTesting() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('Result: ' + (yield prisma.$queryRaw `EXEC CH_LOGIN N'', N'1433'`));
-        return prisma.$queryRaw `EXEC CH_LOGIN N'sysdba', N'1433'`;
+        try {
+            console.log('Result: ');
+            return prisma.$queryRaw `EXEC CH_LOGIN N'react', N'1433'`;
+        }
+        catch (err) {
+            console.log(err);
+            return err;
+        }
     });
 }
 exports.storedProcedureTesting = storedProcedureTesting;
+function createPrismaClient(userInput) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const prisma = yield (0, dbConnectService_1.dbConnect)(userInput);
+        return yield prisma.pilot_user.findFirst({
+            where: { name: userInput.name, pw: userInput.pw }
+        });
+    });
+}
+exports.createPrismaClient = createPrismaClient;
