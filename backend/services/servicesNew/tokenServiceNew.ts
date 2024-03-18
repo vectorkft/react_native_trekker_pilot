@@ -115,3 +115,13 @@ async function isRefreshTokenInDatabase(refreshToken: ZrefreshTokenInput): Promi
         }
     }).then(token => !!token);
 }
+
+
+export async function signTokens(tokenType: string, expiresIn: string, userInput: ZUserSchemaInput){
+
+    return jwt.sign(
+        {name: userInput.name, pw: userInput.pw, tokenType},
+        process.env.JWT_SECRET_KEY ?? '',
+        {expiresIn: process.env[expiresIn] ?? '1h'}
+    );
+}

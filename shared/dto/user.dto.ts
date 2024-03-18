@@ -12,7 +12,6 @@ export const userLoginDTOOutputNew=z.object({
     accessToken: z.string(),
     refreshToken: z.string(),
     userName: z.string(),
-    currentTime: z.number()
 })
 export const userRegisterDTOOutput=z.object({
     message:z.string(),
