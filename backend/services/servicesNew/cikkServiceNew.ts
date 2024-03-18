@@ -1,17 +1,17 @@
-import {PrismaClient} from "@prisma/client";
 import {
     ProductDataOutput,
     ProductListOutput,
-    ZProductEANSchemaInput, ZProductNumberSchemaInput,
-} from "../../shared/dto/product.dto";
+    ZProductEANSchemaInput,
+    ZProductNumberSchemaInput
+} from "../../../shared/dto/product.dto";
+import {ZAccessTokenInput} from "../../../shared/dto/refresh.token.dto";
+import {dbConnect} from "./dbConnectService";
+import * as tokenServiceNew from "../servicesNew/tokenServiceNew"
 
-const prisma = new PrismaClient()
-
-
-
-
-export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
-    const cikk = await prisma.raktar_eancikkek.findMany({
+export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput,accessToken: ZAccessTokenInput) {
+    const userInput= await tokenServiceNew.retrieveUserInfoFromAccessToken(accessToken)
+    const prismaA =await dbConnect(userInput);
+    const cikk = await prismaA.raktar_eancikkek.findMany({
         where: {
             etk: cikkszam.cikkszam
         }
@@ -23,9 +23,11 @@ export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
 
 }
 
+export async function getCikkByEanKod(eankod: ZProductEANSchemaInput, accessToken: ZAccessTokenInput){
+    const userInput= await tokenServiceNew.retrieveUserInfoFromAccessToken(accessToken)
+    const prismaA =await dbConnect(userInput);
 
-export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
-        const cikk = await prisma.raktar_eancikkek.findMany({
+        const cikk = await prismaA.raktar_eancikkek.findMany({
             where: {
                 jellemzo: eankod.eankod
             }
@@ -37,6 +39,9 @@ export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
 
 
 }
+
+
+
 
 const processArticles = (articles: any[]) => {
     const result = {

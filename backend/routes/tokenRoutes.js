@@ -41,11 +41,12 @@ const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const zodDTO_1 = require("../dto/zodDTO");
 const tokenService = __importStar(require("../services/tokenServices"));
 const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
+const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 exports.tokenRouter = express_1.default.Router();
 exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
-        const body = yield tokenService.refreshToken_new({ refreshToken: validData.refreshToken });
+        const body = yield tokenService.refreshToken({ refreshToken: validData.refreshToken });
         if ('errorMessage' in body) {
             //Ha van errorMessage akkor rossz a token amit kaptunk
             return res.status(403).json(body);
@@ -55,5 +56,21 @@ exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, voi
     catch (e) {
         //ha zodError van
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(e));
+    }
+}));
+//// FOR TESTING PURPOSE ONLY
+exports.tokenRouter.post('/refreshTeszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
+        const body = yield tokenServiceNew.refreshToken_new({ refreshToken: validData.refreshToken });
+        if ('errorMessage' in body) {
+            //Ha van errorMessage akkor rossz a token amit kaptunk
+            return res.status(403).json(body);
+        }
+        return res.status(200).json(body);
+    }
+    catch (e) {
+        //ha zodError van
+        return res.status(400).json(e);
     }
 }));

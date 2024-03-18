@@ -51,6 +51,7 @@ app.listen(HTTP_PORT, () => {
 app.get('/', (req, res) => {
     return res.status(200).json('Check postman for guidance');
 });
+cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens);
 cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
 app.all('/check', (res) => {

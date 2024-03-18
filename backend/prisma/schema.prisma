@@ -8,6 +8,12 @@ datasource db {
   url      = env("MS_SQL_CONNECT")
 }
 
+model pilot_user {
+  id   Int     @id(map: "PK__pilot_us__3213E83FB5ABB124") @default(autoincrement())
+  name String? @db.NVarChar(Max)
+  pw   String? @db.NVarChar(Max)
+}
+
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model STATION {
   USERNEV               String?   @unique(map: "aaaaa_PrimaryKey", clustered: true) @db.VarChar(50)
@@ -94,12 +100,6 @@ model STATION {
   @@ignore
 }
 
-model pilot_user {
-  id   Int     @id(map: "PK__pilot_us__3213E83FB5ABB124") @default(autoincrement())
-  name String? @db.NVarChar(Max)
-  pw   String? @db.NVarChar(Max)
-}
-
 model Tokens_v1 {
   id                Int     @id(map: "PK__Tokens_v__3213E83F94511225") @default(autoincrement())
   accessToken       String? @db.NVarChar(Max)
@@ -109,7 +109,15 @@ model Tokens_v1 {
   userId            Int?
 }
 
-/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Tokens_v2 {
+  id                Int     @id(map: "PK__Tokens_v2__3213E83F94511225") @default(autoincrement())
+  accessToken       String? @db.NVarChar(Max)
+  accessExpireDate  Int?
+  refreshToken      String? @db.NVarChar(Max)
+  refreshExpireDate Int?
+  userName          String? @db.NVarChar(Max)
+}
+
 view raktar_eancikkek {
   jellemzo String @db.VarChar(100)
   etk      String @unique @db.VarChar(21)

@@ -4,6 +4,8 @@ import {ProductEANSchemaInput, ProductNumberSchemaInput} from "../../shared/dto/
 import * as cikkService from "../services/cikkService";
 import {ZodDTO} from "../dto/zodDTO";
 
+import * as cikkServiceNew from "../services/servicesNew/cikkServiceNew"
+
 export const protectedProductRouter = express.Router();
 
 protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response)=>{
@@ -35,4 +37,39 @@ protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
     } catch (err){
         return res.status(400).json(ZodDTO.fromZodError(err));
     }
+})
+//// TESTING
+protectedProductRouter.post('/getCikkTeszt', async(req:Request, res:Response)=>{
+    const authHeader = req.headers.authorization??'';
+    const accessToken = authHeader.split(' ')[1];
+    try{
+        const validData = await zParse(ProductNumberSchemaInput,req.body);
+        const body= await cikkServiceNew.getCikkByCikkszam(validData,{accessToken: accessToken});
+        if(body==="Not found"){
+            return res.status(204).json({message: 'Not found'});
+        }
+        return res.status(200).json(body);
+    } catch (err){
+        return res.status(400).json(ZodDTO.fromZodError(err));
+    }
+})
+
+protectedProductRouter.post('/getCikkByEANTeszt', async (req: Request, res: Response)=>{
+    const authHeader = req.headers.authorization??'';
+    const accessToken = authHeader.split(' ')[1];
+    try{
+
+        const validData=await zParse(ProductEANSchemaInput,req.body);
+        const body= await cikkServiceNew.getCikkByEanKod(validData,{accessToken: accessToken});
+        if(!body){
+            return res.status(204).json(body);
+
+        }
+        return res.status(200).json(body);
+
+    } catch (err){
+        console.error(err);
+        return res.status(400).json(ZodDTO.fromZodError(err));
+    }
+
 })

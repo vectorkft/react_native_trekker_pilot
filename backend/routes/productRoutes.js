@@ -41,6 +41,7 @@ const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const product_dto_1 = require("../../shared/dto/product.dto");
 const cikkService = __importStar(require("../services/cikkService"));
 const zodDTO_1 = require("../dto/zodDTO");
+const cikkServiceNew = __importStar(require("../services/servicesNew/cikkServiceNew"));
 exports.protectedProductRouter = express_1.default.Router();
 exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -66,6 +67,40 @@ exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, 
         return res.status(200).json(body);
     }
     catch (err) {
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+    }
+}));
+//// TESTING
+exports.protectedProductRouter.post('/getCikkTeszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
+    const accessToken = authHeader.split(' ')[1];
+    try {
+        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
+        const body = yield cikkServiceNew.getCikkByCikkszam(validData, { accessToken: accessToken });
+        if (body === "Not found") {
+            return res.status(204).json({ message: 'Not found' });
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+    }
+}));
+exports.protectedProductRouter.post('/getCikkByEANTeszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    const authHeader = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
+    const accessToken = authHeader.split(' ')[1];
+    try {
+        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, req.body);
+        const body = yield cikkServiceNew.getCikkByEanKod(validData, { accessToken: accessToken });
+        if (!body) {
+            return res.status(204).json(body);
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        console.error(err);
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));

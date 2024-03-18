@@ -18,7 +18,9 @@ export const AccessTokenInput=z.object({
         accessToken: z.string(),
 })
 
+
 export type ZrefreshTokenOutput = z.infer<typeof refreshTokenDTOOutput>
 export type ZrefreshTokenInput = z.infer<typeof RefreshBodySchemaInput>
 export type ZAccessTokenInput = z.infer<typeof AccessTokenInput>
+
 
