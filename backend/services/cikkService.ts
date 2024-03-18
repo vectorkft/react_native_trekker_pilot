@@ -25,7 +25,6 @@ export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
 
 
 export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
-    try {
         const cikk = await prisma.raktar_eancikkek.findMany({
             where: {
                 jellemzo: eankod.eankod
@@ -35,10 +34,8 @@ export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
             return false;
         }
         return processArticles(cikk);
-    }
-    catch (err: unknown) {
-        throw err;
-    }
+
+
 }
 
 const processArticles = (articles: any[]) => {
