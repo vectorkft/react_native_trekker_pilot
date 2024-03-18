@@ -9,7 +9,7 @@ import Vinput from '../components/Vinput';
 import Valert from '../components/Valert';
 import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
 import VbackButton from '../components/Vback-button';
-import {RouterProps} from '../interfaces/navigation-props';
+import {RouterProps} from '../interfaces/navigation';
 import {
   ProductEANSchemaInput,
   ProductNumberSchemaInput,
@@ -18,7 +18,7 @@ import {useStore} from '../states/zustand-states';
 import VinternetToast from '../components/Vinternet-toast';
 import Vtoast from '../components/Vtoast';
 import VdataTable from '../components/Vdata-table';
-import VCardSuccess from '../components/Vcard-succes';
+import VcardSuccess from '../components/Vcard-succes';
 import {
   useBeepSound,
   useCamera,
@@ -29,7 +29,7 @@ import {ZodError, ZodIssueCode} from 'zod';
 import {ValidateForm} from '../interfaces/validate-form';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {LocalStorageService} from '../services/local-storage.service';
-import VKeyboardIcon from '../components/Vkeyboard-icon';
+import VkeyboardIconButton from '../components/VkeyboardIconButton';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const Product = ({navigation}: RouterProps): JSX.Element => {
@@ -165,10 +165,14 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
           />
         </View>
         <View style={{marginLeft: '80%', marginTop: -60}}>
-          <VcameraIconButton onPress={clickCamera} />
-          <VKeyboardIcon
-            toggleKeyboard={() => setKeyboardActive(!keyboardActive)}
-          />
+            {!LocalStorageService.getDataString([
+                'deviceData',
+            ]).deviceData?.includes('Zebra') && (<VcameraIconButton onPress={clickCamera} />)}
+            {LocalStorageService.getDataString([
+                'deviceData',
+            ]).deviceData?.includes('Zebra') && (<VkeyboardIconButton
+                toggleKeyboard={() => setKeyboardActive(!keyboardActive)}
+            />)}
         </View>
         {changeHandlerResult?.status === 200 && (
           <View>

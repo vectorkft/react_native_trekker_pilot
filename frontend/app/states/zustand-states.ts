@@ -6,8 +6,8 @@ interface Store {
   setAccessToken: (value: string) => void;
   refreshToken: string;
   setRefreshToken: (value: string) => void;
-  id: number;
-  setId: (value: number) => void;
+  id: number | null;
+  setId: (value: number|null) => void;
   isConnected: boolean;
   setIsConnected: (value: boolean) => void;
   uptoDate: boolean;

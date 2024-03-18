@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import {VTileProps} from '../interfaces/vtile-props';
+import {VtileProps} from '../interfaces/VtileProps';
 import {VTileStylesheet} from '../styles/vtile.stylesheet';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const Vtile = ({title, tileProps}: VTileProps) => {
+const Vtile = ({title, tileProps}: VtileProps) => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   return (

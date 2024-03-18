@@ -1,14 +1,14 @@
 import React, {useContext} from 'react';
-import {CardPropsNotFound} from '../interfaces/card-props';
+import {VCardNotFound} from '../interfaces/Vcard';
 import {Text, View} from 'react-native';
 import {VCardComponentStylesheet} from '../styles/vcard-component.stylesheet';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VcardNotFound: React.FC<CardPropsNotFound> = ({
+const VcardNotFound: React.FC<VCardNotFound> = ({
   title,
   value,
-}: CardPropsNotFound) => {
+}: VCardNotFound) => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   return (

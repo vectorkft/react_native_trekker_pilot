@@ -1,5 +1,5 @@
 import {Icon} from 'react-native-elements';
-import {RouterProps} from '../interfaces/navigation-props';
+import {RouterProps} from '../interfaces/navigation';
 import {TouchableOpacity} from 'react-native';
 import {useStore} from '../states/zustand-states';
 import {RouteProp, useRoute} from '@react-navigation/native';

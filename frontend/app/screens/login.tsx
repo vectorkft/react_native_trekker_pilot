@@ -1,6 +1,6 @@
 import React, {JSX, useContext, useRef, useState} from 'react';
 import {LoginService} from '../services/login.service';
-import {RouterProps} from '../interfaces/navigation-props';
+import {RouterProps} from '../interfaces/navigation';
 import {useStore} from '../states/zustand-states';
 import {
   parseZodError,
@@ -70,7 +70,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
         pw: password,
       });
 
-      if (loginSuccess === undefined) {
+        if ('error' in loginSuccess && loginSuccess.error === 'Unauthorized') {
         return setErrorMessage('Hibás felhasználónév vagy jelszó!');
       }
 
@@ -83,9 +83,9 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
         setUsername('');
       }
       setPassword('');
-      setAccessToken(loginSuccess.accessToken);
-      setRefreshToken(loginSuccess.refreshToken);
-      setId(loginSuccess.userId);
+      setAccessToken('accessToken' in loginSuccess ? loginSuccess.accessToken : '');
+      setRefreshToken('refreshToken' in loginSuccess ? loginSuccess.refreshToken : '');
+      setId('userId' in loginSuccess ? loginSuccess.userId : null);
       setIsLoggedIn(true);
       setErrorMessage(null);
       navigation.navigate('homescreen', {hidebutton: true});

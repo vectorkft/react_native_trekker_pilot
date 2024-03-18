@@ -1,10 +1,10 @@
 import React, {JSX, useContext} from 'react';
 import {View} from 'react-native';
 import {useStore} from '../states/zustand-states';
-import {RouterProps} from '../interfaces/navigation-props';
+import {RouterProps} from '../interfaces/navigation';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import LoadingScreen from './loading-screen';
-import VToast from '../components/Vtoast';
+import Vtoast from '../components/Vtoast';
 import VinternetToast from '../components/Vinternet-toast';
 import Header from './header';
 import Vtile from '../components/Vtile';
@@ -32,7 +32,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
       }>
       <Header navigation={navigation} />
       <VinternetToast isVisible={!isConnected} />
-      <VToast
+      <Vtoast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
         type={'check'}

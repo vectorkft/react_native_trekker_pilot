@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {Icon, Button} from 'react-native-elements';
-import {CameraScannerProps} from '../interfaces/vcamera-props';
+import {CameraScannerProps} from '../interfaces/Vcamera';
 
 const Vcamera = ({onScan, onClose}: CameraScannerProps) => {
   return (
