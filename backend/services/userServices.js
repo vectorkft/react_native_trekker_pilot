@@ -35,9 +35,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserByIdFromToken = exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
+exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
 const tokenService = __importStar(require("./tokenServices"));
-const tokenServices_1 = require("./tokenServices");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -92,20 +91,3 @@ function getUserById_new(accessToken) {
     });
 }
 exports.getUserById_new = getUserById_new;
-function deleteUserByIdFromToken(accessToken) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
-        try {
-            yield prisma.pilot_user.delete({
-                where: { id: decodedAccessToken.id }
-            });
-            yield (0, tokenServices_1.deleteTokensByLogout)({ accessToken: accessToken.accessToken });
-            return yield (0, zod_dto_service_1.zParse)(user_dto_1.userDeletedOutPut, { message: 'User deleted successfully' });
-        }
-        catch (err) {
-            console.log(err);
-            return (0, zod_dto_service_1.zParse)(user_dto_1.userDeletedOutPutError, { errormessage: 'User not found' });
-        }
-    });
-}
-exports.deleteUserByIdFromToken = deleteUserByIdFromToken;

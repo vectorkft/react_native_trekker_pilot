@@ -1,13 +1,10 @@
 import * as tokenService from './tokenServices';
-import {deleteTokensByLogout} from './tokenServices';
 import jwt from "jsonwebtoken";
 import {PrismaClient} from '@prisma/client'
 import dotenv from 'dotenv';
 import {JwtPayload} from "../models/JwtPayload";
 import {
     userAlreadyExistDTOOutput,
-    userDeletedOutPut,
-    userDeletedOutPutError,
     userLoginDTOOutput,
     userLoginFailedOutput,
     userRegisterDTOOutput,
@@ -77,22 +74,6 @@ export async function getUserById_new(accessToken: ZAccessTokenInput) {
     });
 }
 
-export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
-    const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
-    try{
-        await prisma.pilot_user.delete({
-            where:{id: decodedAccessToken.id}
-        })
-
-        await deleteTokensByLogout({accessToken:accessToken.accessToken});
-        return await zParse(userDeletedOutPut, {message: 'User deleted successfully'});
-    } catch (err){
-        console.log(err);
-        return zParse(userDeletedOutPutError,{errormessage: 'User not found'})
-    }
-
-
-}
 
 
 
