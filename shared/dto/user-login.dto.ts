@@ -27,6 +27,9 @@ export const UserLoginDTOOutput = z.object({
   currentTime: z.number(),
 });
 
+
+
+
 export type ZUserLoginDTOInput = z.infer<typeof UserLoginDTOInput>;
 
 export type ZUserLoginDTOOutput = z.infer<typeof UserLoginDTOOutput>;

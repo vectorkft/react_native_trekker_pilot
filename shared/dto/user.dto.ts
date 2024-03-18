@@ -7,6 +7,13 @@ export const userLoginDTOOutput=z.object({
     userId: z.number(),
     currentTime: z.number()
 })
+export const userLoginDTOOutputNew=z.object({
+    message:z.string(),
+    accessToken: z.string(),
+    refreshToken: z.string(),
+    userName: z.string(),
+    currentTime: z.number()
+})
 export const userRegisterDTOOutput=z.object({
     message:z.string(),
     name:z.string(),
@@ -21,7 +28,7 @@ export const UserIdInput=z.object({
 })
 
 export const userSchemaInput = z.object({
-    name: z.string().min(6, { message: "Username must be 6 or more characters long" }),
+    name: z.string().min(1, { message: "Username must be 6 or more characters long" }),
     pw: z.string().min(1, { message: "Password must be 6 or more characters long" }),
 });
 
