@@ -6,7 +6,7 @@ import {
   ZProductNumberSchemaInput,
 } from '../../../shared/dto/product.dto';
 import {tokenHandlingService} from './token-handling.service';
-import * as Sentry from "@sentry/react-native";
+import * as Sentry from '@sentry/react-native';
 
 export const ProductsService = {
   getProductByEAN: async (
@@ -26,6 +26,7 @@ export const ProductsService = {
       );
     } catch (e) {
       Sentry.captureException(e);
+      throw e;
     }
   },
   getProductByNumber: async (
@@ -45,6 +46,7 @@ export const ProductsService = {
       );
     } catch (e) {
       Sentry.captureException(e);
+      throw e;
     }
   },
 };

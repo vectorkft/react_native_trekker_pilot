@@ -1,4 +1,4 @@
-import React, {JSX, useRef} from 'react';
+import React, {JSX, useContext, useRef, useState} from 'react';
 import {LoginService} from '../services/login.service';
 import {RouterProps} from '../interfaces/navigation-props';
 import {useStore} from '../states/zustand-states';
@@ -6,26 +6,28 @@ import {
   parseZodError,
   validateZDTOForm,
 } from '../../../shared/services/zod-dto.service';
-import {DarkModeProviderService} from '../services/context-providers.service';
 import {ZodError} from 'zod';
-import {LoadingProviderService} from '../services/context-providers.service';
 import {Image, TextInput, View} from 'react-native';
 import {useLoginState} from '../states/use-login-states';
-import VAlert from '../components/VAlert';
+import Valert from '../components/Valert';
 import {useAlert} from '../states/use-alert';
-import {CheckBox, Text, Switch} from 'react-native-elements';
+import {CheckBox, Text, Switch, Icon} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import VButton from '../components/VButton';
+import Vbutton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
 import {UserLoginDTOInput} from '../../../shared/dto/user-login.dto';
-import VInput from '../components/VInput';
+import Vinput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
 import {LocalStorageService} from '../services/local-storage.service';
+import * as Sentry from '@sentry/react-native';
+import DeviceInfoList from '../services/device-info.service';
+import {DarkModeContext} from '../providers/dark-mode';
+import {LoadingContext} from '../providers/loading';
 
 const Login = ({navigation}: RouterProps): JSX.Element => {
-  const {isDarkMode, toggleDarkMode} = DarkModeProviderService.useDarkMode();
-  const {loading, setLoadingState} = LoadingProviderService.useLoading();
+  const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
+  const {loading, setLoadingState} = useContext(LoadingContext);
   const passwordInput = useRef<TextInput | null>(null);
   const {setId, setRefreshToken, setAccessToken, setIsLoggedIn, isLoggedIn} =
     useStore.getState();
@@ -37,8 +39,13 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
     rememberMe,
     setRememberMe,
   } = useLoginState();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {errorMessage, setErrorMessage} = useAlert();
   const {mountConnection} = useNetInfo();
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(previousState => !previousState);
+  };
 
   const handleFormSubmit = async () => {
     try {
@@ -81,8 +88,11 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       setId(loginSuccess.userId);
       setIsLoggedIn(true);
       setErrorMessage(null);
-      navigation.navigate('homescreen',{hidebutton: true});
+      navigation.navigate('homescreen', {hidebutton: true});
       return 'Sikeres bejelentkezés!';
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
     } finally {
       setLoadingState(false);
     }
@@ -98,9 +108,13 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
         flex: 1,
         backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
       }}>
-        <Image source={require('../../assets/img/header.png')} style={{ width: 400 }} />
-        {errorMessage && (
-        <VAlert type="error" title={'Hibás belépés!'} message={errorMessage} />
+      <DeviceInfoList />
+      <Image
+        source={require('../../assets/img/header.png')}
+        style={{width: '100%', height: 100}}
+      />
+      {errorMessage && (
+        <Valert type="error" title={'Hibás belépés!'} message={errorMessage} />
       )}
       <View style={{flex: 1, alignItems: 'center'}}>
         <Text
@@ -113,7 +127,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
           Bejelentkezés
         </Text>
         <View style={{width: '90%'}}>
-          <VInput
+          <Vinput
             inputProps={{
               value: username,
               onChangeText: setUsername,
@@ -123,53 +137,64 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
               blurOnSubmit: false,
             }}
           />
-          <VInput
+          <Vinput
             inputProps={{
               ref: passwordInput,
-              secureTextEntry: true,
+              secureTextEntry: !isPasswordVisible,
               value: password,
               onChangeText: setPassword,
               autoFocus: isLoggedIn ? false : !!username,
               placeholder: 'Jelszó',
               onSubmitEditing: handleFormSubmit,
+              rightIcon: (
+                <>
+                  <Icon
+                    onPress={togglePasswordVisibility}
+                    type={'material'}
+                    name={isPasswordVisible ? 'visibility-off' : 'visibility'}
+                    size={24}
+                    color={isDarkMode ? '#fff' : '#000'}
+                  />
+                </>
+              ),
             }}
           />
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <CheckBox
-                    title="Emlékezz rám"
-                    checkedColor="#00EDAE"
-                    uncheckedColor={isDarkMode ? 'white' : 'black'}
-                    containerStyle={{
-                        backgroundColor: 'transparent',
-                        borderWidth: 0,
-                        alignSelf: 'flex-start',
-                        marginLeft: -8,
-                    }}
-                    textStyle={{color: isDarkMode ? 'white' : 'black', fontSize: 15}}
-                    checked={rememberMe}
-                    onPress={() => setRememberMe(!rememberMe)}
-                />
-                <View style={darkModeContent.switchMode}>
-                    <Text
-                        style={
-                            isDarkMode
-                                ? darkModeContent.darkModeText
-                                : darkModeContent.lightModeText
-                        }>
-                        Sötét mód
-                    </Text>
-                    <Switch
-                        trackColor={{
-                            false: isDarkMode ? '#424242' : '#E0E0E0',
-                            true: '#ffffff',
-                        }}
-                        thumbColor={isDarkMode ? '#00EDAE' : '#616161'}
-                        onValueChange={toggleDarkMode}
-                        value={isDarkMode}
-                    />
-                </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <CheckBox
+              title="Emlékezz rám"
+              checkedColor="#00EDAE"
+              uncheckedColor={isDarkMode ? 'white' : 'black'}
+              containerStyle={{
+                backgroundColor: 'transparent',
+                borderWidth: 0,
+                alignSelf: 'flex-start',
+                marginLeft: -8,
+              }}
+              textStyle={{color: isDarkMode ? 'white' : 'black', fontSize: 16}}
+              checked={rememberMe}
+              onPress={() => setRememberMe(!rememberMe)}
+            />
+            <View style={darkModeContent.switchMode}>
+              <Text
+                style={
+                  isDarkMode
+                    ? darkModeContent.darkModeText
+                    : darkModeContent.lightModeText
+                }>
+                Sötét mód
+              </Text>
+              <Switch
+                trackColor={{
+                  false: isDarkMode ? '#424242' : '#E0E0E0',
+                  true: '#ffffff',
+                }}
+                thumbColor={isDarkMode ? '#00EDAE' : '#616161'}
+                onValueChange={toggleDarkMode}
+                value={isDarkMode}
+              />
             </View>
-            <VButton
+          </View>
+          <Vbutton
             buttonPropsNativeElement={{
               title: 'Bejelentkezés',
               titleStyle: {

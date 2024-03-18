@@ -1,12 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {CardProps} from '../interfaces/card-props';
-import {DarkModeProviderService} from '../services/context-providers.service';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {VCardComponentStylesheet} from '../styles/vcard-component.stylesheet';
+import {DarkModeContext} from '../providers/dark-mode';
 
 const VCardSuccess: React.FC<CardProps> = ({title, content}: CardProps) => {
-  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {isDarkMode} = useContext(DarkModeContext);
 
   const groupedData = [];
   for (let i = 0; i < content.data.length; i += 3) {

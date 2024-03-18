@@ -1,8 +1,12 @@
 import React, {createContext, ReactNode, useState} from 'react';
 import {LoadingContextType} from '../interfaces/loading-context-type';
-export const LoadingContext = createContext<LoadingContextType | undefined>(
-  undefined,
-);
+
+const defaultContextValue = {
+  loading: false,
+  setLoadingState: () => {},
+};
+export const LoadingContext =
+  createContext<LoadingContextType>(defaultContextValue);
 
 export const LoadingProvider = ({children}: {children: ReactNode}) => {
   const [loading, setLoading] = useState(false);

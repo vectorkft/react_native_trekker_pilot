@@ -14,7 +14,7 @@ import {
 } from '../../../shared/dto/token.dto';
 import {NavigationService} from './navigation.service';
 import {ZodError} from 'zod';
-import * as Sentry from "@sentry/react-native";
+import * as Sentry from '@sentry/react-native';
 
 const isTokenExpired = (token: string): boolean => {
   if (!token) {
@@ -41,18 +41,18 @@ const refreshAccessToken = async (
   };
 
   try {
-    return await ApiService.doRequest(
-      '/token/refresh',
-      options,
-      TokenDTOOutput,
+    return (
+      (await ApiService.doRequest('/token/refresh', options, TokenDTOOutput)) ??
+      {}
     );
   } catch (error) {
     Sentry.captureException(error);
+    throw error;
   }
 };
 
 export const tokenHandlingService = {
-  getTokenIfValid: async (): Promise<string> => {
+  getTokenIfValid: async (): Promise<string | undefined> => {
     const {accessToken, refreshToken, setAccessToken} = useStore.getState();
 
     if (isTokenExpired(accessToken)) {
@@ -65,13 +65,16 @@ export const tokenHandlingService = {
       })) as {isValid: boolean; error: ZodError};
 
       if (isValid) {
-        const newToken = await refreshAccessToken({refreshToken});
+        try {
+          const newToken = await refreshAccessToken({refreshToken});
 
-        if (newToken) {
-          setAccessToken(newToken.newAccessToken);
-          return newToken.newAccessToken;
-        } else {
-          return '';
+          if (newToken) {
+            setAccessToken(newToken.newAccessToken);
+            return newToken.newAccessToken;
+          }
+        } catch (e) {
+          Sentry.captureException(e);
+          return;
         }
       } else {
         const msg = await parseZodError(error);
@@ -80,6 +83,5 @@ export const tokenHandlingService = {
     }
 
     NavigationService.redirectToLogin();
-    return '';
   },
 };

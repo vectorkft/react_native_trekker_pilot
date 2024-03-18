@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {VinputProps} from '../interfaces/vinput-props';
-import {DarkModeProviderService} from '../services/context-providers.service';
 import {Input} from 'react-native-elements';
 import {VInputComponentStylesheet} from '../styles/vinput-component.stylesheet';
+import {DarkModeContext} from '../providers/dark-mode';
 
-const VInput = ({inputProps}: VinputProps) => {
-  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+const Vinput = ({inputProps}: VinputProps) => {
+  const {isDarkMode} = useContext(DarkModeContext);
 
   return (
     <Input
@@ -36,4 +36,4 @@ const VInput = ({inputProps}: VinputProps) => {
   );
 };
 
-export default VInput;
+export default Vinput;

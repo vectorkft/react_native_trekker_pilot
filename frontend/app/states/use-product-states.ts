@@ -3,11 +3,7 @@ import {TextInput} from 'react-native';
 import * as Sentry from '@sentry/react';
 import {ValidateForm} from '../interfaces/validate-form';
 
-export const useInputChange = (
-  onChangeHandler: (value: string) => void,
-  searchQuery: string,
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
-) => {
+export const useInputChange = (searchQuery: string) => {
   const inputRef = useRef<TextInput | null>(null);
 
   useEffect(() => {
@@ -16,27 +12,8 @@ export const useInputChange = (
     }
   }, [searchQuery]);
 
-  const onChangeInput = useCallback(
-    (value: string) => {
-      onChangeHandler(value);
-      setSearchQuery(value);
-    },
-    [onChangeHandler, setSearchQuery],
-  );
-
-  const onChangeInputWhenEnabled = useCallback(
-    (text: string) => {
-      setSearchQuery(text);
-    },
-    [setSearchQuery],
-  );
-
   return {
     inputRef,
-    onChangeInput,
-    onChangeInputWhenEnabled,
-    searchQuery,
-    setSearchQuery,
   };
 };
 
@@ -47,7 +24,7 @@ export const useOnChangeHandler = (
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [searchQueryState, setSearchQueryState] = useState<number | string>(0);
+  const [searchQueryVal, setSearchQueryVal] = useState<string>('');
   const [changeHandlerResult, setChangeHandlerResult] = useState<any>(null);
 
   const onChangeHandler = useCallback(
@@ -74,7 +51,7 @@ export const useOnChangeHandler = (
           setChangeHandlerResult(response);
         }
 
-        setSearchQueryState(value);
+        setSearchQueryVal(value);
         setSearchQuery('');
       } catch (e: any) {
         Sentry.captureException(e);
@@ -85,7 +62,7 @@ export const useOnChangeHandler = (
 
   return [
     errorMessage,
-    searchQueryState,
+    searchQueryVal,
     changeHandlerResult,
     onChangeHandler,
     setErrorMessage,

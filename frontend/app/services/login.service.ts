@@ -6,7 +6,7 @@ import {
   ZUserLoginDTOOutput,
 } from '../../../shared/dto/user-login.dto';
 import {LocalStorageService} from './local-storage.service';
-import * as Sentry from "@sentry/react-native";
+import * as Sentry from '@sentry/react-native';
 
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
@@ -37,6 +37,7 @@ export const LoginService = {
       );
     } catch (error: any) {
       Sentry.captureException(error);
+      throw error;
     }
   },
 
@@ -55,6 +56,7 @@ export const LoginService = {
       return result.status === 200;
     } catch (error: any) {
       Sentry.captureException(error);
+      throw error;
     }
   },
 };

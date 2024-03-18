@@ -4,11 +4,11 @@ import {RNCamera} from 'react-native-camera';
 import {Icon, Button} from 'react-native-elements';
 import {CameraScannerProps} from '../interfaces/vcamera-props';
 
-const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
+const Vcamera = ({onScan, onClose}: CameraScannerProps) => {
   return (
     <View style={StyleSheet.absoluteFillObject}>
       <RNCamera
-        onBarCodeRead={isCameraActive ? onScan : undefined}
+        onBarCodeRead={onScan}
         style={StyleSheet.absoluteFillObject}
         type={RNCamera.Constants.Type.back}
         flashMode={RNCamera.Constants.FlashMode.on}
@@ -28,4 +28,4 @@ const VCamera = ({onScan, isCameraActive, onClose}: CameraScannerProps) => {
   );
 };
 
-export default VCamera;
+export default Vcamera;

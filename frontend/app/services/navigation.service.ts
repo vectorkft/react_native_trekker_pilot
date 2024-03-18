@@ -1,6 +1,6 @@
 import {useStore} from '../states/zustand-states';
-import React from "react";
-import {NavigationContainerRef} from "@react-navigation/native";
+import React from 'react';
+import {NavigationContainerRef} from '@react-navigation/native';
 
 export const navigationRef = React.createRef<NavigationContainerRef>();
 

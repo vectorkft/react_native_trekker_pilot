@@ -3,7 +3,12 @@ import {useColorScheme} from 'react-native';
 import {DarkMode} from '../interfaces/dark-mode';
 import {LocalStorageService} from '../services/local-storage.service';
 
-export const DarkModeContext = createContext<DarkMode | undefined>(undefined);
+const defaultContextValue = {
+  isDarkMode: false,
+  toggleDarkMode: async () => {},
+};
+
+export const DarkModeContext = createContext<DarkMode>(defaultContextValue);
 
 export const DarkModeProvider = ({children}: {children: ReactNode}) => {
   const colorScheme = useColorScheme();
@@ -29,10 +34,8 @@ export const DarkModeProvider = ({children}: {children: ReactNode}) => {
     }
   }, [colorScheme]);
 
-  const value = {isDarkMode, toggleDarkMode};
-
   return (
-    <DarkModeContext.Provider value={value}>
+    <DarkModeContext.Provider value={{isDarkMode, toggleDarkMode}}>
       {children}
     </DarkModeContext.Provider>
   );

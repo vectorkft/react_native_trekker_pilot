@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Modal, StyleSheet, Animated} from 'react-native';
+import {View, Text, Modal, Animated} from 'react-native';
 import {Icon, Button} from 'react-native-elements';
 import {AlertProps} from '../interfaces/alert-props';
-import {VAlertComponentStylesheet} from "../styles/valert-component.stylesheet";
+import {VAlertComponentStylesheet} from '../styles/valert-component.stylesheet';
 
-const VAlert: React.FC<AlertProps> = ({type, title, message}) => {
+const Valert: React.FC<AlertProps> = ({type, title, message}) => {
   const backgroundColor =
     type === 'error' ? '#ff4d4d' : type === 'warning' ? '#ffcc00' : '#3399ff';
   const [visible, setVisible] = useState(true);
@@ -28,7 +28,9 @@ const VAlert: React.FC<AlertProps> = ({type, title, message}) => {
         }}>
         <View style={VAlertComponentStylesheet.alertHeader}>
           <Icon name={type} type="material" color="#fff" />
-          <Text style={VAlertComponentStylesheet.alertTitle}>{title.toUpperCase()}</Text>
+          <Text style={VAlertComponentStylesheet.alertTitle}>
+            {title.toUpperCase()}
+          </Text>
           <Button
             icon={<Icon name="close" size={18} color="#fff" />}
             type="clear"
@@ -43,4 +45,4 @@ const VAlert: React.FC<AlertProps> = ({type, title, message}) => {
   );
 };
 
-export default VAlert;
+export default Valert;

@@ -1,21 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Animated,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {Animated, Text, Dimensions, ActivityIndicator} from 'react-native';
 import {VtoastProps} from '../interfaces/vtoast-props';
-import {DarkModeProviderService} from '../services/context-providers.service';
 import {Icon} from 'react-native-elements';
-import {VInternetToastStylesheet} from "../styles/vinternet-toast.stylesheet";
+import {VInternetToastStylesheet} from '../styles/vinternet-toast.stylesheet';
+import {DarkModeContext} from '../providers/dark-mode';
 
-const VInternetToast = ({isVisible}: VtoastProps) => {
+const VinternetToast = ({isVisible}: VtoastProps) => {
   const [slideAnim] = useState(
     new Animated.Value(Dimensions.get('window').height),
   );
-  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {isDarkMode} = useContext(DarkModeContext);
 
   useEffect(() => {
     Animated.timing(slideAnim, {
@@ -56,6 +50,4 @@ const VInternetToast = ({isVisible}: VtoastProps) => {
   );
 };
 
-
-
-export default VInternetToast;
+export default VinternetToast;

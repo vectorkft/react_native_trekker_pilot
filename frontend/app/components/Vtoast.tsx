@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {Animated, Text, StyleSheet, Dimensions} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {Animated, Text, Dimensions} from 'react-native';
 import {VtoastProps} from '../interfaces/vtoast-props';
-import {DarkModeProviderService} from '../services/context-providers.service';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {Icon} from 'react-native-elements';
-import {VToastStylesheet} from "../styles/vtoast.stylesheet";
+import {VToastStylesheet} from '../styles/vtoast.stylesheet';
+import {DarkModeContext} from '../providers/dark-mode';
 
-const Toast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
+const Vtoast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
   const [slideAnim] = useState(
     new Animated.Value(-Dimensions.get('window').height),
   );
-  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {isDarkMode} = useContext(DarkModeContext);
 
   useEffect(() => {
     if (isVisible) {
@@ -25,7 +25,7 @@ const Toast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
             duration: 500,
             useNativeDriver: true,
           }).start(() => {
-            if (handleEvent){
+            if (handleEvent) {
               handleEvent();
             }
           });
@@ -60,4 +60,4 @@ const Toast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
   );
 };
 
-export default Toast;
+export default Vtoast;

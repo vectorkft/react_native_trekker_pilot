@@ -7,5 +7,5 @@ export interface CardProps {
 
 export interface CardPropsNotFound {
   title: string;
-  ean: number;
+  value: string;
 }

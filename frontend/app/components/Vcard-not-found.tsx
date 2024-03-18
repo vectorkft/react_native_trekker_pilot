@@ -1,15 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {CardPropsNotFound} from '../interfaces/card-props';
 import {Text, View} from 'react-native';
 import {VCardComponentStylesheet} from '../styles/vcard-component.stylesheet';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {DarkModeProviderService} from '../services/context-providers.service';
+import {DarkModeContext} from '../providers/dark-mode';
 
-const VCardNotFound: React.FC<CardPropsNotFound> = ({
+const VcardNotFound: React.FC<CardPropsNotFound> = ({
   title,
-  ean,
+  value,
 }: CardPropsNotFound) => {
-  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+  const {isDarkMode} = useContext(DarkModeContext);
 
   return (
     <View
@@ -21,10 +21,10 @@ const VCardNotFound: React.FC<CardPropsNotFound> = ({
         {title}
       </Text>
       <Text style={[VCardComponentStylesheet.cardTitle, {color: '#ff0000'}]}>
-        EAN kód: {ean}
+        EAN kód: {value}
       </Text>
     </View>
   );
 };
 
-export default VCardNotFound;
+export default VcardNotFound;

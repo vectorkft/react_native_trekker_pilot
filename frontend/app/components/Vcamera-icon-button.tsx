@@ -1,14 +1,17 @@
 import {Button, Icon} from 'react-native-elements';
-import {DarkModeProviderService} from '../services/context-providers.service';
 import {useStore} from '../states/zustand-states';
+import {TouchableOpacity} from 'react-native';
+import {useContext} from 'react';
+import {DarkModeContext} from '../providers/dark-mode';
 
-const VCameraIconButton = ({onPress}: any) => {
-  const {isDarkMode} = DarkModeProviderService.useDarkMode();
+const VcameraIconButton = ({onPress}: any) => {
+  const {isDarkMode} = useContext(DarkModeContext);
   const {isConnected} = useStore.getState();
 
   return (
     <Button
       disabled={!isConnected}
+      TouchableComponent={TouchableOpacity}
       icon={
         <Icon
           type="antdesign"
@@ -23,4 +26,4 @@ const VCameraIconButton = ({onPress}: any) => {
   );
 };
 
-export default VCameraIconButton;
+export default VcameraIconButton;

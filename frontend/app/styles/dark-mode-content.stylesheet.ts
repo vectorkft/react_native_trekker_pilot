@@ -32,8 +32,7 @@ export const darkModeContent = StyleSheet.create({
   },
   switchMode: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
   },
