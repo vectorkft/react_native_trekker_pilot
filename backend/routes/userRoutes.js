@@ -42,6 +42,10 @@ const user_dto_1 = require("../../shared/dto/user.dto");
 const userService = __importStar(require("../services/userServices"));
 const zodDTO_1 = require("../dto/zodDTO");
 const tokenService = __importStar(require("../services/tokenServices"));
+// TESTING
+const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
+const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
+// TESTING
 // Public endpoints
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
@@ -79,7 +83,7 @@ protectedUserRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 
     const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
     const accessToken = authHeader.split(' ')[1];
     try {
-        yield tokenService.deleteTokensByLogout_new({ accessToken: accessToken });
+        yield tokenService.deleteTokensByLogout({ accessToken: accessToken });
         return res.status(200).json('Logout successful');
     }
     catch (e) {
@@ -102,14 +106,30 @@ protectedUserRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, voi
         return res.status(400).send('Something went wrong: ' + err);
     }
 }));
+//// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
-        const body = yield userService.createPrismaClient(validData);
+        const body = yield userServiceNew.loginWithDB(validData);
+        if ('errormessage' in body) {
+            return res.status(401).json(body);
+        }
         return res.status(200).json(body);
     }
     catch (err) {
         console.log(err);
         return res.status(400).json(err);
+    }
+}));
+protectedUserRouter.get('/logoutteszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    const authHeader = (_c = req.headers.authorization) !== null && _c !== void 0 ? _c : '';
+    const accessToken = authHeader.split(' ')[1];
+    try {
+        yield tokenServiceNew.deleteTokensByLogout_new({ accessToken: accessToken });
+        return res.status(200).json('Logout successful');
+    }
+    catch (e) {
+        return res.status(403).json('err' + e);
     }
 }));
