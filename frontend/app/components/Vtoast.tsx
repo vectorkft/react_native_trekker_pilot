@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Animated, Text, Dimensions} from 'react-native';
-import {VtoastProps} from '../interfaces/vtoast-props';
+import {VtoastProps} from '../interfaces/VtoastProps';
 import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
 import {Icon} from 'react-native-elements';
 import {VToastStylesheet} from '../styles/vtoast.stylesheet';

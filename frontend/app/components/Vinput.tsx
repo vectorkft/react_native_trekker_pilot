@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {VinputProps} from '../interfaces/vinput-props';
+import {VinputProps} from '../interfaces/VinputProps';
 import {Input} from 'react-native-elements';
 import {VInputComponentStylesheet} from '../styles/vinput-component.stylesheet';
 import {DarkModeContext} from '../providers/dark-mode';

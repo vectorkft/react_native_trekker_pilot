@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {Icon} from 'react-native-elements';
-import {RouterProps} from '../interfaces/navigation-props';
+import {RouterProps} from '../interfaces/navigation';
 import {useStore} from '../states/zustand-states';
 import VbackButton from '../components/Vback-button';
 import {RouteProp, useRoute} from '@react-navigation/native';

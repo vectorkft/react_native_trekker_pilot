@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Modal, Animated} from 'react-native';
 import {Icon, Button} from 'react-native-elements';
-import {AlertProps} from '../interfaces/alert-props';
+import {ValertProps} from '../interfaces/ValertProps';
 import {VAlertComponentStylesheet} from '../styles/valert-component.stylesheet';
 
-const Valert: React.FC<AlertProps> = ({type, title, message}) => {
+const Valert: React.FC<ValertProps> = ({type, title, message}) => {
   const backgroundColor =
     type === 'error' ? '#ff4d4d' : type === 'warning' ? '#ffcc00' : '#3399ff';
   const [visible, setVisible] = useState(true);

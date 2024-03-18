@@ -7,6 +7,7 @@ import {
 } from '../../../shared/dto/user-login.dto';
 import {LocalStorageService} from './local-storage.service';
 import * as Sentry from '@sentry/react-native';
+import {ZApiError} from "../../../shared/dto/api-error";
 
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
@@ -23,7 +24,7 @@ export const LoginService = {
 
   handleSubmit: async (
     input: ZUserLoginDTOInput,
-  ): Promise<ZUserLoginDTOOutput | undefined> => {
+  ): Promise<ZUserLoginDTOOutput | ZApiError> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(input),

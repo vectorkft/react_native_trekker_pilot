@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
 import {View, Text, FlatList} from 'react-native';
-import {DataTableProps} from '../interfaces/data-table-props';
+import {VdataTableProps} from '../interfaces/VdataTableProps';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Button} from 'react-native-elements';
 import {VDataTableStylesheet} from '../styles/vdata-table.stylesheet';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VdataTable: React.FC<DataTableProps> = ({data}: DataTableProps) => {
+const VdataTable: React.FC<VdataTableProps> = ({data}: VdataTableProps) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {data: dataArray} = data;
 
