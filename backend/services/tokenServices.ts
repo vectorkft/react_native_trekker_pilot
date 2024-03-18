@@ -48,7 +48,7 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshTok
 
 
 
-export async function deleteExpiredTokens_new(){
+export async function deleteExpiredTokens(){
     const currentTime = Math.floor(Date.now() / 1000);
     try{
         const deletedAccessTokens = await prisma.tokens_v1.updateMany({
@@ -83,8 +83,56 @@ export async function deleteExpiredTokens_new(){
                 }
             }
         })
+        console.log('-------------------------------');
         console.log('Deleted Access token(s) '+deletedAccessTokens.count + ' || '+'Deleted Refresh Token(s) '+deletedRefreshTokens.count);
         console.log('Deleted record(s) ' +deleteTheWholeRecord.count);
+        console.log('-------------------------------');
+
+    } catch (err){
+        console.log(err);
+    }
+
+
+
+}
+export async function deleteExpiredTokens_new(){
+    const currentTime = Math.floor(Date.now() / 1000);
+    try{
+        const deletedAccessTokens = await prisma.tokens_v2.updateMany({
+            where: {
+                accessExpireDate: {
+                    lt: currentTime
+                }
+            },
+            data : {
+                accessToken:null,
+
+            }
+        });
+        const deletedRefreshTokens = await prisma.tokens_v2.updateMany({
+            where: {
+                refreshExpireDate: {
+                    lt: currentTime
+                }
+            },
+            data : {
+                refreshToken:null,
+
+            }
+        });
+        const deleteTheWholeRecord = await prisma.tokens_v2.deleteMany({
+            where: {
+                accessExpireDate:{
+                    lt: currentTime
+                },
+                refreshExpireDate:{
+                    lt: currentTime
+                }
+            }
+        })
+        console.log('Deleted Access token(s) '+deletedAccessTokens.count + ' || '+'Deleted Refresh Token(s) '+deletedRefreshTokens.count);
+        console.log('Deleted record(s) ' +deleteTheWholeRecord.count);
+        console.log('-------------------------------');
 
     } catch (err){
         console.log(err);
@@ -94,7 +142,7 @@ export async function deleteExpiredTokens_new(){
 
 }
 
-export async function deleteTokensByLogout_new(accessToken:ZAccessTokenInput){
+export async function deleteTokensByLogout(accessToken:ZAccessTokenInput){
     try{
        await prisma.tokens_v1.deleteMany({
            where: {
@@ -120,7 +168,7 @@ export async function deleteTokensByUserId(userId:ZUserIdInput){
     }
 }
 
-export async function refreshToken_new(refreshToken: ZrefreshTokenInput) {
+export async function refreshToken(refreshToken: ZrefreshTokenInput) {
     //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
     if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
         return await zParse(RefreshBodyErrorMessage,{errorMessage: 'You tried to use AccessToken as RefreshToken'});

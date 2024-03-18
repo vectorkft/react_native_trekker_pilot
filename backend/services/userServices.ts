@@ -1,5 +1,5 @@
 import * as tokenService from './tokenServices';
-import {deleteTokensByLogout_new} from './tokenServices';
+import {deleteTokensByLogout} from './tokenServices';
 import jwt from "jsonwebtoken";
 import {PrismaClient} from '@prisma/client'
 import dotenv from 'dotenv';
@@ -15,14 +15,15 @@ import {
 } from "../../shared/dto/user.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 import {ZAccessTokenInput} from "../../shared/dto/refresh.token.dto";
-import {dbConnect} from "./dbConnectService";
+
 
 
 dotenv.config()
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({log: ['info'],})
 
 
 export async function loginUser(userInput: ZUserSchemaInput) {
+
     const user= await prisma.pilot_user.findFirst({
         where:{ name: userInput.name, pw: userInput.pw}
     });
@@ -83,7 +84,7 @@ export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
             where:{id: decodedAccessToken.id}
         })
 
-        await deleteTokensByLogout_new({accessToken:accessToken.accessToken});
+        await deleteTokensByLogout({accessToken:accessToken.accessToken});
         return await zParse(userDeletedOutPut, {message: 'User deleted successfully'});
     } catch (err){
         console.log(err);
@@ -92,25 +93,9 @@ export async function deleteUserByIdFromToken(accessToken:ZAccessTokenInput){
 
 
 }
-export async function storedProcedureTesting(){
-    try{
-        console.log('Result: ');
-        return prisma.$queryRaw`EXEC CH_LOGIN N'react', N'1433'`;
-    } catch (err){
-        console.log(err);
-        return err;
-    }
 
 
-}
 
-export async function createPrismaClient(userInput: ZUserSchemaInput) {
-    const prisma =await dbConnect(userInput);
-    return await prisma.pilot_user.findFirst({
-        where: {name: userInput.name, pw: userInput.pw}
-    });
-
-}
 
 
 

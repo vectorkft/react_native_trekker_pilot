@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAccessTokenInDatabase = exports.refreshToken_new = exports.deleteTokensByUserId = exports.deleteTokensByLogout_new = exports.deleteExpiredTokens_new = exports.addTokenAtLogin = void 0;
+exports.isAccessTokenInDatabase = exports.refreshToken = exports.deleteTokensByUserId = exports.deleteTokensByLogout = exports.deleteExpiredTokens_new = exports.deleteExpiredTokens = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
@@ -68,7 +68,7 @@ function addTokenAtLogin(accessToken, refreshToken, userId) {
     });
 }
 exports.addTokenAtLogin = addTokenAtLogin;
-function deleteExpiredTokens_new() {
+function deleteExpiredTokens() {
     return __awaiter(this, void 0, void 0, function* () {
         const currentTime = Math.floor(Date.now() / 1000);
         try {
@@ -102,8 +102,54 @@ function deleteExpiredTokens_new() {
                     }
                 }
             });
+            console.log('-------------------------------');
             console.log('Deleted Access token(s) ' + deletedAccessTokens.count + ' || ' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count);
             console.log('Deleted record(s) ' + deleteTheWholeRecord.count);
+            console.log('-------------------------------');
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+}
+exports.deleteExpiredTokens = deleteExpiredTokens;
+function deleteExpiredTokens_new() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const currentTime = Math.floor(Date.now() / 1000);
+        try {
+            const deletedAccessTokens = yield prisma.tokens_v2.updateMany({
+                where: {
+                    accessExpireDate: {
+                        lt: currentTime
+                    }
+                },
+                data: {
+                    accessToken: null,
+                }
+            });
+            const deletedRefreshTokens = yield prisma.tokens_v2.updateMany({
+                where: {
+                    refreshExpireDate: {
+                        lt: currentTime
+                    }
+                },
+                data: {
+                    refreshToken: null,
+                }
+            });
+            const deleteTheWholeRecord = yield prisma.tokens_v2.deleteMany({
+                where: {
+                    accessExpireDate: {
+                        lt: currentTime
+                    },
+                    refreshExpireDate: {
+                        lt: currentTime
+                    }
+                }
+            });
+            console.log('Deleted Access token(s) ' + deletedAccessTokens.count + ' || ' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count);
+            console.log('Deleted record(s) ' + deleteTheWholeRecord.count);
+            console.log('-------------------------------');
         }
         catch (err) {
             console.log(err);
@@ -111,7 +157,7 @@ function deleteExpiredTokens_new() {
     });
 }
 exports.deleteExpiredTokens_new = deleteExpiredTokens_new;
-function deleteTokensByLogout_new(accessToken) {
+function deleteTokensByLogout(accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield prisma.tokens_v1.deleteMany({
@@ -125,7 +171,7 @@ function deleteTokensByLogout_new(accessToken) {
         }
     });
 }
-exports.deleteTokensByLogout_new = deleteTokensByLogout_new;
+exports.deleteTokensByLogout = deleteTokensByLogout;
 function deleteTokensByUserId(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -140,7 +186,7 @@ function deleteTokensByUserId(userId) {
     });
 }
 exports.deleteTokensByUserId = deleteTokensByUserId;
-function refreshToken_new(refreshToken) {
+function refreshToken(refreshToken) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
@@ -165,7 +211,7 @@ function refreshToken_new(refreshToken) {
         }
     });
 }
-exports.refreshToken_new = refreshToken_new;
+exports.refreshToken = refreshToken;
 function isRefreshTokenInDatabase(refreshToken) {
     return __awaiter(this, void 0, void 0, function* () {
         // Convert the token object to boolean

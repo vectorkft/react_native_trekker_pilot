@@ -13,10 +13,10 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
     const secretKey=process.env.JWT_SECRET_KEY ?? ''
     if (authHeader) {
         const token = authHeader.split(' ')[1];
-        if(!await tokenService.isAccessTokenInDatabase({accessToken: token})){
-            console.log('Invalid token');
-            return res.sendStatus(403);
-        }
+        // if(!await tokenService.isAccessTokenInDatabase({accessToken: token})){
+        //     console.log('Invalid token');
+        //     return res.sendStatus(403);
+        // }
 
         jwt.verify(token, secretKey, (err, user) => {
             if (err) {

@@ -29,20 +29,15 @@ function getCikkByCikkszam(cikkszam) {
 exports.getCikkByCikkszam = getCikkByCikkszam;
 function getCikkByEanKod(eankod) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const cikk = yield prisma.raktar_eancikkek.findMany({
-                where: {
-                    jellemzo: eankod.eankod
-                }
-            });
-            if (cikk.length === 0) {
-                return false;
+        const cikk = yield prisma.raktar_eancikkek.findMany({
+            where: {
+                jellemzo: eankod.eankod
             }
-            return processArticles(cikk);
+        });
+        if (cikk.length === 0) {
+            return false;
         }
-        catch (err) {
-            throw err;
-        }
+        return processArticles(cikk);
     });
 }
 exports.getCikkByEanKod = getCikkByEanKod;
