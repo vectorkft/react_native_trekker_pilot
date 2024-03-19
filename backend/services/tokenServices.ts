@@ -10,7 +10,7 @@ import {
     ZrefreshTokenInput,
     ZrefreshTokenOutput
 } from "../../shared/dto/refresh.token.dto";
-import {ZUserIdInput} from "../../shared/dto/user.dto";
+import {ZUserIdInput, ZUserSchemaInput} from "../../shared/dto/user.dto";
 import dotenv from "dotenv";
 
 
@@ -156,17 +156,6 @@ export async function deleteTokensByLogout(accessToken:ZAccessTokenInput){
 
 }
 
-export async function deleteTokensByUserId(userId:ZUserIdInput){
-    try {
-        return await prisma.tokens_v1.deleteMany({
-            where: {
-                userId: userId.userId
-            }
-        });
-    } catch (err){
-
-    }
-}
 
 export async function refreshToken(refreshToken: ZrefreshTokenInput) {
     //Így megtudom fogni hogy ne lehessen accessTokennel is kérni a refresht
@@ -206,11 +195,4 @@ async function isRefreshTokenInDatabase(refreshToken: ZrefreshTokenInput): Promi
     }).then(token => !!token);
 }
 
-export async function isAccessTokenInDatabase(accessToken: ZAccessTokenInput): Promise<boolean> {
-    // Convert the token object to boolean
-    return prisma.tokens_v1.findFirst({
-        where: {
-            accessToken: accessToken.accessToken
-        }
-    }).then(token => !!token);
-}
+

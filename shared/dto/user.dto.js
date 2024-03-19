@@ -14,7 +14,6 @@ exports.userLoginDTOOutputNew = zod_1.z.object({
     accessToken: zod_1.z.string(),
     refreshToken: zod_1.z.string(),
     userName: zod_1.z.string(),
-    currentTime: zod_1.z.number()
 });
 exports.userRegisterDTOOutput = zod_1.z.object({
     message: zod_1.z.string(),
