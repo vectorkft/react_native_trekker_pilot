@@ -2,6 +2,8 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {TextInput} from 'react-native';
 import * as Sentry from '@sentry/react';
 import {ValidationResult} from '../interfaces/validation-result';
+import {parseZodError} from '../../../shared/services/zod-dto.service';
+import {ZodError} from 'zod';
 
 export const useInputChange = (searchQuery: string) => {
   const inputRef = useRef<TextInput | null>(null);
@@ -35,16 +37,17 @@ export const useOnChangeHandler = (
         const {isValid, error, validType} = await validateFormArray(value);
 
         if (!isValid) {
-          setErrorMessage('Nem megfelelő formátum, ellenőrizd az adatot!');
+          const msg = await parseZodError(<ZodError>error);
+          setErrorMessage(msg);
           setSearchQuery('');
           return;
         }
 
         // TODO: mindkettő eset
         let response;
-        if (validType === 'ean') {
+        if (validType === 'eankod') {
           response = await getProductByEAN(value);
-        } else if (validType === 'number') {
+        } else if (validType === 'cikkszam') {
           response = await getProductByNumber(value);
         }
 

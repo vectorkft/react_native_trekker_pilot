@@ -25,10 +25,9 @@ import {
   useOnBarCodeRead,
 } from '../states/use-camera-scan';
 import {Icon} from 'react-native-elements';
-import {ZodError, ZodIssueCode} from 'zod';
+import {AnyZodObject, ZodError, ZodIssueCode} from 'zod';
 import {ValidationResult} from '../interfaces/validation-result';
 import {darkModeContent} from '../styles/dark-mode-content';
-import {LocalStorageService} from '../services/local-storage';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
 
@@ -49,29 +48,34 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     return await ProductService.getProductByNumber({cikkszam: value});
   };
 
+  type TSchemaDataPair = {
+    schema: AnyZodObject;
+    formData: {[key: string]: string};
+  };
+
   const validateFormArray = async (
     value: string,
   ): Promise<ValidationResult> => {
-    const eanValidation = await validateZDTOForm(ProductEANSchemaInput, {
-      eankod: value,
-    });
-    if (eanValidation.isValid) {
-      return {...eanValidation, validType: 'ean'};
-    } else {
-      const numberValidation = await validateZDTOForm(
-        ProductNumberSchemaInput,
-        {cikkszam: value},
-      );
-      if (numberValidation.isValid) {
-        return {...numberValidation, validType: 'number'};
+    const pairs: TSchemaDataPair[] = [
+      {schema: ProductEANSchemaInput, formData: {eankod: value}},
+      {schema: ProductNumberSchemaInput, formData: {cikkszam: value}},
+    ];
+
+    for (let i = 0; i < pairs.length; i++) {
+      const {schema, formData} = pairs[i];
+      const validation = await validateZDTOForm(schema, formData);
+
+      if (validation.isValid) {
+        return {...validation, validType: Object.keys(formData)[0]};
       }
     }
+
     return {
       isValid: false,
       error: new ZodError([
         {
           code: ZodIssueCode.custom,
-          message: 'Nem megfelelő adatforma!',
+          message: 'Nem megfelelő formátum, ellenőrizd az adatot!',
           path: [],
         },
       ]),
