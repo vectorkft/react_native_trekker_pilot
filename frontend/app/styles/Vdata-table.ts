@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const VDataTableStylesheet = StyleSheet.create({
+export const dataTableStylesheet = StyleSheet.create({
   containerStyle: {
     width: '100%',
     alignSelf: 'center',

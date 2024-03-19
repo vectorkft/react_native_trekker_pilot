@@ -40,6 +40,7 @@ export const useOnChangeHandler = (
           return;
         }
 
+        // TODO: mindkettő eset
         let response;
         if (validType === 'ean') {
           response = await getProductByEAN(value);

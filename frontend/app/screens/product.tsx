@@ -49,7 +49,9 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     return await ProductService.getProductByNumber({cikkszam: value});
   };
 
-  const validateFormArray = async (value: string): Promise<ValidationResult> => {
+  const validateFormArray = async (
+    value: string,
+  ): Promise<ValidationResult> => {
     const eanValidation = await validateZDTOForm(ProductEANSchemaInput, {
       eankod: value,
     });
@@ -69,7 +71,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       error: new ZodError([
         {
           code: ZodIssueCode.custom,
-          message: 'Nem megfelelő adat!',
+          message: 'Nem megfelelő adatforma!',
           path: [],
         },
       ]),
@@ -126,10 +128,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               ref: inputRef,
               value: searchQuery,
               showSoftInputOnFocus:
-                !LocalStorageService.getDataString([
+                !!LocalStorageService.getDataString([
                   'deviceData',
                 ]).deviceData?.includes('Zebra') || keyboardActive,
-              autoFocus: !searchQuery,
+              autoFocus: true,
               onChangeText: setSearchQuery,
               onSubmitEditing: async () => await onChangeHandler(searchQuery),
               placeholder: 'Keresés...',
@@ -163,6 +165,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               ),
             }}
           />
+          // TODO: Hamburger menü, ha egy ikon van akkor csak az, ha több akkor
+          hamburger menü
         </View>
         <View style={{marginLeft: '80%', marginTop: -60}}>
           {!LocalStorageService.getDataString([
@@ -170,11 +174,19 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
           ]).deviceData?.includes('Zebra') && (
             <VCameraIconButton toggleCameraIcon={clickCamera} />
           )}
-          {LocalStorageService.getDataString([
+          {!LocalStorageService.getDataString([
             'deviceData',
           ]).deviceData?.includes('Zebra') && (
             <VKeyboardIconButton
-              toggleKeyboard={() => setKeyboardActive(!keyboardActive)}
+              toggleKeyboard={() => {
+                setKeyboardActive(!keyboardActive);
+                setTimeout(() => {
+                  inputRef.current?.blur();
+                  setTimeout(() => {
+                    inputRef.current?.focus();
+                  }, 100);
+                }, 100);
+              }}
             />
           )}
         </View>

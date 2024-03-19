@@ -3,7 +3,7 @@ import {Animated, Text, Dimensions} from 'react-native';
 import {ToastProps} from '../interfaces/Vtoast';
 import {darkModeContent} from '../styles/dark-mode-content';
 import {Icon} from 'react-native-elements';
-import {VToastStylesheet} from '../styles/vtoast';
+import {toastStylesheet} from '../styles/Vtoast';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
@@ -39,7 +39,7 @@ const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
   return (
     <Animated.View
       style={{
-        ...VToastStylesheet.toast,
+        ...toastStylesheet.toast,
         transform: [{translateY: slideAnim}],
         backgroundColor: isDarkMode ? '#343333' : '#a9a4a4',
       }}>

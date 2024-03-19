@@ -3,7 +3,7 @@ import {View, Text, FlatList} from 'react-native';
 import {ZProductOutput} from '../interfaces/Vdata-table';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Button} from 'react-native-elements';
-import {VDataTableStylesheet} from '../styles/vdata-table';
+import {dataTableStylesheet} from '../styles/Vdata-table';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const VDataTable: React.FC<ZProductOutput> = ({data}: ZProductOutput) => {
@@ -24,21 +24,21 @@ const VDataTable: React.FC<ZProductOutput> = ({data}: ZProductOutput) => {
   return (
     <View
       style={[
-        VDataTableStylesheet.containerStyle,
+        dataTableStylesheet.containerStyle,
         {
           backgroundColor: isDarkMode ? Colors.white : Colors.darker,
         },
       ]}>
       <View
         style={[
-          VDataTableStylesheet.titleContainer,
+          dataTableStylesheet.titleContainer,
           {borderColor: isDarkMode ? '#000' : '#fff'},
         ]}>
         {titles.slice(0, 3).map((title, index) => (
           <Text
             key={index}
             style={[
-              VDataTableStylesheet.textStyle,
+              dataTableStylesheet.textStyle,
               {
                 color: isDarkMode ? '#000' : '#fff',
                 borderRightWidth: index < 2 ? 1 : 0, // az utolsó cellánál nincs jobb oldali vonal
@@ -56,13 +56,13 @@ const VDataTable: React.FC<ZProductOutput> = ({data}: ZProductOutput) => {
         renderItem={({item: row}) => (
           <View
             style={[
-              VDataTableStylesheet.tableContainer,
+              dataTableStylesheet.tableContainer,
               {borderColor: isDarkMode ? '#000' : '#fff'},
             ]}>
             {row.map((value, i) => (
               <Text
                 style={[
-                  VDataTableStylesheet.textStyle,
+                  dataTableStylesheet.textStyle,
                   {
                     color: isDarkMode ? '#000' : '#fff',
                     borderRightWidth: i < row.length - 1 ? 1 : 0, // az utolsó cellánál nincs jobb oldali vonal

@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const VInputComponentStylesheet = StyleSheet.create({
+export const inputStylesheet = StyleSheet.create({
   containerStyle: {
     marginTop: 10,
     borderRadius: 10,

@@ -6,3 +6,5 @@ export const DeviceInfoDTO = z.object({
     deviceName: z.string(),
     deviceId: z.string(),
 });
+
+export type ZDeviceInfoDTO = z.infer<typeof DeviceInfoDTO>

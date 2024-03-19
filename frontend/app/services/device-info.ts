@@ -1,12 +1,15 @@
 import {useEffect} from 'react';
 import DeviceInfo from 'react-native-device-info';
-import {DeviceInfoDTO} from '../../../shared/dto/device-info.dto';
+import {
+  DeviceInfoDTO,
+  ZDeviceInfoDTO,
+} from '../../../shared/dto/device-info.dto';
 import {LocalStorageService} from './local-storage';
 import * as Sentry from '@sentry/react-native';
 const DeviceInfoList = () => {
   useEffect(() => {
     (() => {
-      const deviceData = {
+      const deviceData: ZDeviceInfoDTO = {
         brand: DeviceInfo.getBrand(),
         deviceId: DeviceInfo.getDeviceId(),
         deviceName: DeviceInfo.getDeviceNameSync(),

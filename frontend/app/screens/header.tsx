@@ -10,7 +10,7 @@ import {LoginService} from '../services/login';
 import LoadingScreen from './loading-screen';
 import {useAlert} from '../states/use-alert';
 import VAlert from '../components/Valert';
-import {HeaderStylesheet} from '../styles/header';
+import {headerStylesheet} from '../styles/header';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 
@@ -32,16 +32,16 @@ const Header = ({navigation}: AppNavigation) => {
   return (
     <View
       style={[
-        HeaderStylesheet.header,
+        headerStylesheet.header,
         {backgroundColor: isDarkMode ? '#2d2d2d' : '#d2cfcf'},
       ]}>
       {errorMessage && (
         <VAlert type="error" title={'Hiba!'} message={errorMessage} />
       )}
-      <View style={HeaderStylesheet.iconContainer}>
+      <View style={headerStylesheet.iconContainer}>
         {!hideButtonProfile && (
           <TouchableOpacity
-            style={HeaderStylesheet.iconButton}
+            style={headerStylesheet.iconButton}
             disabled={!isConnected}
             onPress={() =>
               navigation.navigate('profile', {
@@ -59,7 +59,7 @@ const Header = ({navigation}: AppNavigation) => {
         )}
         {!hidebutton && (
           <TouchableOpacity
-            style={HeaderStylesheet.iconButton}
+            style={headerStylesheet.iconButton}
             disabled={!isConnected}
             onPress={async () => {
               setLoadingState(true);

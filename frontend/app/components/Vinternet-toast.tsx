@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Animated, Text, Dimensions, ActivityIndicator} from 'react-native';
 import {ToastProps} from '../interfaces/Vtoast';
 import {Icon} from 'react-native-elements';
-import {VInternetToastStylesheet} from '../styles/vinternet-toast';
+import {internetToastStylesheet} from '../styles/Vinternet-toast';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const VInternetToast = ({isVisible}: ToastProps) => {
@@ -22,7 +22,7 @@ const VInternetToast = ({isVisible}: ToastProps) => {
   return (
     <Animated.View
       style={{
-        ...VInternetToastStylesheet.toast,
+        ...internetToastStylesheet.toast,
         transform: [{translateY: slideAnim}],
         backgroundColor: isDarkMode ? '#343333' : '#a9a4a4',
       }}>
