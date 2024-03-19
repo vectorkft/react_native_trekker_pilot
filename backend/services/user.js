@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerUser = exports.loginUser = void 0;
-const tokenService = __importStar(require("./tokenServices"));
+const tokenService = __importStar(require("./token"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_dto_1 = require("../../shared/dto/user.dto");

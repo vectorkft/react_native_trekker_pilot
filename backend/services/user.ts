@@ -1,4 +1,4 @@
-import * as tokenService from './tokenServices';
+import * as tokenService from './token';
 import {PrismaClient} from '@prisma/client'
 import dotenv from 'dotenv';
 

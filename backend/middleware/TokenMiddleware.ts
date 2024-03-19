@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import {NextFunction, Request, Response} from 'express';
 import dotenv from 'dotenv';
-import * as tokenService from "../services/tokenServices"
+import * as tokenService from "../services/token"
 import {PrismaClientInitializationError} from "@prisma/client/runtime/library";
 
 

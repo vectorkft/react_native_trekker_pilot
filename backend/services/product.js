@@ -21,7 +21,7 @@ function getCikkByCikkszam(cikkszam) {
             }
         });
         if (cikk.length === 0) {
-            return "Not found";
+            return false;
         }
         return processArticles(cikk);
     });

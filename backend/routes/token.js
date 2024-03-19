@@ -38,7 +38,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
-const tokenService = __importStar(require("../services/tokenServices"));
+const zodDTO_1 = require("../dto/zodDTO");
+const tokenService = __importStar(require("../services/token"));
 const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
@@ -56,7 +57,7 @@ exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, voi
         if (e instanceof library_1.PrismaClientInitializationError) {
             return res.status(500).json('Cannot connect to the database');
         }
-        return res.status(400).json(e);
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(e));
     }
 }));
 //// FOR TESTING PURPOSE ONLY

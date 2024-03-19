@@ -1,9 +1,9 @@
 import express, {Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {userSchemaInput} from "../../shared/dto/user.dto";
-import * as userService from "../services/userServices";
+import * as userService from "../services/user";
 import {ZodDTO} from "../dto/zodDTO";
-import * as tokenService from "../services/tokenServices";
+import * as tokenService from "../services/token";
 // TESTING
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"

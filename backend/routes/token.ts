@@ -1,12 +1,12 @@
 import express, {Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {ZodDTO} from "../dto/zodDTO";
-import * as tokenService from "../services/tokenServices";
+import * as tokenService from "../services/token";
 import {RefreshBodySchemaInput} from "../../shared/dto/refresh.token.dto";
 
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew"
-import {PrismaClientInitializationError, PrismaClientRustPanicError, PrismaClientUnknownRequestError} from '@prisma/client/runtime/library';
-import { Prisma } from '@prisma/client';
+import {PrismaClientInitializationError} from '@prisma/client/runtime/library';
+
 
 
 
@@ -25,7 +25,7 @@ tokenRouter.post('/refresh', async (req : Request, res : Response) => {
         if(e instanceof PrismaClientInitializationError){
             return res.status(500).json('Cannot connect to the database');
         }
-        return res.status(400).json(e);
+        return res.status(400).json(ZodDTO.fromZodError(e));
 
     }
 });

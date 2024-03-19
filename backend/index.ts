@@ -1,11 +1,11 @@
 import express, {Request, Response} from 'express';
 import * as cron from 'node-cron';
-import {deleteExpiredTokens, deleteExpiredTokens_new} from './services/tokenServices';
+import {deleteExpiredTokens, deleteExpiredTokens_new} from './services/token';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
-import {userRouter, protectedUserRouter} from './routes/userRoutes';
-import {tokenRouter} from "./routes/tokenRoutes";
-import {protectedProductRouter} from "./routes/productRoutes";
+import {userRouter, protectedUserRouter} from './routes/user';
+import {tokenRouter} from "./routes/token";
+import {protectedProductRouter} from "./routes/product";
 
 const app = express();
 const HTTP_PORT = 8000;

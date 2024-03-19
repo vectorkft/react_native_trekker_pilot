@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const tokenService = __importStar(require("../services/tokenServices"));
+const tokenService = __importStar(require("../services/token"));
 const library_1 = require("@prisma/client/runtime/library");
 dotenv_1.default.config();
 function verifyToken(req, res, next) {

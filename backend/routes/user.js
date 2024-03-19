@@ -39,9 +39,9 @@ exports.protectedUserRouter = exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const user_dto_1 = require("../../shared/dto/user.dto");
-const userService = __importStar(require("../services/userServices"));
+const userService = __importStar(require("../services/user"));
 const zodDTO_1 = require("../dto/zodDTO");
-const tokenService = __importStar(require("../services/tokenServices"));
+const tokenService = __importStar(require("../services/token"));
 // TESTING
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
