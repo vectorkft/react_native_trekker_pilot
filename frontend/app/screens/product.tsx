@@ -128,7 +128,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               ref: inputRef,
               value: searchQuery,
               showSoftInputOnFocus:
-                !!LocalStorageService.getDataString([
+                !LocalStorageService.getDataString([
                   'deviceData',
                 ]).deviceData?.includes('Zebra') || keyboardActive,
               autoFocus: true,
@@ -174,7 +174,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
           ]).deviceData?.includes('Zebra') && (
             <VCameraIconButton toggleCameraIcon={clickCamera} />
           )}
-          {!LocalStorageService.getDataString([
+          {LocalStorageService.getDataString([
             'deviceData',
           ]).deviceData?.includes('Zebra') && (
             <VKeyboardIconButton

@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {DeviceInfoDTO} from "./device-info.dto";
-import {DeviceInfo} from "../../frontend/app/enums/device-info";
+import {DeviceInfoEnum} from "../../frontend/app/enums/device-info";
 
 const jwtRegex = /(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/;
 
@@ -26,9 +26,8 @@ export const UserLoginDTOOutput = z.object({
   refreshToken: z
     .string()
     .refine(token => jwtRegex.test(token), {message: 'Érvénytelen JWT token'}),
-  userId: z.number(),
-  currentTime: z.number(),
-  deviceType: z.enum([DeviceInfo.trekker,DeviceInfo.mobile]).describe('Device Type'),
+  userName: z.string(),
+  deviceType: z.enum([DeviceInfoEnum.trekker,DeviceInfoEnum.mobile]).describe('Device Type'),
 });
 
 export type ZUserLoginDTOInput = z.infer<typeof UserLoginDTOInput>;

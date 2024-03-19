@@ -24,12 +24,13 @@ import * as Sentry from '@sentry/react-native';
 import DeviceInfoList from '../services/device-info';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
+import {deviceData} from "../enums/device-info";
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
   const {loading, setLoadingState} = useContext(LoadingContext);
   const passwordInput = useRef<TextInput | null>(null);
-  const {setId, setRefreshToken, setAccessToken, setIsLoggedIn, isLoggedIn} =
+  const {setRefreshToken, setAccessToken, setIsLoggedIn, isLoggedIn} =
     useStore.getState();
   const {
     username,
@@ -41,7 +42,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   } = useLoginState();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {errorMessage, setErrorMessage} = useAlert();
-    const { width, height } = Dimensions.get('window');
+    const {height } = Dimensions.get('window');
   const {mountConnection} = useNetInfo();
 
   const togglePasswordVisibility = () => {
@@ -59,6 +60,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       const {isValid, error} = (await validateZDTOForm(UserLoginDTOInput, {
         name: username,
         pw: password,
+          deviceData: deviceData
       })) as {isValid: boolean; error: ZodError};
 
       if (!isValid) {
@@ -69,6 +71,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       const loginSuccess = await LoginService.handleSubmit({
         name: username,
         pw: password,
+          deviceData: deviceData
       });
 
         if ('error' in loginSuccess && loginSuccess.error === 'Unauthorized') {
@@ -86,7 +89,6 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       setPassword('');
       setAccessToken('accessToken' in loginSuccess ? loginSuccess.accessToken : '');
       setRefreshToken('refreshToken' in loginSuccess ? loginSuccess.refreshToken : '');
-      setId('userId' in loginSuccess ? loginSuccess.userId : null);
       setIsLoggedIn(true);
       setErrorMessage(null);
       navigation.navigate('homescreen', {hidebutton: true});

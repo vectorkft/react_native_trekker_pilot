@@ -6,8 +6,8 @@ interface Store {
   setAccessToken: (value: string) => void;
   refreshToken: string;
   setRefreshToken: (value: string) => void;
-  id: number | null;
-  setId: (value: number|null) => void;
+  deviceType: string;
+  setDeviceType: (value: string) => void;
   isConnected: boolean;
   setIsConnected: (value: boolean) => void;
   uptoDate: boolean;
@@ -23,8 +23,8 @@ export const useStore = create<Store>(set => ({
   setAccessToken: value => set({accessToken: value}),
   refreshToken: '',
   setRefreshToken: value => set({refreshToken: value}),
-  id: 0,
-  setId: value => set({id: value}),
+  deviceType: '',
+  setDeviceType: value => set({deviceType: value}),
   isConnected: false,
   setIsConnected: value => set({isConnected: value}),
   uptoDate: false,
