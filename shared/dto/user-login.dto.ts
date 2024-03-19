@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {DeviceInfoDTO} from "./device-info.dto";
-import {DeviceInfoEnum} from "../../frontend/app/enums/device-info";
+import {DeviceInfoEnum} from "../enums/device-info";
 
 const jwtRegex = /(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/;
 
@@ -12,7 +12,7 @@ export const UserLoginDTOInput = z.object({
     .describe('Username'),
   pw: z
     .string()
-    .min(6, 'A jelszó hossza minimum 6 karakter kell legyen!')
+    .min(1, 'A jelszó hossza minimum 1 karakter kell legyen!')
     .max(100, 'A jelszó hossza maximum 100 karakter lehet!')
     .describe('Password'),
   deviceData: DeviceInfoDTO.describe('Device Info'),

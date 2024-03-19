@@ -24,7 +24,7 @@ import * as Sentry from '@sentry/react-native';
 import DeviceInfoList from '../services/device-info';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
-import {deviceData} from "../enums/device-info";
+import {deviceData} from '../constants/device-data';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
@@ -42,7 +42,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   } = useLoginState();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {errorMessage, setErrorMessage} = useAlert();
-    const {height } = Dimensions.get('window');
+  const {height} = Dimensions.get('window');
   const {mountConnection} = useNetInfo();
 
   const togglePasswordVisibility = () => {
@@ -60,7 +60,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       const {isValid, error} = (await validateZDTOForm(UserLoginDTOInput, {
         name: username,
         pw: password,
-          deviceData: deviceData
+        deviceData: deviceData,
       })) as {isValid: boolean; error: ZodError};
 
       if (!isValid) {
@@ -71,10 +71,10 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       const loginSuccess = await LoginService.handleSubmit({
         name: username,
         pw: password,
-          deviceData: deviceData
+        deviceData: deviceData,
       });
 
-        if ('error' in loginSuccess && loginSuccess.error === 'Unauthorized') {
+      if ('error' in loginSuccess && loginSuccess.error === 'Unauthorized') {
         return setErrorMessage('Hibás felhasználónév vagy jelszó!');
       }
 
@@ -87,8 +87,12 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
         setUsername('');
       }
       setPassword('');
-      setAccessToken('accessToken' in loginSuccess ? loginSuccess.accessToken : '');
-      setRefreshToken('refreshToken' in loginSuccess ? loginSuccess.refreshToken : '');
+      setAccessToken(
+        'accessToken' in loginSuccess ? loginSuccess.accessToken : '',
+      );
+      setRefreshToken(
+        'refreshToken' in loginSuccess ? loginSuccess.refreshToken : '',
+      );
       setIsLoggedIn(true);
       setErrorMessage(null);
       navigation.navigate('homescreen', {hidebutton: true});
