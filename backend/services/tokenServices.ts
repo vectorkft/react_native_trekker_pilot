@@ -19,7 +19,7 @@ const prisma = new PrismaClient()
 
 dotenv.config()
 
-export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshToken: ZrefreshTokenInput, userId: ZUserIdInput){
+export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshToken: ZrefreshTokenInput, userInput: ZUserSchemaInput){
     const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
     const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as JwtPayload;
     if (!decodedRefreshToken || !decodedAccessToken) {
@@ -27,22 +27,22 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshTok
 
     }
     try{
-        await prisma.tokens_v1.create({
+        await prisma.tokens_v2.create({
             data:
                 {
                     accessToken: accessToken.accessToken,
                     accessExpireDate: decodedAccessToken.exp,
                     refreshToken: refreshToken.refreshToken,
                     refreshExpireDate: decodedRefreshToken.exp,
-                    userId: userId.userId
+                    userName: userInput.name,
 
                 }
         })
         console.log('Tokens added')
     } catch (err){
         console.log(err);
+        return err;
     }
-
 }
 
 
@@ -195,4 +195,11 @@ async function isRefreshTokenInDatabase(refreshToken: ZrefreshTokenInput): Promi
     }).then(token => !!token);
 }
 
+export async function signTokens(tokenType: string, expiresIn: string, userInput: ZUserSchemaInput){
 
+    return jwt.sign(
+        {name: userInput.name, szemelykod: 1, tokenType},
+        process.env.JWT_SECRET_KEY ?? '',
+        {expiresIn: process.env[expiresIn] ?? '1h'}
+    );
+}

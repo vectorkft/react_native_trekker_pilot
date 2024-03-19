@@ -18,15 +18,15 @@ export async function loginWithDB(userInput: ZUserSchemaInput) {
             return ['User not found'];
         }
 
-        const token= await tokenServiceNew.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput);
+        const accessToken= await tokenServiceNew.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput);
 
         const refreshToken= await tokenServiceNew.signTokens('refreshToken','REFRESH_TOKEN_EXPIRE',userInput);
 
-        await tokenServiceNew.addTokenAtLogin({accessToken: token}, {refreshToken}, userInput);
+        await tokenServiceNew.addTokenAtLogin({accessToken}, {refreshToken}, userInput);
 
         return zParse(userLoginDTOOutputNew, {
             message: 'Login Success, token added successfully',
-            accessToken: token,
+            accessToken: accessToken,
             refreshToken,
             userName: userInput.name,
         });

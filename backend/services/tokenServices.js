@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshToken = exports.deleteTokensByLogout = exports.deleteExpiredTokens_new = exports.deleteExpiredTokens = exports.addTokenAtLogin = void 0;
+exports.signTokens = exports.refreshToken = exports.deleteTokensByLogout = exports.deleteExpiredTokens_new = exports.deleteExpiredTokens = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importStar(require("jsonwebtoken"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
@@ -43,7 +43,7 @@ const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
 const dotenv_1 = __importDefault(require("dotenv"));
 const prisma = new client_1.PrismaClient();
 dotenv_1.default.config();
-function addTokenAtLogin(accessToken, refreshToken, userId) {
+function addTokenAtLogin(accessToken, refreshToken, userInput) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
         const decodedRefreshToken = jsonwebtoken_1.default.decode(refreshToken.refreshToken);
@@ -51,19 +51,20 @@ function addTokenAtLogin(accessToken, refreshToken, userId) {
             throw new Error('Cannot decode token');
         }
         try {
-            yield prisma.tokens_v1.create({
+            yield prisma.tokens_v2.create({
                 data: {
                     accessToken: accessToken.accessToken,
                     accessExpireDate: decodedAccessToken.exp,
                     refreshToken: refreshToken.refreshToken,
                     refreshExpireDate: decodedRefreshToken.exp,
-                    userId: userId.userId
+                    userName: userInput.name,
                 }
             });
             console.log('Tokens added');
         }
         catch (err) {
             console.log(err);
+            return err;
         }
     });
 }
@@ -208,3 +209,10 @@ function isRefreshTokenInDatabase(refreshToken) {
         }).then(token => !!token);
     });
 }
+function signTokens(tokenType, expiresIn, userInput) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        return jsonwebtoken_1.default.sign({ name: userInput.name, szemelykod: 1, tokenType }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: (_b = process.env[expiresIn]) !== null && _b !== void 0 ? _b : '1h' });
+    });
+}
+exports.signTokens = signTokens;
