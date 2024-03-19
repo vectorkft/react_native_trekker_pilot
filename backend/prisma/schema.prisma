@@ -116,6 +116,7 @@ model Tokens_v2 {
   refreshToken      String? @db.NVarChar(Max)
   refreshExpireDate Int?
   userName          String? @db.NVarChar(Max)
+  szemelykod        Int?
 }
 
 view raktar_eancikkek {

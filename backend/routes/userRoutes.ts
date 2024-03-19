@@ -7,6 +7,7 @@ import * as tokenService from "../services/tokenServices";
 // TESTING
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
+import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
 // TESTING
 
 // Public endpoints
@@ -22,8 +23,11 @@ userRouter.post('/login', async (req: Request, res: Response) => {
             return res.status(401).json(body);
         }
         return res.status(200).json(body);
-    } catch (err: any) {
-        return res.status(400).send(ZodDTO.fromZodError(err));
+    } catch (err) {
+        if(err instanceof PrismaClientRustPanicError){
+            return res.status(401).json('Invalid username or password');
+        }
+        return res.status(400).send(err);
     }
 });
 
@@ -54,18 +58,8 @@ protectedUserRouter.get('/logout', async (req: Request, res : Response) =>{
 });
 
 protectedUserRouter.post('/profile',async (req: Request, res: Response)=>{
-    const authHeader = req.headers.authorization??'';
-    const accessToken = authHeader.split(' ')[1];
-    try{
-        const body=await userService.getUserById_new({accessToken: accessToken});
-        if(!body){
-            return res.status(404).send('User not found');
-        }
-        return res.status(200).json(body)
-    } catch (err){
-        console.error(err);
-        return res.status(400).send('Something went wrong: ' + err);
-    }
+    return res.status(200).json('OK');
+
 
 });
 //// FOR TESTING PURPOSE ONLY

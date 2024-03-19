@@ -42,6 +42,7 @@ const product_dto_1 = require("../../shared/dto/product.dto");
 const cikkService = __importStar(require("../services/cikkService"));
 const zodDTO_1 = require("../dto/zodDTO");
 const cikkServiceNew = __importStar(require("../services/servicesNew/cikkServiceNew"));
+const library_1 = require("@prisma/client/runtime/library");
 exports.protectedProductRouter = express_1.default.Router();
 exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -54,7 +55,7 @@ exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(voi
     }
     catch (err) {
         console.error(err);
-        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+        return res.status(400).json(err);
     }
 }));
 exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -84,6 +85,9 @@ exports.protectedProductRouter.post('/getCikkTeszt', (req, res) => __awaiter(voi
         return res.status(200).json(body);
     }
     catch (err) {
+        if (err instanceof library_1.PrismaClientRustPanicError) {
+            return res.status(401).json('Invalid username or password');
+        }
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
@@ -100,7 +104,9 @@ exports.protectedProductRouter.post('/getCikkByEANTeszt', (req, res) => __awaite
         return res.status(200).json(body);
     }
     catch (err) {
-        console.error(err);
+        if (err instanceof library_1.PrismaClientRustPanicError) {
+            return res.status(401).json('Invalid username or password');
+        }
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));

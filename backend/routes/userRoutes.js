@@ -45,6 +45,7 @@ const tokenService = __importStar(require("../services/tokenServices"));
 // TESTING
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
+const library_1 = require("@prisma/client/runtime/library");
 // TESTING
 // Public endpoints
 const userRouter = express_1.default.Router();
@@ -62,7 +63,10 @@ userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
         return res.status(200).json(body);
     }
     catch (err) {
-        return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
+        if (err instanceof library_1.PrismaClientRustPanicError) {
+            return res.status(401).json('Invalid username or password');
+        }
+        return res.status(400).send(err);
     }
 }));
 userRouter.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -91,20 +95,7 @@ protectedUserRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 
     }
 }));
 protectedUserRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    const authHeader = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
-    const accessToken = authHeader.split(' ')[1];
-    try {
-        const body = yield userService.getUserById_new({ accessToken: accessToken });
-        if (!body) {
-            return res.status(404).send('User not found');
-        }
-        return res.status(200).json(body);
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(400).send('Something went wrong: ' + err);
-    }
+    return res.status(200).json('OK');
 }));
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -122,8 +113,8 @@ userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 }));
 protectedUserRouter.get('/logoutteszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    const authHeader = (_c = req.headers.authorization) !== null && _c !== void 0 ? _c : '';
+    var _b;
+    const authHeader = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
     const accessToken = authHeader.split(' ')[1];
     try {
         yield tokenServiceNew.deleteTokensByLogout_new({ accessToken: accessToken });

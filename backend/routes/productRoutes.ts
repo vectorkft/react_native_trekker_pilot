@@ -5,6 +5,8 @@ import * as cikkService from "../services/cikkService";
 import {ZodDTO} from "../dto/zodDTO";
 
 import * as cikkServiceNew from "../services/servicesNew/cikkServiceNew"
+import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
+
 
 export const protectedProductRouter = express.Router();
 
@@ -21,7 +23,7 @@ protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response)
 
     } catch (err){
         console.error(err);
-        return res.status(400).json(ZodDTO.fromZodError(err));
+        return res.status(400).json(err);
     }
 
 })
@@ -50,6 +52,9 @@ protectedProductRouter.post('/getCikkTeszt', async(req:Request, res:Response)=>{
         }
         return res.status(200).json(body);
     } catch (err){
+        if(err instanceof PrismaClientRustPanicError){
+            return res.status(401).json('Invalid username or password');
+        }
         return res.status(400).json(ZodDTO.fromZodError(err));
     }
 })
@@ -68,7 +73,9 @@ protectedProductRouter.post('/getCikkByEANTeszt', async (req: Request, res: Resp
         return res.status(200).json(body);
 
     } catch (err){
-        console.error(err);
+        if(err instanceof PrismaClientRustPanicError){
+            return res.status(401).json('Invalid username or password');
+        }
         return res.status(400).json(ZodDTO.fromZodError(err));
     }
 

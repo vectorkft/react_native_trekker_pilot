@@ -35,34 +35,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById_new = exports.registerUser = exports.loginUser = void 0;
+exports.registerUser = exports.loginUser = void 0;
 const tokenService = __importStar(require("./tokenServices"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_dto_1 = require("../../shared/dto/user.dto");
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
+const dbConnectionCheck_1 = require("./dbConnectionCheck");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient({ log: ['info'], });
 function loginUser(userInput) {
-    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
+        yield (0, dbConnectionCheck_1.dbConnectionCheck)(userInput);
         const user = yield prisma.pilot_user.findFirst({
             where: { name: userInput.name, pw: userInput.pw }
         });
         if (!user) {
             return yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginFailedOutput, { errormessage: 'Wrong username or Password' });
         }
-        const now = Math.floor(Date.now() / 1000);
-        const token = jsonwebtoken_1.default.sign({ name: user.name, pw: user.id, id: user.id, tokenType: 'accessToken' }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: (_b = process.env.ACCESS_TOKEN_EXPIRE) !== null && _b !== void 0 ? _b : '30min' });
-        const refreshToken = jsonwebtoken_1.default.sign({ name: user.name, pw: user.pw, id: user.id, tokenType: 'refreshToken' }, (_c = process.env.JWT_SECRET_KEY) !== null && _c !== void 0 ? _c : '', { expiresIn: (_d = process.env.REFRESH_TOKEN_EXPIRE) !== null && _d !== void 0 ? _d : '1h' });
-        yield tokenService.addTokenAtLogin({ accessToken: token }, { refreshToken }, { userId: user.id });
-        return (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutput, {
+        const token = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput);
+        const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput);
+        yield tokenService.addTokenAtLogin({ accessToken: token }, { refreshToken }, userInput);
+        return (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutputNew, {
             message: 'Login Success, token added successfully',
             accessToken: token,
             refreshToken,
-            userId: user.id,
-            currentTime: now
+            userName: user.name,
         });
     });
 }
@@ -82,12 +80,3 @@ function registerUser(user) {
     });
 }
 exports.registerUser = registerUser;
-function getUserById_new(accessToken) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
-        return prisma.pilot_user.findFirst({
-            where: { id: decodedAccessToken.id }
-        });
-    });
-}
-exports.getUserById_new = getUserById_new;
