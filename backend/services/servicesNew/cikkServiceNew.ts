@@ -37,7 +37,6 @@ export async function getCikkByEanKod(eankod: ZProductEANSchemaInput, accessToke
         }
         return processArticles(cikk);
 
-
 }
 
 
