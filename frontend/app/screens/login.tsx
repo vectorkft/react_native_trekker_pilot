@@ -1,31 +1,31 @@
 import React, {JSX, useContext, useRef, useState} from 'react';
-import {LoginService} from '../services/login.service';
-import {RouterProps} from '../interfaces/navigation';
-import {useStore} from '../states/zustand-states';
+import {LoginService} from '../services/login';
+import {AppNavigation} from '../interfaces/navigation';
+import {useStore} from '../states/zustand';
 import {
   parseZodError,
   validateZDTOForm,
 } from '../../../shared/services/zod-dto.service';
 import {ZodError} from 'zod';
-import {Image, TextInput, View} from 'react-native';
-import {useLoginState} from '../states/use-login-states';
-import Valert from '../components/Valert';
+import {Dimensions, Image, TextInput, View} from 'react-native';
+import {useLoginState} from '../states/use-login';
+import VAlert from '../components/Valert';
 import {useAlert} from '../states/use-alert';
 import {CheckBox, Text, Switch, Icon} from 'react-native-elements';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import Vbutton from '../components/Vbutton';
+import {darkModeContent} from '../styles/dark-mode-content';
+import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
 import {UserLoginDTOInput} from '../../../shared/dto/user-login.dto';
-import Vinput from '../components/Vinput';
+import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
-import {LocalStorageService} from '../services/local-storage.service';
+import {LocalStorageService} from '../services/local-storage';
 import * as Sentry from '@sentry/react-native';
-import DeviceInfoList from '../services/device-info.service';
+import DeviceInfoList from '../services/device-info';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 
-const Login = ({navigation}: RouterProps): JSX.Element => {
+const Login = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
   const {loading, setLoadingState} = useContext(LoadingContext);
   const passwordInput = useRef<TextInput | null>(null);
@@ -41,6 +41,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
   } = useLoginState();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {errorMessage, setErrorMessage} = useAlert();
+    const { width, height } = Dimensions.get('window');
   const {mountConnection} = useNetInfo();
 
   const togglePasswordVisibility = () => {
@@ -111,10 +112,10 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
       <DeviceInfoList />
       <Image
         source={require('../../assets/img/header.png')}
-        style={{width: '100%', height: 100}}
+        style={{width: '100%', height: height > 600 ? 200 : 100}}
       />
       {errorMessage && (
-        <Valert type="error" title={'Hibás belépés!'} message={errorMessage} />
+        <VAlert type="error" title={'Hibás belépés!'} message={errorMessage} />
       )}
       <View style={{flex: 1, alignItems: 'center'}}>
         <Text
@@ -127,7 +128,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
           Bejelentkezés
         </Text>
         <View style={{width: '90%'}}>
-          <Vinput
+          <VInput
             inputProps={{
               value: username,
               onChangeText: setUsername,
@@ -137,7 +138,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
               blurOnSubmit: false,
             }}
           />
-          <Vinput
+          <VInput
             inputProps={{
               ref: passwordInput,
               secureTextEntry: !isPasswordVisible,
@@ -194,7 +195,7 @@ const Login = ({navigation}: RouterProps): JSX.Element => {
               />
             </View>
           </View>
-          <Vbutton
+          <VButton
             buttonPropsNativeElement={{
               title: 'Bejelentkezés',
               titleStyle: {

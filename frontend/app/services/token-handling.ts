@@ -1,7 +1,7 @@
-import {useStore} from '../states/zustand-states';
+import {useStore} from '../states/zustand';
 import jwtDecode from 'jwt-decode';
-import {DecodedToken} from '../interfaces/decoded-token';
-import {ApiService} from './api.service';
+import {ExpInterface} from '../interfaces/decoded-token';
+import {ApiService} from './api';
 import {
   parseZodError,
   validateZDTOForm,
@@ -12,7 +12,7 @@ import {
   ZTokenDTOInput,
   ZTokenDTOOutput,
 } from '../../../shared/dto/token.dto';
-import {NavigationService} from './navigation.service';
+import {NavigationService} from './navigation';
 import {ZodError} from 'zod';
 import * as Sentry from '@sentry/react-native';
 
@@ -22,7 +22,7 @@ const isTokenExpired = (token: string): boolean => {
   }
 
   try {
-    const decoded: DecodedToken = jwtDecode(token);
+    const decoded: ExpInterface = jwtDecode(token);
     const currentTime = Date.now() / 1000;
 
     return decoded.exp >= currentTime;
@@ -51,7 +51,7 @@ const refreshAccessToken = async (
   }
 };
 
-export const tokenHandlingService = {
+export const TokenHandlingService = {
   getTokenIfValid: async (): Promise<string | undefined> => {
     const {accessToken, refreshToken, setAccessToken} = useStore.getState();
 

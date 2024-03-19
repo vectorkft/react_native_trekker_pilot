@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
-import {networkChange} from '../services/net-info.service';
-import {useStore} from './zustand-states';
+import {networkChange} from '../services/net-info';
+import {useStore} from './zustand';
 
 export const useNetInfo = () => {
   const [mountConnection, setMountConnection] = useState(false);

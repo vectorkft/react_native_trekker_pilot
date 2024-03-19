@@ -1,17 +1,17 @@
 import React, {JSX, useContext} from 'react';
 import {View} from 'react-native';
-import {useStore} from '../states/zustand-states';
-import {RouterProps} from '../interfaces/navigation';
-import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
+import {useStore} from '../states/zustand';
+import {AppNavigation} from '../interfaces/navigation';
+import {darkModeContent} from '../styles/dark-mode-content';
 import LoadingScreen from './loading-screen';
-import Vtoast from '../components/Vtoast';
-import VinternetToast from '../components/Vinternet-toast';
+import VToast from '../components/Vtoast';
+import VInternetToast from '../components/Vinternet-toast';
 import Header from './header';
-import Vtile from '../components/Vtile';
+import VTile from '../components/Vtile';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 
-const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
+const HomeScreen = ({navigation}: AppNavigation): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
@@ -31,8 +31,8 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
           : {...darkModeContent.lightContainer, alignItems: 'center'}
       }>
       <Header navigation={navigation} />
-      <VinternetToast isVisible={!isConnected} />
-      <Vtoast
+      <VInternetToast isVisible={!isConnected} />
+      <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
         type={'check'}
@@ -42,7 +42,7 @@ const HomeScreen = ({navigation}: RouterProps): JSX.Element => {
         {isLoggedIn && (
           <View>
             <View>
-              <Vtile
+              <VTile
                 title={'Cikkek'}
                 tileProps={{
                   onPress: () =>

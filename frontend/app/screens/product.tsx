@@ -1,38 +1,38 @@
 import React, {JSX, useContext, useState} from 'react';
 import {View} from 'react-native';
-import {ProductsService} from '../services/products.service';
+import {ProductService} from '../services/product';
 import {validateZDTOForm} from '../../../shared/services/zod-dto.service';
-import VcardNotFound from '../components/Vcard-not-found';
-import Vcamera from '../components/Vcamera';
-import VcameraIconButton from '../components/Vcamera-icon-button';
-import Vinput from '../components/Vinput';
-import Valert from '../components/Valert';
-import {useInputChange, useOnChangeHandler} from '../states/use-product-states';
-import VbackButton from '../components/Vback-button';
-import {RouterProps} from '../interfaces/navigation';
+import VCardNotFound from '../components/Vcard-not-found';
+import VCamera from '../components/Vcamera';
+import VCameraIconButton from '../components/Vcamera-icon-button';
+import VInput from '../components/Vinput';
+import VAlert from '../components/Valert';
+import {useInputChange, useOnChangeHandler} from '../states/use-product-search';
+import VBackButton from '../components/Vback-button';
+import {AppNavigation} from '../interfaces/navigation';
 import {
   ProductEANSchemaInput,
   ProductNumberSchemaInput,
 } from '../../../shared/dto/product.dto';
-import {useStore} from '../states/zustand-states';
-import VinternetToast from '../components/Vinternet-toast';
-import Vtoast from '../components/Vtoast';
-import VdataTable from '../components/Vdata-table';
-import VcardSuccess from '../components/Vcard-succes';
+import {useStore} from '../states/zustand';
+import VInternetToast from '../components/Vinternet-toast';
+import VToast from '../components/Vtoast';
+import VDataTable from '../components/Vdata-table';
+import VCardSuccess from '../components/Vcard-succes';
 import {
   useBeepSound,
   useCamera,
   useOnBarCodeRead,
-} from '../states/use-camera-states';
+} from '../states/use-camera-scan';
 import {Icon} from 'react-native-elements';
 import {ZodError, ZodIssueCode} from 'zod';
-import {ValidateForm} from '../interfaces/validate-form';
-import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
-import {LocalStorageService} from '../services/local-storage.service';
-import VkeyboardIconButton from '../components/VkeyboardIconButton';
+import {ValidationResult} from '../interfaces/validation-result';
+import {darkModeContent} from '../styles/dark-mode-content';
+import {LocalStorageService} from '../services/local-storage';
+import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const Product = ({navigation}: RouterProps): JSX.Element => {
+const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {setWasDisconnected} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
@@ -42,14 +42,14 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
   const {inputRef} = useInputChange(searchQuery);
   const beep = useBeepSound();
   const getProductByEAN = async (value: string) => {
-    return await ProductsService.getProductByEAN({eankod: value});
+    return await ProductService.getProductByEAN({eankod: value});
   };
 
   const getProductByNumber = async (value: string) => {
-    return await ProductsService.getProductByNumber({cikkszam: value});
+    return await ProductService.getProductByNumber({cikkszam: value});
   };
 
-  const validateFormArray = async (value: string): Promise<ValidateForm> => {
+  const validateFormArray = async (value: string): Promise<ValidationResult> => {
     const eanValidation = await validateZDTOForm(ProductEANSchemaInput, {
       eankod: value,
     });
@@ -98,7 +98,7 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
   );
 
   if (isCameraActive) {
-    return <Vcamera onScan={onBarCodeRead} onClose={handleOnClose} />;
+    return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
   }
 
   return (
@@ -108,20 +108,20 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
           ? {...darkModeContent.darkContainer}
           : {...darkModeContent.lightContainer}
       }>
-      <VinternetToast isVisible={!isConnected} />
-      <Vtoast
+      <VInternetToast isVisible={!isConnected} />
+      <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
         type={'check'}
         handleEvent={() => setWasDisconnected(false)}
       />
       {errorMessage && (
-        <Valert type="error" title={'Hibás eankód!'} message={errorMessage} />
+        <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
       )}
-      <VbackButton navigation={navigation} />
+      <VBackButton navigation={navigation} />
       <View style={{flex: 1, justifyContent: 'flex-start'}}>
         <View style={{marginLeft: '12%', width: '70%'}}>
-          <Vinput
+          <VInput
             inputProps={{
               ref: inputRef,
               value: searchQuery,
@@ -165,24 +165,28 @@ const Product = ({navigation}: RouterProps): JSX.Element => {
           />
         </View>
         <View style={{marginLeft: '80%', marginTop: -60}}>
-            {!LocalStorageService.getDataString([
-                'deviceData',
-            ]).deviceData?.includes('Zebra') && (<VcameraIconButton onPress={clickCamera} />)}
-            {LocalStorageService.getDataString([
-                'deviceData',
-            ]).deviceData?.includes('Zebra') && (<VkeyboardIconButton
-                toggleKeyboard={() => setKeyboardActive(!keyboardActive)}
-            />)}
+          {!LocalStorageService.getDataString([
+            'deviceData',
+          ]).deviceData?.includes('Zebra') && (
+            <VCameraIconButton toggleCameraIcon={clickCamera} />
+          )}
+          {LocalStorageService.getDataString([
+            'deviceData',
+          ]).deviceData?.includes('Zebra') && (
+            <VKeyboardIconButton
+              toggleKeyboard={() => setKeyboardActive(!keyboardActive)}
+            />
+          )}
         </View>
         {changeHandlerResult?.status === 200 && (
           <View>
-            <VdataTable data={changeHandlerResult} />
+            <VDataTable data={changeHandlerResult} />
             {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
           </View>
         )}
         {changeHandlerResult?.status === 204 && (
           <View>
-            <VcardNotFound title={'Not Found'} value={searchQueryVal} />
+            <VCardNotFound title={'Not Found'} value={searchQueryVal} />
           </View>
         )}
       </View>

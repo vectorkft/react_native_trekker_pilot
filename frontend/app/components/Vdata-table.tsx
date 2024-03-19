@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
 import {View, Text, FlatList} from 'react-native';
-import {VdataTableProps} from '../interfaces/VdataTableProps';
+import {ZProductOutput} from '../interfaces/Vdata-table';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Button} from 'react-native-elements';
-import {VDataTableStylesheet} from '../styles/vdata-table.stylesheet';
+import {VDataTableStylesheet} from '../styles/vdata-table';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VdataTable: React.FC<VdataTableProps> = ({data}: VdataTableProps) => {
+const VDataTable: React.FC<ZProductOutput> = ({data}: ZProductOutput) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {data: dataArray} = data;
 
@@ -97,4 +97,4 @@ const VdataTable: React.FC<VdataTableProps> = ({data}: VdataTableProps) => {
   );
 };
 
-export default VdataTable;
+export default VDataTable;

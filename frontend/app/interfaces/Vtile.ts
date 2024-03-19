@@ -1,7 +1,7 @@
 import React from 'react';
 import {TouchableOpacity} from 'react-native';
 
-export interface VtileProps {
+export interface TileButton {
   tileProps: React.ComponentProps<typeof TouchableOpacity>;
   title: string;
 }

@@ -1,3 +1,3 @@
-export interface Vkeyboard {
+export interface KeyboardManager {
   toggleKeyboard: () => void;
 }

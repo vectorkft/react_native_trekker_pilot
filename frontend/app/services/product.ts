@@ -1,21 +1,21 @@
-import {ApiService} from './api.service';
+import {ApiService} from './api';
 import {
   ProductListOutput,
   ZProductListOutput,
   ZProductEANSchemaInput,
   ZProductNumberSchemaInput,
 } from '../../../shared/dto/product.dto';
-import {tokenHandlingService} from './token-handling.service';
+import {TokenHandlingService} from './token-handling';
 import * as Sentry from '@sentry/react-native';
 
-export const ProductsService = {
+export const ProductService = {
   getProductByEAN: async (
     ean: ZProductEANSchemaInput,
   ): Promise<ZProductListOutput | Response | undefined> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(ean),
-      accessToken: await tokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(),
     };
 
     try {
@@ -35,7 +35,7 @@ export const ProductsService = {
     const options = {
       method: 'POST',
       body: JSON.stringify(productNumber),
-      accessToken: await tokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(),
     };
 
     try {

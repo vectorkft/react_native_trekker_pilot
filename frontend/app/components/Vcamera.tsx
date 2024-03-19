@@ -2,9 +2,9 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {Icon, Button} from 'react-native-elements';
-import {CameraScannerProps} from '../interfaces/Vcamera';
+import {ScannerInterface} from '../interfaces/Vcamera';
 
-const Vcamera = ({onScan, onClose}: CameraScannerProps) => {
+const VCamera = ({onScan, onClose}: ScannerInterface) => {
   return (
     <View style={StyleSheet.absoluteFillObject}>
       <RNCamera
@@ -28,4 +28,4 @@ const Vcamera = ({onScan, onClose}: CameraScannerProps) => {
   );
 };
 
-export default Vcamera;
+export default VCamera;

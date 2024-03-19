@@ -1,3 +1,3 @@
-export interface DecodedToken {
+export interface ExpInterface {
   exp: number;
 }

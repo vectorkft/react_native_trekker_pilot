@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {TextInput} from 'react-native';
 import * as Sentry from '@sentry/react';
-import {ValidateForm} from '../interfaces/validate-form';
+import {ValidationResult} from '../interfaces/validation-result';
 
 export const useInputChange = (searchQuery: string) => {
   const inputRef = useRef<TextInput | null>(null);
@@ -18,7 +18,7 @@ export const useInputChange = (searchQuery: string) => {
 };
 
 export const useOnChangeHandler = (
-  validateFormArray: (value: string) => Promise<ValidateForm>,
+  validateFormArray: (value: string) => Promise<ValidationResult>,
   getProductByEAN: (value: string) => Promise<any>,
   getProductByNumber: (value: string) => Promise<any>,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,

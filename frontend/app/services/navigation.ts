@@ -1,4 +1,4 @@
-import {useStore} from '../states/zustand-states';
+import {useStore} from '../states/zustand';
 import React from 'react';
 import {NavigationContainerRef} from '@react-navigation/native';
 

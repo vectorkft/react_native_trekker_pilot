@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Animated, Text, Dimensions} from 'react-native';
-import {VtoastProps} from '../interfaces/VtoastProps';
-import {darkModeContent} from '../styles/dark-mode-content.stylesheet';
+import {ToastProps} from '../interfaces/Vtoast';
+import {darkModeContent} from '../styles/dark-mode-content';
 import {Icon} from 'react-native-elements';
-import {VToastStylesheet} from '../styles/vtoast.stylesheet';
+import {VToastStylesheet} from '../styles/vtoast';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const Vtoast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
+const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
   const [slideAnim] = useState(
     new Animated.Value(-Dimensions.get('window').height),
   );
@@ -34,7 +34,7 @@ const Vtoast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
         return () => clearTimeout(timer);
       });
     }
-  }, [isVisible, slideAnim]);
+  }, [handleEvent, isVisible, slideAnim]);
 
   return (
     <Animated.View
@@ -60,4 +60,4 @@ const Vtoast = ({isVisible, label, type, handleEvent}: VtoastProps) => {
   );
 };
 
-export default Vtoast;
+export default VToast;

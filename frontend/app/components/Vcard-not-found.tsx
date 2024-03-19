@@ -1,14 +1,14 @@
 import React, {useContext} from 'react';
-import {VCardNotFound} from '../interfaces/Vcard';
+import {CardNotFound} from '../interfaces/Vcard';
 import {Text, View} from 'react-native';
-import {VCardComponentStylesheet} from '../styles/vcard-component.stylesheet';
+import {VCardComponentStylesheet} from '../styles/vcard-component';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VcardNotFound: React.FC<VCardNotFound> = ({
+const VCardNotFound: React.FC<CardNotFound> = ({
   title,
   value,
-}: VCardNotFound) => {
+}: CardNotFound) => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   return (
@@ -27,4 +27,4 @@ const VcardNotFound: React.FC<VCardNotFound> = ({
   );
 };
 
-export default VcardNotFound;
+export default VCardNotFound;

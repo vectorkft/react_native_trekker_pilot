@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import DeviceInfo from 'react-native-device-info';
 import {DeviceInfoDTO} from '../../../shared/dto/device-info.dto';
-import {LocalStorageService} from './local-storage.service';
+import {LocalStorageService} from './local-storage';
 import * as Sentry from '@sentry/react-native';
 const DeviceInfoList = () => {
   useEffect(() => {

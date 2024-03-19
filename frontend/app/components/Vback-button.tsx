@@ -1,16 +1,16 @@
 import {Icon} from 'react-native-elements';
-import {RouterProps} from '../interfaces/navigation';
+import {AppNavigation} from '../interfaces/navigation';
 import {TouchableOpacity} from 'react-native';
-import {useStore} from '../states/zustand-states';
+import {useStore} from '../states/zustand';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {StackParamList} from '../interfaces/stack-param-list';
+import {UIConfig} from '../interfaces/u-i-config';
 import {useContext} from 'react';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VbackButton = ({navigation}: RouterProps) => {
+const VBackButton = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {isConnected} = useStore.getState();
-  const routeProducts = useRoute<RouteProp<StackParamList, 'products'>>();
+  const routeProducts = useRoute<RouteProp<UIConfig, 'products'>>();
   const styleButton = routeProducts.params.styleButton;
 
   return (
@@ -28,4 +28,4 @@ const VbackButton = ({navigation}: RouterProps) => {
   );
 };
 
-export default VbackButton;
+export default VBackButton;

@@ -1,26 +1,26 @@
 import React, {useContext} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {Icon} from 'react-native-elements';
-import {RouterProps} from '../interfaces/navigation';
-import {useStore} from '../states/zustand-states';
-import VbackButton from '../components/Vback-button';
+import {AppNavigation} from '../interfaces/navigation';
+import {useStore} from '../states/zustand';
+import VBackButton from '../components/Vback-button';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {StackParamList} from '../interfaces/stack-param-list';
-import {LoginService} from '../services/login.service';
+import {UIConfig} from '../interfaces/u-i-config';
+import {LoginService} from '../services/login';
 import LoadingScreen from './loading-screen';
 import {useAlert} from '../states/use-alert';
-import Valert from '../components/Valert';
-import {HeaderStylesheet} from '../styles/header.stylesheet';
+import VAlert from '../components/Valert';
+import {HeaderStylesheet} from '../styles/header';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 
-const Header = ({navigation}: RouterProps) => {
+const Header = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {isConnected, setIsLoggedIn} = useStore.getState();
   const {loading, setLoadingState} = useContext(LoadingContext);
   const {errorMessage, setErrorMessage} = useAlert();
-  const routeHomeScreen = useRoute<RouteProp<StackParamList, 'homescreen'>>();
-  const routeProfile = useRoute<RouteProp<StackParamList, 'profile'>>();
+  const routeHomeScreen = useRoute<RouteProp<UIConfig, 'homescreen'>>();
+  const routeProfile = useRoute<RouteProp<UIConfig, 'profile'>>();
   const hidebutton =
     routeHomeScreen.params.hidebutton || routeProfile.params.hidebutton;
   const hideButtonProfile = routeProfile.params.hideButtonProfile;
@@ -36,7 +36,7 @@ const Header = ({navigation}: RouterProps) => {
         {backgroundColor: isDarkMode ? '#2d2d2d' : '#d2cfcf'},
       ]}>
       {errorMessage && (
-        <Valert type="error" title={'Hiba!'} message={errorMessage} />
+        <VAlert type="error" title={'Hiba!'} message={errorMessage} />
       )}
       <View style={HeaderStylesheet.iconContainer}>
         {!hideButtonProfile && (
@@ -83,7 +83,7 @@ const Header = ({navigation}: RouterProps) => {
           </TouchableOpacity>
         )}
       </View>
-      {!hidebutton && <VbackButton navigation={navigation} />}
+      {!hidebutton && <VBackButton navigation={navigation} />}
     </View>
   );
 };

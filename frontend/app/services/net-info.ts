@@ -1,4 +1,4 @@
-import {useStore} from '../states/zustand-states';
+import {useStore} from '../states/zustand';
 
 const {setIsConnected, setUptoDate} = useStore.getState();
 

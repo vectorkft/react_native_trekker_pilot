@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
-import {LoginService} from '../services/login.service';
-import {LocalStorageService} from '../services/local-storage.service';
+import {LoginService} from '../services/login';
+import {LocalStorageService} from '../services/local-storage';
 
 export const useLoginState = () => {
   const [username, setUsername] = useState(

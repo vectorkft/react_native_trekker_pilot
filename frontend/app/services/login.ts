@@ -1,13 +1,13 @@
-import {ApiService} from './api.service';
-import {tokenHandlingService} from './token-handling.service';
+import {ApiService} from './api';
+import {TokenHandlingService} from './token-handling';
 import {
   UserLoginDTOOutput,
   ZUserLoginDTOInput,
   ZUserLoginDTOOutput,
 } from '../../../shared/dto/user-login.dto';
-import {LocalStorageService} from './local-storage.service';
+import {LocalStorageService} from './local-storage';
 import * as Sentry from '@sentry/react-native';
-import {ZApiError} from "../../../shared/dto/api-error";
+import {ZApiError} from '../../../shared/dto/api-error';
 
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
@@ -45,7 +45,7 @@ export const LoginService = {
   handleLogout: async (): Promise<boolean | undefined> => {
     const options = {
       method: 'GET',
-      accessToken: await tokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(),
     };
 
     try {

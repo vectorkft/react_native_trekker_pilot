@@ -1,4 +1,4 @@
-export interface LoadingContextType {
+export interface LoadingState {
   loading: boolean;
   setLoadingState: (isLoading: boolean) => void;
 }

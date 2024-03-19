@@ -1,14 +1,14 @@
 import React, {createContext, useState, useEffect, ReactNode} from 'react';
 import {useColorScheme} from 'react-native';
-import {DarkMode} from '../interfaces/dark-mode';
-import {LocalStorageService} from '../services/local-storage.service';
+import {DarkModeInterface} from '../interfaces/dark-mode';
+import {LocalStorageService} from '../services/local-storage';
 
 const defaultContextValue = {
   isDarkMode: false,
   toggleDarkMode: async () => {},
 };
 
-export const DarkModeContext = createContext<DarkMode>(defaultContextValue);
+export const DarkModeContext = createContext<DarkModeInterface>(defaultContextValue);
 
 export const DarkModeProvider = ({children}: {children: ReactNode}) => {
   const colorScheme = useColorScheme();

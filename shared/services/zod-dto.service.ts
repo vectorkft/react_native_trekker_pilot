@@ -1,5 +1,5 @@
 import {AnyZodObject, z, ZodArray, ZodError, ZodObject} from "zod";
-import {ValidateForm} from "../../frontend/app/interfaces/validate-form"
+import {ValidationResult} from "../../frontend/app/interfaces/validation-result"
 import * as Sentry from '@sentry/react';
 
 export async function zParse<T extends AnyZodObject | ZodArray<ZodObject<any>>>(
@@ -33,7 +33,7 @@ export async function parseZodError(error: ZodError) : Promise<string> {
 export async function validateZDTOForm<T extends AnyZodObject>(
     schema: T,
     formData: z.infer<T>,
-): Promise<ValidateForm> {
+): Promise<ValidationResult> {
     try {
         const body: z.infer<T> = await zParse(schema, formData);
         Sentry.captureMessage("DTO body", body);

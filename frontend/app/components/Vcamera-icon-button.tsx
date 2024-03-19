@@ -1,11 +1,11 @@
 import {Button, Icon} from 'react-native-elements';
-import {useStore} from '../states/zustand-states';
+import {useStore} from '../states/zustand';
 import {TouchableOpacity} from 'react-native';
 import {useContext} from 'react';
 import {DarkModeContext} from '../providers/dark-mode';
-import {VcameraIcon} from "../interfaces/Vcamera-icon";
+import {CameraControl} from '../interfaces/Vcamera-button';
 
-const VcameraIconButton = ({toggleCameraIcon}: VcameraIcon) => {
+const VCameraIconButton = ({toggleCameraIcon}: CameraControl) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {isConnected} = useStore.getState();
 
@@ -27,4 +27,4 @@ const VcameraIconButton = ({toggleCameraIcon}: VcameraIcon) => {
   );
 };
 
-export default VcameraIconButton;
+export default VCameraIconButton;

@@ -1,11 +1,11 @@
 import React from 'react';
-import {VbuttonProps} from '../interfaces/Vbutton';
+import {ButtonPropsNativeElement} from '../interfaces/Vbutton';
 import {Button} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native';
 
-const Vbutton: React.FC<VbuttonProps> = ({
+const VButton: React.FC<ButtonPropsNativeElement> = ({
   buttonPropsNativeElement,
-}: VbuttonProps) => {
+}: ButtonPropsNativeElement) => {
   return (
     <Button
       TouchableComponent={TouchableOpacity}
@@ -20,4 +20,4 @@ const Vbutton: React.FC<VbuttonProps> = ({
   );
 };
 
-export default Vbutton;
+export default VButton;

@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import {VtileProps} from '../interfaces/VtileProps';
-import {VTileStylesheet} from '../styles/vtile.stylesheet';
+import {TileButton} from '../interfaces/Vtile';
+import {VTileStylesheet} from '../styles/vtile';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const Vtile = ({title, tileProps}: VtileProps) => {
+const VTile = ({title, tileProps}: TileButton) => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   return (
@@ -29,4 +29,4 @@ const Vtile = ({title, tileProps}: VtileProps) => {
   );
 };
 
-export default Vtile;
+export default VTile;

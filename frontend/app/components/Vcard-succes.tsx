@@ -1,11 +1,14 @@
 import React, {useContext} from 'react';
 import {View, Text, ScrollView} from 'react-native';
-import {VcardSuccess} from '../interfaces/Vcard';
+import {CardContent} from '../interfaces/Vcard';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {VCardComponentStylesheet} from '../styles/vcard-component.stylesheet';
+import {VCardComponentStylesheet} from '../styles/vcard-component';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VcardSuccess: React.FC<VcardSuccess> = ({title, content}: VcardSuccess) => {
+const VCardSuccess: React.FC<CardContent> = ({
+  title,
+  content,
+}: CardContent) => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   const groupedData = [];
@@ -57,4 +60,4 @@ const VcardSuccess: React.FC<VcardSuccess> = ({title, content}: VcardSuccess) =>
   );
 };
 
-export default VcardSuccess;
+export default VCardSuccess;
