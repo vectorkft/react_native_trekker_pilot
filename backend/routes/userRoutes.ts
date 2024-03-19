@@ -8,6 +8,7 @@ import * as tokenService from "../services/tokenServices";
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
 import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
+import {UserLoginDTOInput} from "../../shared/dto/user-login.dto";
 // TESTING
 
 // Public endpoints
@@ -17,7 +18,7 @@ const protectedUserRouter = express.Router();
 userRouter.post('/login', async (req: Request, res: Response) => {
 
     try {
-        const validData= await zParse(userSchemaInput,req.body);
+        const validData= await zParse(UserLoginDTOInput,req.body);
         const body=await userService.loginUser(validData);
         if("errormessage" in body){
             return res.status(401).json(body);
