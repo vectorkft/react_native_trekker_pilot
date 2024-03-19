@@ -16,7 +16,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Godzillaasd\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
+					"raw": "{\"name\":\"sysdba\",\r\n\"pw\":\"a\",\r\n\"deviceData\":{\"brand\":\"Zebra\",\"deviceId\":\"goldfish_x86_64\",\"deviceName\":\"Android SDK built for x86_64\",\"manufacturer\":\"Google\"}\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -73,11 +73,14 @@
 		{
 			"name": "Regisztráció",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Komo213a1Aasdqw\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
+					"raw": "{\r\n    \"name\": \"Godzillaasd\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -135,6 +138,9 @@
 		{
 			"name": "Refresh Token",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -167,13 +173,14 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
-						"type": "text"
+						"value": "Bearer",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\r\n\"cikkszam\":1\r\n\r\n}",
+					"raw": "{\r\n\r\n\"cikkszam\":\"000002\"\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -202,13 +209,14 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
-						"type": "text"
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzOTkxNDQsImV4cCI6MTcxMDQwMDk0NH0.zDet9aun10vuI3iZNzHcIQwaiNKCVHP5wCNzjK4BAmY",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"eankod\": 4061462985683\r\n}",
+					"raw": "{\r\n  \"eankod\": \"4006050477386\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -226,7 +234,7 @@
 						"getCikkByEAN"
 					]
 				},
-				"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n404 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
+				"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
 			},
 			"response": []
 		},
@@ -237,8 +245,9 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
-						"type": "text"
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzNDE2NjQsImV4cCI6MTcxMDM0MzQ2NH0.gco3q24KgMO_YZw6epIwHt7zlMtJyHaGgxRVEHSh5G4",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -275,8 +284,9 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTMzMDUsImV4cCI6MTcwOTg5NTEwNX0.42wXr20pZAfdVmYPzEhhcSR_N3-LBD91lJUps8RqcuA",
-						"type": "text"
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTQ1ODMsImV4cCI6MTcwOTg5NjM4M30.TPa3mcEYHTxga5lNA3u3rV7r5V9UYF4qADUIirPL5OY",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
@@ -310,38 +320,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGEiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjozNSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDg1MDg4NzQsImV4cCI6MTcwODUwODkwNH0.CL0Jr4VrlhLQaPBolK2kS6GA_Cjg78JXPZO2mq8480Y",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8000/deleteUser2",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"deleteUser2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "teszt",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer ",
+						"value": "Bearer protected/product/getCikk",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"eankod\": \"4061462985683\"\r\n}",
+					"raw": "{\r\n    \"cikkszam\": \"ab007\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -349,19 +334,196 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/protected/getCikkByEAN",
+					"raw": "http://localhost:8000/protected/product/getCikk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"protected",
+						"product",
+						"getCikk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TESZT LOGIN",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwicHciOiJhYSIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzEwODM2ODQ1LCJleHAiOjE3MTA4Mzc0NDV9.nCHaRj19h41zsFmm0u_EpgWcRc5s3EHEt1UKD2yp674",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"sysdba\",\r\n    \"pw\" : \"a\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/user/teszt",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"teszt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TESZT LOGOUT",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2Mzc1MywiZXhwIjoxNzEwNzY0MzUzfQ.EG859wmWz03k_9z_69Nbi82fESwxp8FSI93ZQOhJC9I",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/protected/user/logoutteszt",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"protected",
-						"getCikkByEAN"
+						"user",
+						"logoutteszt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TESZT REFRESH TOKEN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2MzYxMywiZXhwIjoxNzEwNzY0MjEzfQ.tnhWAEaYCGAbB1LRSa6nu3l9Fd6Pv5R61aqMgu14mK8\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/token/refreshTeszt",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"token",
+						"refreshTeszt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TESZT GETCIKKBYCIKKSZAM",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwicHciOiJhIiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTA4MzY4NDUsImV4cCI6MTcxMDgzNzQ0NX0.6-3WuNrqaOFTEjKQwjhI4DbBAyjcB2Sxk7qwzJkGqk8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"cikkszam\":\"000002\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/protected/product/getCikkTeszt",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"protected",
+						"product",
+						"getCikkTeszt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TESZT EANCIKK",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2NjI4OCwiZXhwIjoxNzEwNzY2ODg4fQ.mn7dDRsiu-Fj7ufYEiuS5MsI29U793DGuETNsYye98A",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"eankod\": \"5997710400167\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/protected/product/getCikkByEANTeszt",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"protected",
+						"product",
+						"getCikkByEANTeszt"
 					]
 				}
 			},
 			"response": []
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken }}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -389,7 +551,7 @@
 			"type": "string"
 		},
 		{
-			"key": "token ",
+			"key": "accessToken ",
 			"value": "",
 			"type": "string"
 		},

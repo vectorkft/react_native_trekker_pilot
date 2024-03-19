@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 import {
     userAlreadyExistDTOOutput,
-    userLoginDTOOutputNew,
     userLoginFailedOutput,
     userRegisterDTOOutput,
     ZUserSchemaInput
@@ -12,6 +11,9 @@ import {
 import {zParse} from "../../shared/services/zod-dto.service";
 
 import {dbConnectionCheck} from "./dbConnectionCheck";
+import {UserLoginDTOOutput, ZUserLoginDTOInput} from "../../shared/dto/user-login.dto";
+import {DeviceInfoEnum} from "../../shared/enums/device-info";
+
 
 
 
@@ -19,10 +21,10 @@ dotenv.config()
 const prisma = new PrismaClient({log: ['info'],})
 
 
-export async function loginUser(userInput: ZUserSchemaInput) {
-
+export async function loginUser(userInput: ZUserLoginDTOInput) {
+    console.log(JSON.stringify(userInput.deviceData))
         await dbConnectionCheck(userInput);
-
+        const device=await deviceInfoHelper(JSON.stringify(userInput.deviceData));
         const user= await prisma.pilot_user.findFirst({
             where:{ name: userInput.name, pw: userInput.pw}
         });
@@ -37,11 +39,12 @@ export async function loginUser(userInput: ZUserSchemaInput) {
 
         await tokenService.addTokenAtLogin({accessToken: token}, {refreshToken}, userInput);
 
-        return zParse(userLoginDTOOutputNew, {
+        return zParse(UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',
             accessToken: token,
             refreshToken,
             userName: user.name,
+            deviceType: device,
         });
 }
 
@@ -66,6 +69,14 @@ export async function registerUser(user: ZUserSchemaInput) {
         userRegisterDTOOutput,
         { message: 'User registration successful', name: user.name, password: user.pw }
     );
+}
+
+async function deviceInfoHelper(deviceData: string){
+        if(deviceData.includes('Zebra')){
+            return DeviceInfoEnum.trekker;
+        }
+        return DeviceInfoEnum.mobile;
+
 }
 
 
