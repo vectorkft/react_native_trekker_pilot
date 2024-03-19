@@ -22,9 +22,11 @@ const prisma = new PrismaClient({log: ['info'],})
 
 
 export async function loginUser(userInput: ZUserLoginDTOInput) {
-    console.log(JSON.stringify(userInput.deviceData))
+
         await dbConnectionCheck(userInput);
+
         const device=await deviceInfoHelper(JSON.stringify(userInput.deviceData));
+
         const user= await prisma.pilot_user.findFirst({
             where:{ name: userInput.name, pw: userInput.pw}
         });
@@ -33,15 +35,15 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
             return await zParse(userLoginFailedOutput,{errormessage: 'Wrong username or Password'});
         }
 
-        const token =await tokenService.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput);
+        const accessToken =await tokenService.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput);
 
         const refreshToken=await  tokenService.signTokens('refreshToken','REFRESH_TOKEN_EXPIRE',userInput);
 
-        await tokenService.addTokenAtLogin({accessToken: token}, {refreshToken}, userInput);
+        await tokenService.addTokenAtLogin({accessToken}, {refreshToken}, userInput);
 
         return zParse(UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',
-            accessToken: token,
+            accessToken,
             refreshToken,
             userName: user.name,
             deviceType: device,

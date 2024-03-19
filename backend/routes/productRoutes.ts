@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {ProductEANSchemaInput, ProductNumberSchemaInput} from "../../shared/dto/product.dto";
-import * as cikkService from "../services/cikkService";
+import * as cikkService from "../services/productService";
 import {ZodDTO} from "../dto/zodDTO";
 
 import * as cikkServiceNew from "../services/servicesNew/cikkServiceNew"

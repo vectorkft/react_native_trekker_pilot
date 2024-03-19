@@ -7,7 +7,7 @@ import * as tokenService from "../services/tokenServices";
 // TESTING
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
-import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
+import {PrismaClientInitializationError, PrismaClientKnownRequestError, PrismaClientRustPanicError} from "@prisma/client/runtime/library";
 import {UserLoginDTOInput} from "../../shared/dto/user-login.dto";
 // TESTING
 
@@ -28,6 +28,9 @@ userRouter.post('/login', async (req: Request, res: Response) => {
         if(err instanceof PrismaClientRustPanicError){
             return res.status(401).json('Invalid username or password');
         }
+        if(err instanceof PrismaClientInitializationError){
+            return res.status(500).json('Cannot connect to the database');
+        }
         return res.status(400).send(err);
     }
 });
@@ -41,7 +44,10 @@ userRouter.post('/register', async (req: Request, res: Response) => {
             return res.status(409 ).json(body);
         }
         return res.status(200).json(body)
-    } catch (err: any) {
+    } catch (err) {
+        if(err instanceof PrismaClientInitializationError){
+            return res.status(500).json('Cannot connect to the database');
+        }
         return res.status(400).send(ZodDTO.fromZodError(err));
     }
 });
@@ -51,10 +57,13 @@ protectedUserRouter.get('/logout', async (req: Request, res : Response) =>{
     const authHeader = req.headers.authorization??'';
     const accessToken = authHeader.split(' ')[1];
     try {
-        await tokenService.deleteTokensByLogout({ accessToken: accessToken });
-        return res.status(200).json('Logout successful');
+        const isSuccess=await tokenService.deleteTokensByLogout({ accessToken: accessToken });
+        if(isSuccess){
+            return res.status(200).json('Logout successful');
+        }
+
     }catch (e) {
-        return res.status(403).json('err' + e);
+        return res.status(403).json(e);
     }
 });
 

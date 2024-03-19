@@ -42,10 +42,16 @@ export const userDeletedOutPut= z.object({
 export const userDeletedOutPutError= z.object({
     errormessage: z.string(),
 })
+export const userPayLoadInput= z.object({
+    name: z.string(),
+    szemelykod:z.number(),
+})
+
 
 export type ZuserAlreadyExistsDTOOutput= z.infer<typeof userAlreadyExistDTOOutput>
 export type ZuserLoginDTOOutput = z.infer<typeof userLoginDTOOutput>
 export type ZuserRegisterDTOOutput = z.infer<typeof userRegisterDTOOutput>
 export type ZUserIdInput = z.infer<typeof UserIdInput>
 export type ZUserSchemaInput = z.infer<typeof userSchemaInput>
+export type ZuserPayloadInput= z.infer<typeof userPayLoadInput>
 

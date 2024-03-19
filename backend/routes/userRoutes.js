@@ -46,6 +46,7 @@ const tokenService = __importStar(require("../services/tokenServices"));
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
+const user_login_dto_1 = require("../../shared/dto/user-login.dto");
 // TESTING
 // Public endpoints
 const userRouter = express_1.default.Router();
@@ -55,7 +56,7 @@ const protectedUserRouter = express_1.default.Router();
 exports.protectedUserRouter = protectedUserRouter;
 userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
         const body = yield userService.loginUser(validData);
         if ("errormessage" in body) {
             return res.status(401).json(body);
@@ -65,6 +66,9 @@ userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
     catch (err) {
         if (err instanceof library_1.PrismaClientRustPanicError) {
             return res.status(401).json('Invalid username or password');
+        }
+        if (err instanceof library_1.PrismaClientInitializationError) {
+            return res.status(500).json('Cannot connect to the database');
         }
         return res.status(400).send(err);
     }
@@ -79,6 +83,9 @@ userRouter.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json(body);
     }
     catch (err) {
+        if (err instanceof library_1.PrismaClientInitializationError) {
+            return res.status(500).json('Cannot connect to the database');
+        }
         return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
@@ -87,11 +94,13 @@ protectedUserRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 
     const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
     const accessToken = authHeader.split(' ')[1];
     try {
-        yield tokenService.deleteTokensByLogout({ accessToken: accessToken });
-        return res.status(200).json('Logout successful');
+        const isSuccess = yield tokenService.deleteTokensByLogout({ accessToken: accessToken });
+        if (isSuccess) {
+            return res.status(200).json('Logout successful');
+        }
     }
     catch (e) {
-        return res.status(403).json('err' + e);
+        return res.status(403).json(e);
     }
 }));
 protectedUserRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

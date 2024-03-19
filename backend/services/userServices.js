@@ -42,25 +42,29 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const user_dto_1 = require("../../shared/dto/user.dto");
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const dbConnectionCheck_1 = require("./dbConnectionCheck");
+const user_login_dto_1 = require("../../shared/dto/user-login.dto");
+const device_info_1 = require("../../shared/enums/device-info");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient({ log: ['info'], });
 function loginUser(userInput) {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, dbConnectionCheck_1.dbConnectionCheck)(userInput);
+        const device = yield deviceInfoHelper(JSON.stringify(userInput.deviceData));
         const user = yield prisma.pilot_user.findFirst({
             where: { name: userInput.name, pw: userInput.pw }
         });
         if (!user) {
             return yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginFailedOutput, { errormessage: 'Wrong username or Password' });
         }
-        const token = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput);
+        const accessToken = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput);
         const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput);
-        yield tokenService.addTokenAtLogin({ accessToken: token }, { refreshToken }, userInput);
-        return (0, zod_dto_service_1.zParse)(user_dto_1.userLoginDTOOutputNew, {
+        yield tokenService.addTokenAtLogin({ accessToken }, { refreshToken }, userInput);
+        return (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',
-            accessToken: token,
+            accessToken,
             refreshToken,
             userName: user.name,
+            deviceType: device,
         });
     });
 }
@@ -80,3 +84,11 @@ function registerUser(user) {
     });
 }
 exports.registerUser = registerUser;
+function deviceInfoHelper(deviceData) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (deviceData.includes('Zebra')) {
+            return device_info_1.DeviceInfoEnum.trekker;
+        }
+        return device_info_1.DeviceInfoEnum.mobile;
+    });
+}
