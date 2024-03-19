@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {CardContent} from '../interfaces/Vcard';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {VCardComponentStylesheet} from '../styles/vcard-component';
+import {cardStylesheet} from '../styles/Vcard';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const VCardSuccess: React.FC<CardContent> = ({
@@ -18,18 +18,18 @@ const VCardSuccess: React.FC<CardContent> = ({
 
   return (
     <ScrollView
-      contentContainerStyle={VCardComponentStylesheet.scrollView}
+      contentContainerStyle={cardStylesheet.scrollView}
       indicatorStyle="black">
       {groupedData.map((group, index) => (
         <View
           key={index}
           style={[
-            VCardComponentStylesheet.cardContainer,
+            cardStylesheet.cardContainer,
             {backgroundColor: isDarkMode ? Colors.lighter : Colors.darker},
           ]}>
           <Text
             style={[
-              VCardComponentStylesheet.cardTitle,
+              cardStylesheet.cardTitle,
               {color: isDarkMode ? '#000' : '#fff'},
             ]}>
             {title}
@@ -37,17 +37,17 @@ const VCardSuccess: React.FC<CardContent> = ({
           {group.map((item, indexGroup) => (
             <View
               key={indexGroup}
-              style={VCardComponentStylesheet.itemContainer}>
+              style={cardStylesheet.itemContainer}>
               <Text
                 style={[
-                  VCardComponentStylesheet.itemTitle,
+                  cardStylesheet.itemTitle,
                   {color: isDarkMode ? '#000' : '#fff'},
                 ]}>
                 {item.title}
               </Text>
               <Text
                 style={[
-                  VCardComponentStylesheet.itemValue,
+                  cardStylesheet.itemValue,
                   {color: isDarkMode ? '#000' : '#fff'},
                 ]}>
                 {item.value}

@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const HeaderStylesheet = StyleSheet.create({
+export const headerStylesheet = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

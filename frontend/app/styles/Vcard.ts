@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const VCardComponentStylesheet = StyleSheet.create({
+export const cardStylesheet = StyleSheet.create({
   scrollView: {
     paddingBottom: 80,
   },

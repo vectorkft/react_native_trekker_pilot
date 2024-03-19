@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const VAlertComponentStylesheet = StyleSheet.create({
+export const alertStylesheet = StyleSheet.create({
   modalView: {
     margin: 20,
     borderRadius: 20,

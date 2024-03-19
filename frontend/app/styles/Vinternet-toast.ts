@@ -1,13 +1,12 @@
 import {StyleSheet} from 'react-native';
 
-export const VToastStylesheet = StyleSheet.create({
+export const internetToastStylesheet = StyleSheet.create({
   toast: {
-    zIndex: 1,
     position: 'absolute',
     width: '90%',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    top: 15,
+    bottom: 15,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -16,10 +15,10 @@ export const VToastStylesheet = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 6,
+      height: 4,
     },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4, // Android árnyékolás
   },
 });

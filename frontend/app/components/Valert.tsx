@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Modal, Animated} from 'react-native';
 import {Icon, Button} from 'react-native-elements';
 import {Alert} from '../interfaces/Valert';
-import {VAlertComponentStylesheet} from '../styles/valert-component';
+import {alertStylesheet} from '../styles/Valert';
 
 const VAlert: React.FC<Alert> = ({type, title, message}) => {
   const backgroundColor =
@@ -22,13 +22,13 @@ const VAlert: React.FC<Alert> = ({type, title, message}) => {
     <Modal animationType="slide" transparent={true} visible={visible}>
       <Animated.View
         style={{
-          ...VAlertComponentStylesheet.modalView,
+          ...alertStylesheet.modalView,
           backgroundColor: backgroundColor,
           opacity: fadeAnim,
         }}>
-        <View style={VAlertComponentStylesheet.alertHeader}>
+        <View style={alertStylesheet.alertHeader}>
           <Icon name={type} type="material" color="#fff" />
-          <Text style={VAlertComponentStylesheet.alertTitle}>
+          <Text style={alertStylesheet.alertTitle}>
             {title.toUpperCase()}
           </Text>
           <Button
@@ -39,7 +39,7 @@ const VAlert: React.FC<Alert> = ({type, title, message}) => {
             }}
           />
         </View>
-        <Text style={VAlertComponentStylesheet.alertMessage}>{message}</Text>
+        <Text style={alertStylesheet.alertMessage}>{message}</Text>
       </Animated.View>
     </Modal>
   );

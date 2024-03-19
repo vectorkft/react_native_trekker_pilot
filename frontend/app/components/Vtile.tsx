@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import {TileButton} from '../interfaces/Vtile';
-import {VTileStylesheet} from '../styles/vtile';
+import {tileStylesheet} from '../styles/Vtile';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const VTile = ({title, tileProps}: TileButton) => {
@@ -14,12 +14,12 @@ const VTile = ({title, tileProps}: TileButton) => {
       disabled={tileProps.disabled}>
       <View
         style={[
-          VTileStylesheet.tile,
+          tileStylesheet.tile,
           {backgroundColor: isDarkMode ? '#2d2d2d' : '#d2cfcf'},
         ]}>
         <Text
           style={[
-            VTileStylesheet.title,
+            tileStylesheet.title,
             {color: isDarkMode ? '#fff' : '#000'},
           ]}>
           {title}

@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {InputProps} from '../interfaces/Vinput';
 import {Input} from 'react-native-elements';
-import {VInputComponentStylesheet} from '../styles/vinput-component';
+import {inputStylesheet} from '../styles/Vinput';
 import {DarkModeContext} from '../providers/dark-mode';
 
 const VInput = ({inputProps}: InputProps) => {
@@ -21,7 +21,7 @@ const VInput = ({inputProps}: InputProps) => {
       showSoftInputOnFocus={inputProps.showSoftInputOnFocus}
       autoFocus={inputProps.autoFocus}
       containerStyle={[
-        VInputComponentStylesheet.containerStyle,
+        inputStylesheet.containerStyle,
         {backgroundColor: isDarkMode ? '#343333' : '#dcdcdc'},
       ]}
       rightIcon={inputProps.rightIcon}

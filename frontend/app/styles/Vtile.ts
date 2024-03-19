@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const VTileStylesheet = StyleSheet.create({
+export const tileStylesheet = StyleSheet.create({
   tile: {
     width: 120,
     height: 110,
