@@ -34,7 +34,7 @@ import {DarkModeContext} from '../providers/dark-mode';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
-  const {setWasDisconnected} = useStore.getState();
+  const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -103,6 +103,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
   }
 
+  // TODO: Hamburger menü, ha egy ikon van akkor csak az, ha több akkor hamburger menü
+
   return (
     <View
       style={
@@ -127,10 +129,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             inputProps={{
               ref: inputRef,
               value: searchQuery,
-              showSoftInputOnFocus:
-                !LocalStorageService.getDataString([
-                  'deviceData',
-                ]).deviceData?.includes('Zebra') || keyboardActive,
+              showSoftInputOnFocus: deviceType === 'mobile' || keyboardActive,
               autoFocus: true,
               onChangeText: setSearchQuery,
               onSubmitEditing: async () => await onChangeHandler(searchQuery),
@@ -165,18 +164,12 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               ),
             }}
           />
-          // TODO: Hamburger menü, ha egy ikon van akkor csak az, ha több akkor
-          hamburger menü
         </View>
         <View style={{marginLeft: '80%', marginTop: -60}}>
-          {!LocalStorageService.getDataString([
-            'deviceData',
-          ]).deviceData?.includes('Zebra') && (
+          {deviceType === 'mobile' && (
             <VCameraIconButton toggleCameraIcon={clickCamera} />
           )}
-          {LocalStorageService.getDataString([
-            'deviceData',
-          ]).deviceData?.includes('Zebra') && (
+          {deviceType === 'trekker' && (
             <VKeyboardIconButton
               toggleKeyboard={() => {
                 setKeyboardActive(!keyboardActive);

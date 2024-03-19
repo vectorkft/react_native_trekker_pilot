@@ -21,7 +21,6 @@ import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
 import {LocalStorageService} from '../services/local-storage';
 import * as Sentry from '@sentry/react-native';
-import DeviceInfoList from '../services/device-info';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 import {deviceData} from '../constants/device-data';
@@ -30,8 +29,13 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
   const {loading, setLoadingState} = useContext(LoadingContext);
   const passwordInput = useRef<TextInput | null>(null);
-  const {setRefreshToken, setAccessToken, setIsLoggedIn, isLoggedIn} =
-    useStore.getState();
+  const {
+    setRefreshToken,
+    setAccessToken,
+    setIsLoggedIn,
+    isLoggedIn,
+    setDeviceType,
+  } = useStore.getState();
   const {
     username,
     setUsername,
@@ -93,6 +97,9 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       setRefreshToken(
         'refreshToken' in loginSuccess ? loginSuccess.refreshToken : '',
       );
+      setDeviceType(
+        'deviceType' in loginSuccess ? loginSuccess.deviceType : '',
+      );
       setIsLoggedIn(true);
       setErrorMessage(null);
       navigation.navigate('homescreen', {hidebutton: true});
@@ -115,7 +122,6 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
         flex: 1,
         backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
       }}>
-      <DeviceInfoList />
       <Image
         source={require('../../assets/img/header.png')}
         style={{width: '100%', height: height > 600 ? 200 : 100}}
