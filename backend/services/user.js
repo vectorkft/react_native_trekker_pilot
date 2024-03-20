@@ -41,14 +41,14 @@ const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
 const user_dto_1 = require("../../shared/dto/user.dto");
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
-const dbConnectionCheck_1 = require("./dbConnectionCheck");
+const db_connection_check_1 = require("./db-connection-check");
 const user_login_dto_1 = require("../../shared/dto/user-login.dto");
 const device_info_1 = require("../../shared/enums/device-info");
 dotenv_1.default.config();
-const prisma = new client_1.PrismaClient({ log: ['info'], });
+const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, dbConnectionCheck_1.dbConnectionCheck)(userInput);
+        yield (0, db_connection_check_1.dbConnectionCheck)(userInput);
         const device = yield deviceInfoHelper(JSON.stringify(userInput.deviceData));
         const user = yield prisma.pilot_user.findFirst({
             where: { name: userInput.name, pw: userInput.pw }

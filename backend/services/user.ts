@@ -10,7 +10,7 @@ import {
 } from "../../shared/dto/user.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 
-import {dbConnectionCheck} from "./dbConnectionCheck";
+import {dbConnectionCheck} from "./db-connection-check";
 import {UserLoginDTOOutput, ZUserLoginDTOInput} from "../../shared/dto/user-login.dto";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
 
@@ -18,7 +18,7 @@ import {DeviceInfoEnum} from "../../shared/enums/device-info";
 
 
 dotenv.config()
-const prisma = new PrismaClient({log: ['info'],})
+const prisma = new PrismaClient();
 
 
 export async function loginUser(userInput: ZUserLoginDTOInput) {
