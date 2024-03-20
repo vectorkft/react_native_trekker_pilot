@@ -48,13 +48,12 @@ app.use('/protected/product', TokenMiddleware_1.verifyToken, product_1.protected
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
     return res.status(200).json('Check postman for guidance');
 });
-cron.schedule("* * * * *", token_1.deleteExpiredTokens);
 cron.schedule("* * * * *", token_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
-app.all('/check', (res) => {
+app.all('/check', (_req, res) => {
     return res.status(200).json({
         message: 'Server is running'
     });

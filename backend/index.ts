@@ -1,6 +1,6 @@
-import express, {Request, Response} from 'express';
+import express, {Request,Response} from 'express';
 import * as cron from 'node-cron';
-import {deleteExpiredTokens, deleteExpiredTokens_new} from './services/token';
+import {deleteExpiredTokens_new} from './services/token';
 import {verifyToken} from "./middleware/TokenMiddleware";
 import {Logger} from "./middleware/LogMiddleWare";
 import {userRouter, protectedUserRouter} from './routes/user';
@@ -27,16 +27,15 @@ app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
 
-app.get('/', ( req: Request, res: Response,) => {
+app.get('/', (_req: Request, res: Response) => {
     return res.status(200).json('Check postman for guidance');
 });
 
-cron.schedule("* * * * *", deleteExpiredTokens);
 cron.schedule("* * * * *", deleteExpiredTokens_new);
 
 // Státusz ellenőrzések, nem fontos
 
-app.all('/check', (res: Response) => {
+app.all('/check', (_req: Request,res: Response) => {
     return res.status(200).json({
         message: 'Server is running'
     })
