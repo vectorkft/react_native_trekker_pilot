@@ -1,12 +1,10 @@
 import React, {createContext, ReactNode, useState} from 'react';
 import {LoadingState} from '../interfaces/loading-context-type';
-
-const defaultContextValue = {
+export const LoadingContext = createContext<LoadingState>({
   loading: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setLoadingState: () => {},
-};
-export const LoadingContext =
-  createContext<LoadingState>(defaultContextValue);
+});
 
 export const LoadingProvider = ({children}: {children: ReactNode}) => {
   const [loading, setLoading] = useState(false);

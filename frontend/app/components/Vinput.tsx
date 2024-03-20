@@ -3,6 +3,7 @@ import {InputProps} from '../interfaces/Vinput';
 import {Input} from 'react-native-elements';
 import {inputStylesheet} from '../styles/Vinput';
 import {DarkModeContext} from '../providers/dark-mode';
+import {colors} from '../enums/colors';
 
 const VInput = ({inputProps}: InputProps) => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -15,22 +16,18 @@ const VInput = ({inputProps}: InputProps) => {
       onFocus={inputProps.onFocus}
       onChangeText={inputProps.onChangeText}
       value={inputProps.value}
-      placeholderTextColor={isDarkMode ? '#5b5959' : '#a9a4a4'}
+      placeholderTextColor={
+        isDarkMode ? colors.placeholderDark : colors.placeholderLight
+      }
       placeholder={inputProps.placeholder}
       keyboardType={inputProps.keyboardType}
       showSoftInputOnFocus={inputProps.showSoftInputOnFocus}
       autoFocus={inputProps.autoFocus}
-      containerStyle={[
-        inputStylesheet.containerStyle,
-        {backgroundColor: isDarkMode ? '#343333' : '#dcdcdc'},
-      ]}
+      containerStyle={inputStylesheet(isDarkMode).containerStyle}
       rightIcon={inputProps.rightIcon}
-      inputContainerStyle={{borderBottomWidth: 0}}
-      selectionColor={isDarkMode ? '#fff' : '#000'}
-      inputStyle={{
-        color: isDarkMode ? '#fff' : '#000',
-        textAlignVertical: 'center',
-      }}
+      inputContainerStyle={inputStylesheet().inputContainerStyle}
+      selectionColor={isDarkMode ? colors.lightContent : colors.darkContent}
+      inputStyle={inputStylesheet(isDarkMode).inputStyle}
       onSubmitEditing={inputProps.onSubmitEditing}
     />
   );

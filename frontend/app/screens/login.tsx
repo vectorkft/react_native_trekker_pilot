@@ -11,8 +11,7 @@ import {Dimensions, Image, TextInput, View} from 'react-native';
 import {useLoginState} from '../states/use-login';
 import VAlert from '../components/Valert';
 import {useAlert} from '../states/use-alert';
-import {CheckBox, Text, Switch, Icon} from 'react-native-elements';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {CheckBox, Icon, Switch, Text} from 'react-native-elements';
 import {darkModeContent} from '../styles/dark-mode-content';
 import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
@@ -24,6 +23,8 @@ import * as Sentry from '@sentry/react-native';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 import {deviceData} from '../constants/device-data';
+import {AlertTypes} from '../enums/types';
+import {loginScreenStyles} from '../styles/login-screen';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
@@ -102,8 +103,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       );
       setIsLoggedIn(true);
       setErrorMessage(null);
-      navigation.navigate('homescreen', {hidebutton: true});
-      return 'Sikeres bejelentkezés!';
+      return navigation.navigate('homescreen', {hidebutton: true});
     } catch (e) {
       Sentry.captureException(e);
       throw e;
@@ -117,17 +117,17 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-      }}>
+    <View style={loginScreenStyles(isDarkMode).container}>
       <Image
         source={require('../../assets/img/header.png')}
-        style={{width: '100%', height: height > 600 ? 200 : 100}}
+        style={loginScreenStyles(false, height).image}
       />
       {errorMessage && (
-        <VAlert type="error" title={'Hibás belépés!'} message={errorMessage} />
+        <VAlert
+          type={AlertTypes.error}
+          title={'Hibás belépés!'}
+          message={errorMessage}
+        />
       )}
       <View style={{flex: 1, alignItems: 'center'}}>
         <Text

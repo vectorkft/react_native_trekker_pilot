@@ -3,6 +3,8 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {Icon, Button} from 'react-native-elements';
 import {ScannerInterface} from '../interfaces/Vcamera';
+import {vcamera} from '../styles/Vcamera';
+import {colors} from '../enums/colors';
 
 const VCamera = ({onScan, onClose}: ScannerInterface) => {
   return (
@@ -16,11 +18,16 @@ const VCamera = ({onScan, onClose}: ScannerInterface) => {
         zoom={0}
       />
       <Button
-        containerStyle={{position: 'absolute', top: 0, left: 0}}
+        containerStyle={vcamera.buttonPosition}
         icon={
-          <Icon type="antdesign" name="close" size={40} color={'#ffffff'} />
+          <Icon
+            type="antdesign"
+            name="close"
+            size={40}
+            color={colors.lightContent}
+          />
         }
-        buttonStyle={{backgroundColor: 'transparent'}}
+        buttonStyle={vcamera.buttonStyle}
         onPress={onClose}
         TouchableComponent={TouchableOpacity}
       />

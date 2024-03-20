@@ -5,6 +5,10 @@ import {darkModeContent} from '../styles/dark-mode-content';
 import {Icon} from 'react-native-elements';
 import {toastStylesheet} from '../styles/Vtoast';
 import {DarkModeContext} from '../providers/dark-mode';
+import {
+  TIMEOUT_DELAY_TOAST,
+  VTOAST_ANIMATION_DURATION,
+} from '../constants/time';
 
 const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
   const [slideAnim] = useState(
@@ -16,20 +20,20 @@ const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
     if (isVisible) {
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 500,
+        duration: VTOAST_ANIMATION_DURATION,
         useNativeDriver: true,
       }).start(() => {
         const timer = setTimeout(() => {
           Animated.timing(slideAnim, {
             toValue: -Dimensions.get('window').height,
-            duration: 500,
+            duration: VTOAST_ANIMATION_DURATION,
             useNativeDriver: true,
           }).start(() => {
             if (handleEvent) {
               handleEvent();
             }
           });
-        }, 2000);
+        }, TIMEOUT_DELAY_TOAST);
 
         return () => clearTimeout(timer);
       });
@@ -39,9 +43,8 @@ const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
   return (
     <Animated.View
       style={{
-        ...toastStylesheet.toast,
+        ...toastStylesheet(isDarkMode).toast,
         transform: [{translateY: slideAnim}],
-        backgroundColor: isDarkMode ? '#343333' : '#a9a4a4',
       }}>
       <Text
         style={
@@ -52,7 +55,7 @@ const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
         {label}
       </Text>
       <Icon
-        name={type || 'info-outline'}
+        name={type as string}
         type="material"
         color={isDarkMode ? '#fff' : '#000'}
       />

@@ -1,20 +1,18 @@
 import React, {useContext} from 'react';
 import {View, ActivityIndicator} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DarkModeContext} from '../providers/dark-mode';
+import {loadingStyles} from '../styles/loading';
+import {colors} from '../enums/colors';
 
 const LoadingScreen = () => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-      }}>
-      <ActivityIndicator size="large" color={isDarkMode ? '#fff' : '#000'} />
+    <View style={loadingStyles(isDarkMode).container}>
+      <ActivityIndicator
+        size="large"
+        color={isDarkMode ? colors.lightContent : colors.darkContent}
+      />
     </View>
   );
 };

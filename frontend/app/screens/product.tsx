@@ -25,7 +25,6 @@ import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
 import VDataTable from '../components/Vdata-table';
-import VCardSuccess from '../components/Vcard-succes';
 import {
   useBeepSound,
   useCamera,
@@ -38,6 +37,14 @@ import {darkModeContent} from '../styles/dark-mode-content';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
 import {DeviceInfoEnum} from '../../../shared/enums/device-info';
+import {TIMEOUT_DELAY} from '../constants/time';
+import HamburgerMenu from '../components/Vhamburger-menu';
+import {productStyles} from '../styles/product';
+import {
+  RESPONSE_NO_CONTENT,
+  RESPONSE_SUCCESS,
+} from '../constants/response-status';
+import {AlertTypes, ToastTypes} from '../enums/types';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -69,7 +76,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       {schema: ProductNumberSchemaInput, formData: {cikkszam: value}},
     ];
 
-    let validTypes: string[] = [];
+    const validTypes: string[] = [];
     let error: ZodError | null = null;
 
     for (let i = 0; i < pairs.length; i++) {
@@ -124,8 +131,6 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
   }
 
-  // TODO: Hamburger menü, ha egy ikon van akkor csak az, ha több akkor hamburger menü
-
   return (
     <View
       style={
@@ -137,19 +142,19 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
-        type={'check'}
+        type={ToastTypes.success}
         handleEvent={() => setWasDisconnected(false)}
       />
       {errorMessage && (
         <VAlert
-          type="error"
+          type={AlertTypes.error}
           title={'Hibás eankód!'}
           message={errorMessage as string}
         />
       )}
       <VBackButton navigation={navigation} />
-      <View style={{flex: 1, justifyContent: 'flex-start'}}>
-        <View style={{marginLeft: '12%', width: '70%'}}>
+      <View style={productStyles.container}>
+        <View style={productStyles.innerView}>
           <VInput
             inputProps={{
               ref: inputRef,
@@ -165,14 +170,14 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
               rightIcon: (
-                <View style={{flexDirection: 'row'}}>
+                <View style={productStyles.iconView}>
                   <Icon
                     type="antdesign"
                     name="search1"
                     size={25}
                     color={isDarkMode ? '#ffffff' : '#000000'}
                     disabled={!searchQuery || !isConnected}
-                    disabledStyle={{backgroundColor: 'transparent'}}
+                    disabledStyle={productStyles.iconDisabledStyle}
                     onPress={async () => {
                       await (
                         onChangeHandler as (value: string) => Promise<void>
@@ -184,7 +189,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                       type="antdesign"
                       name="closecircle"
                       size={25}
-                      containerStyle={{marginLeft: 10}}
+                      containerStyle={productStyles.iconContainerStyle}
                       color={isDarkMode ? '#fff' : '#000'}
                       onPress={() => {
                         setSearchQuery('');
@@ -196,29 +201,31 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             }}
           />
         </View>
-        <View style={{marginLeft: '80%', marginTop: -60}}>
-          {deviceType === DeviceInfoEnum.mobile && (
-            <VCameraIconButton toggleCameraIcon={clickCamera} />
-          )}
-          {deviceType === 'trekker' && (
-            <VKeyboardIconButton
-              toggleKeyboard={() => {
-                setKeyboardActive(!keyboardActive);
-                setTimeout(() => {
-                  inputRef.current?.blur();
+        <View style={productStyles.hamburgerMenuView}>
+          <HamburgerMenu>
+            {deviceType === DeviceInfoEnum.mobile && (
+              <VCameraIconButton toggleCameraIcon={clickCamera} />
+            )}
+            {deviceType === DeviceInfoEnum.trekker && (
+              <VKeyboardIconButton
+                toggleKeyboard={() => {
+                  setKeyboardActive(!keyboardActive);
                   setTimeout(() => {
-                    inputRef.current?.focus();
-                  }, 100);
-                }, 100);
-              }}
-            />
-          )}
+                    inputRef.current?.blur();
+                    setTimeout(() => {
+                      inputRef.current?.focus();
+                    }, TIMEOUT_DELAY);
+                  }, TIMEOUT_DELAY);
+                }}
+              />
+            )}
+          </HamburgerMenu>
         </View>
         {Array.isArray(changeHandlerResult) &&
           changeHandlerResult?.map(
             (result: ZProductListOutput | Response, index: number) => (
               <View key={index}>
-                {'status' in result && result.status === 200 && (
+                {'status' in result && result.status === RESPONSE_SUCCESS && (
                   <View>
                     <VDataTable
                       data={
@@ -230,17 +237,28 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                           : {data: [{value: '', key: '', title: ''}], count: 0}
                       }
                     />
-                    {/*<VCardSuccess title={'Találatok'} content={result} />*/}
+                    {/*<VCardSuccess*/}
+                    {/*  title={'Találatok'}*/}
+                    {/*  content={*/}
+                    {/*    'count' in result &&*/}
+                    {/*    typeof result.count === 'number' &&*/}
+                    {/*    'data' in result &&*/}
+                    {/*    Array.isArray(result.data)*/}
+                    {/*      ? {data: result.data, count: result.count}*/}
+                    {/*      : {data: [{value: '', key: '', title: ''}], count: 0}*/}
+                    {/*  }*/}
+                    {/*/>*/}
                   </View>
                 )}
-                {'status' in result && result.status === 204 && (
-                  <View>
-                    <VCardNotFound
-                      title={'Not Found'}
-                      value={searchQueryVal as string}
-                    />
-                  </View>
-                )}
+                {'status' in result &&
+                  result.status === RESPONSE_NO_CONTENT && (
+                    <View>
+                      <VCardNotFound
+                        title={'Not Found'}
+                        value={searchQueryVal as string}
+                      />
+                    </View>
+                  )}
               </View>
             ),
           )}

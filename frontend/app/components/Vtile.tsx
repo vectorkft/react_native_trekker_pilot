@@ -12,18 +12,8 @@ const VTile = ({title, tileProps}: TileButton) => {
       onPress={tileProps.onPress}
       activeOpacity={0.5}
       disabled={tileProps.disabled}>
-      <View
-        style={[
-          tileStylesheet.tile,
-          {backgroundColor: isDarkMode ? '#2d2d2d' : '#d2cfcf'},
-        ]}>
-        <Text
-          style={[
-            tileStylesheet.title,
-            {color: isDarkMode ? '#fff' : '#000'},
-          ]}>
-          {title}
-        </Text>
+      <View style={tileStylesheet(isDarkMode).tile}>
+        <Text style={tileStylesheet(isDarkMode).title}>{title}</Text>
       </View>
     </TouchableOpacity>
   );

@@ -1,0 +1,4 @@
+export const TIMEOUT_DELAY = 100;
+export const TIMEOUT_DELAY_TOAST = 2000;
+export const VALERT_ANIMATION_DURATION = 100;
+export const VTOAST_ANIMATION_DURATION = 500;

@@ -2,7 +2,6 @@ import React, {JSX, useContext} from 'react';
 import {View} from 'react-native';
 import {useStore} from '../states/zustand';
 import {AppNavigation} from '../interfaces/navigation';
-import {darkModeContent} from '../styles/dark-mode-content';
 import LoadingScreen from './loading-screen';
 import VToast from '../components/Vtoast';
 import VInternetToast from '../components/Vinternet-toast';
@@ -10,6 +9,8 @@ import Header from './header';
 import VTile from '../components/Vtile';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
+import {ToastTypes} from '../enums/types';
+import {homeScreenStyles} from '../styles/home-screen';
 
 const HomeScreen = ({navigation}: AppNavigation): JSX.Element => {
   const isLoggedIn = useStore(state => state.isLoggedIn);
@@ -24,21 +25,16 @@ const HomeScreen = ({navigation}: AppNavigation): JSX.Element => {
   }
 
   return (
-    <View
-      style={
-        isDarkMode
-          ? {...darkModeContent.darkContainer, alignItems: 'center'}
-          : {...darkModeContent.lightContainer, alignItems: 'center'}
-      }>
+    <View style={homeScreenStyles(isDarkMode).container}>
       <Header navigation={navigation} />
       <VInternetToast isVisible={!isConnected} />
       <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
-        type={'check'}
+        type={ToastTypes.success}
         handleEvent={() => setWasDisconnected(false)}
       />
-      <View style={{flex: 1, justifyContent: 'center'}}>
+      <View style={homeScreenStyles().innerView}>
         {isLoggedIn && (
           <View>
             <View>

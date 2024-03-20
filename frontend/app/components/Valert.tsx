@@ -1,19 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Modal, Animated} from 'react-native';
-import {Icon, Button} from 'react-native-elements';
+import {Animated, Modal, Text, View} from 'react-native';
+import {Button, Icon} from 'react-native-elements';
 import {Alert} from '../interfaces/Valert';
 import {alertStylesheet} from '../styles/Valert';
+import {VALERT_ANIMATION_DURATION} from '../constants/time';
+import {AlertTypes} from '../enums/types';
+import {colors} from '../enums/colors';
 
 const VAlert: React.FC<Alert> = ({type, title, message}) => {
   const backgroundColor =
-    type === 'error' ? '#ff4d4d' : type === 'warning' ? '#ffcc00' : '#3399ff';
+    type === AlertTypes.error
+      ? colors.error
+      : type === AlertTypes.warning
+      ? colors.warning
+      : colors.message;
   const [visible, setVisible] = useState(true);
   const [fadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000,
+      duration: VALERT_ANIMATION_DURATION,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
@@ -28,9 +35,7 @@ const VAlert: React.FC<Alert> = ({type, title, message}) => {
         }}>
         <View style={alertStylesheet.alertHeader}>
           <Icon name={type} type="material" color="#fff" />
-          <Text style={alertStylesheet.alertTitle}>
-            {title.toUpperCase()}
-          </Text>
+          <Text style={alertStylesheet.alertTitle}>{title.toUpperCase()}</Text>
           <Button
             icon={<Icon name="close" size={18} color="#fff" />}
             type="clear"

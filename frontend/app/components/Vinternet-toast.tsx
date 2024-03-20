@@ -4,6 +4,8 @@ import {ToastProps} from '../interfaces/Vtoast';
 import {Icon} from 'react-native-elements';
 import {internetToastStylesheet} from '../styles/Vinternet-toast';
 import {DarkModeContext} from '../providers/dark-mode';
+import {VTOAST_ANIMATION_DURATION} from '../constants/time';
+import {colors} from '../enums/colors';
 
 const VInternetToast = ({isVisible}: ToastProps) => {
   const [slideAnim] = useState(
@@ -14,7 +16,7 @@ const VInternetToast = ({isVisible}: ToastProps) => {
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: isVisible ? 0 : Dimensions.get('window').height,
-      duration: 500,
+      duration: VTOAST_ANIMATION_DURATION,
       useNativeDriver: true,
     }).start();
   }, [isVisible, slideAnim]);
@@ -22,29 +24,22 @@ const VInternetToast = ({isVisible}: ToastProps) => {
   return (
     <Animated.View
       style={{
-        ...internetToastStylesheet.toast,
+        ...internetToastStylesheet().toast,
         transform: [{translateY: slideAnim}],
-        backgroundColor: isDarkMode ? '#343333' : '#a9a4a4',
       }}>
       <Icon
         type="antdesign"
         name="exclamationcircleo"
         size={25}
-        color={isDarkMode ? '#ffffff' : '#000000'}
+        color={isDarkMode ? colors.lightContent : colors.darkContent}
       />
-      <Text
-        style={{
-          color: isDarkMode ? '#fff' : '#000',
-          fontSize: 15,
-          marginLeft: 15,
-          fontWeight: 'bold',
-        }}>
+      <Text style={internetToastStylesheet(isDarkMode).textStyle}>
         Nincs internetkapcsolat
       </Text>
       <ActivityIndicator
         size={30}
-        color={isDarkMode ? '#fff' : '#000'}
-        style={{marginLeft: 15}}
+        color={isDarkMode ? colors.lightContent : colors.darkContent}
+        style={internetToastStylesheet().activityIndicatorStyle}
       />
     </Animated.View>
   );

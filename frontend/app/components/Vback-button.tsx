@@ -1,3 +1,4 @@
+import React from 'react';
 import {Icon} from 'react-native-elements';
 import {AppNavigation} from '../interfaces/navigation';
 import {TouchableOpacity} from 'react-native';
@@ -6,6 +7,8 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {UIConfig} from '../interfaces/u-i-config';
 import {useContext} from 'react';
 import {DarkModeContext} from '../providers/dark-mode';
+import {vbackButton} from '../styles/Vback-button';
+import {colors} from '../enums/colors';
 
 const VBackButton = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -15,14 +18,14 @@ const VBackButton = ({navigation}: AppNavigation) => {
 
   return (
     <TouchableOpacity
-      style={[{position: 'absolute', left: 5}, styleButton && {top: 15}]}
+      style={vbackButton(styleButton).positionHeader}
       disabled={!isConnected}
       onPress={() => navigation.goBack()}>
       <Icon
         name="left"
         type="antdesign"
         size={35}
-        color={isDarkMode ? '#ffffff' : '#000000'}
+        color={isDarkMode ? colors.lightContent : colors.darkContent}
       />
     </TouchableOpacity>
   );

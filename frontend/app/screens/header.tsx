@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {AppNavigation} from '../interfaces/navigation';
 import {useStore} from '../states/zustand';
@@ -13,6 +13,8 @@ import VAlert from '../components/Valert';
 import {headerStylesheet} from '../styles/header';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
+import {AlertTypes} from '../enums/types';
+import {colors} from '../enums/colors';
 
 const Header = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -21,7 +23,7 @@ const Header = ({navigation}: AppNavigation) => {
   const {errorMessage, setErrorMessage} = useAlert();
   const routeHomeScreen = useRoute<RouteProp<UIConfig, 'homescreen'>>();
   const routeProfile = useRoute<RouteProp<UIConfig, 'profile'>>();
-  const hidebutton =
+  const hideButton =
     routeHomeScreen.params.hidebutton || routeProfile.params.hidebutton;
   const hideButtonProfile = routeProfile.params.hideButtonProfile;
 
@@ -30,18 +32,18 @@ const Header = ({navigation}: AppNavigation) => {
   }
 
   return (
-    <View
-      style={[
-        headerStylesheet.header,
-        {backgroundColor: isDarkMode ? '#2d2d2d' : '#d2cfcf'},
-      ]}>
+    <View style={headerStylesheet(isDarkMode).header}>
       {errorMessage && (
-        <VAlert type="error" title={'Hiba!'} message={errorMessage} />
+        <VAlert
+          type={AlertTypes.error}
+          title={'Hiba!'}
+          message={errorMessage}
+        />
       )}
-      <View style={headerStylesheet.iconContainer}>
+      <View style={headerStylesheet().iconContainer}>
         {!hideButtonProfile && (
           <TouchableOpacity
-            style={headerStylesheet.iconButton}
+            style={headerStylesheet().iconButton}
             disabled={!isConnected}
             onPress={() =>
               navigation.navigate('profile', {
@@ -52,14 +54,14 @@ const Header = ({navigation}: AppNavigation) => {
             <Icon
               name="user"
               type="font-awesome"
-              color={isDarkMode ? '#fff' : '#000'}
+              color={isDarkMode ? colors.lightContent : colors.darkContent}
               size={35}
             />
           </TouchableOpacity>
         )}
-        {!hidebutton && (
+        {!hideButton && (
           <TouchableOpacity
-            style={headerStylesheet.iconButton}
+            style={headerStylesheet().iconButton}
             disabled={!isConnected}
             onPress={async () => {
               setLoadingState(true);
@@ -67,23 +69,22 @@ const Header = ({navigation}: AppNavigation) => {
               if (logoutSuccess) {
                 setIsLoggedIn(false);
                 setLoadingState(false);
-                navigation.navigate('login');
-                return 'Sikeres kijelentkezés!';
+                return navigation.navigate('login');
               } else {
                 setLoadingState(false);
-                setErrorMessage('Sikertelen kijelentkezés');
+                return setErrorMessage('Sikertelen kijelentkezés');
               }
             }}>
             <Icon
               name="exit-to-app"
               type="material"
-              color={isDarkMode ? '#fff' : '#000'}
+              color={isDarkMode ? colors.lightContent : colors.darkContent}
               size={35}
             />
           </TouchableOpacity>
         )}
       </View>
-      {!hidebutton && <VBackButton navigation={navigation} />}
+      {!hideButton && <VBackButton navigation={navigation} />}
     </View>
   );
 };
