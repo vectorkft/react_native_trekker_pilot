@@ -42,12 +42,10 @@ const user_dto_1 = require("../../shared/dto/user.dto");
 const userService = __importStar(require("../services/user"));
 const zodDTO_1 = require("../dto/zodDTO");
 const tokenService = __importStar(require("../services/token"));
-// TESTING
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
 const user_login_dto_1 = require("../../shared/dto/user-login.dto");
-// TESTING
 // Public endpoints
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
@@ -103,13 +101,13 @@ protectedUserRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 
         return res.status(403).json(e);
     }
 }));
-protectedUserRouter.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+protectedUserRouter.post('/profile', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(200).json('OK');
 }));
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
         const body = yield userServiceNew.loginWithDB(validData);
         if ('errormessage' in body) {
             return res.status(401).json(body);

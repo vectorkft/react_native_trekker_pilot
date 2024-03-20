@@ -4,12 +4,11 @@ import {userSchemaInput} from "../../shared/dto/user.dto";
 import * as userService from "../services/user";
 import {ZodDTO} from "../dto/zodDTO";
 import * as tokenService from "../services/token";
-// TESTING
+
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
-import {PrismaClientInitializationError, PrismaClientKnownRequestError, PrismaClientRustPanicError} from "@prisma/client/runtime/library";
+import {PrismaClientInitializationError,PrismaClientRustPanicError} from "@prisma/client/runtime/library";
 import {UserLoginDTOInput} from "../../shared/dto/user-login.dto";
-// TESTING
 
 // Public endpoints
 const userRouter = express.Router();
@@ -67,7 +66,7 @@ protectedUserRouter.get('/logout', async (req: Request, res : Response) =>{
     }
 });
 
-protectedUserRouter.post('/profile',async (req: Request, res: Response)=>{
+protectedUserRouter.post('/profile',async (_req: Request, res: Response)=>{
     return res.status(200).json('OK');
 
 
@@ -75,7 +74,7 @@ protectedUserRouter.post('/profile',async (req: Request, res: Response)=>{
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', async(req: Request, res : Response) => {
     try{
-        const validData= await zParse(userSchemaInput,req.body);
+        const validData= await zParse(UserLoginDTOInput,req.body);
         const body=await userServiceNew.loginWithDB(validData);
         if('errormessage' in body){
             return res.status(401).json(body);

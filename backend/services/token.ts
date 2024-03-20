@@ -45,53 +45,7 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshTok
 
 
 
-export async function deleteExpiredTokens(){
-    const currentTime = Math.floor(Date.now() / 1000);
-    try{
-        const deletedAccessTokens = await prisma.tokens_v1.updateMany({
-            where: {
-                accessExpireDate: {
-                    lt: currentTime
-                }
-            },
-            data : {
-                accessToken:null,
 
-            }
-        });
-        const deletedRefreshTokens = await prisma.tokens_v1.updateMany({
-            where: {
-                refreshExpireDate: {
-                    lt: currentTime
-                }
-            },
-            data : {
-                refreshToken:null,
-
-            }
-        });
-        const deleteTheWholeRecord = await prisma.tokens_v1.deleteMany({
-            where: {
-                accessExpireDate:{
-                    lt: currentTime
-                },
-                refreshExpireDate:{
-                    lt: currentTime
-                }
-            }
-        })
-        console.log('-------------------------------');
-        console.log('Deleted Access token(s) '+deletedAccessTokens.count + ' || '+'Deleted Refresh Token(s) '+deletedRefreshTokens.count);
-        console.log('Deleted record(s) ' +deleteTheWholeRecord.count);
-        console.log('-------------------------------');
-
-    } catch (err){
-        console.log(err);
-    }
-
-
-
-}
 export async function deleteExpiredTokens_new(){
     const currentTime = Math.floor(Date.now() / 1000);
     try{
@@ -127,14 +81,14 @@ export async function deleteExpiredTokens_new(){
                 }
             }
         })
-        console.log('Deleted Access token(s) '+deletedAccessTokens.count + ' || '+'Deleted Refresh Token(s) '+deletedRefreshTokens.count);
+        console.log('-------------------------------');
+        console.log('Deleted Access token(s) '+deletedAccessTokens.count + '\n'+'Deleted Refresh Token(s) '+deletedRefreshTokens.count);
         console.log('Deleted record(s) ' +deleteTheWholeRecord.count);
         console.log('-------------------------------');
 
     } catch (err){
         console.log(err);
     }
-
 
 
 }

@@ -71,6 +71,19 @@ exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, 
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
+exports.protectedProductRouter.post('/getCikkByETK', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
+        const body = yield cikkService.getCikkByCikkszam(validData);
+        if (!body) {
+            return res.status(204).json(body);
+        }
+        return res.status(200).json(body);
+    }
+    catch (err) {
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+    }
+}));
 //// TESTING
 exports.protectedProductRouter.post('/getCikkTeszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;

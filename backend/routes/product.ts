@@ -40,6 +40,19 @@ protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
         return res.status(400).json(ZodDTO.fromZodError(err));
     }
 })
+protectedProductRouter.post('/getCikkByETK', async (req: Request, res)=>{
+    try{
+        const validData = await zParse(ProductNumberSchemaInput,req.body);
+
+        const body= await cikkService.getCikkByCikkszam(validData);
+        if(!body){
+            return res.status(204).json(body);
+        }
+        return res.status(200).json(body);
+    } catch (err){
+        return res.status(400).json(ZodDTO.fromZodError(err));
+    }
+})
 //// TESTING
 protectedProductRouter.post('/getCikkTeszt', async(req:Request, res:Response)=>{
     const authHeader = req.headers.authorization??'';
