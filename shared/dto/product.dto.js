@@ -9,11 +9,13 @@ exports.ProductDataOutput = zod_1.z.object({
     value: zod_1.z.string(),
 });
 exports.ProductEANSchemaInput = zod_1.z.object({
-    eankod: zod_1.z.string().refine(value => value.length === 13, 'Az EAN kód pontosan 13 karakter hosszú kell legyen!')
+    value: zod_1.z.string().refine(value => value.length === 13, 'Az EAN kód pontosan 13 karakter hosszú kell legyen!')
         .refine(value => (0, luhn_validation_1.ean)(Number(value)), 'Nem valid EAN kód!'),
+    validType: zod_1.z.enum(["ean" /* ValidTypes.ean */, "both" /* ValidTypes.both */]).describe('Valid EAN type'),
 });
 exports.ProductNumberSchemaInput = zod_1.z.object({
-    cikkszam: zod_1.z.string().min(1, 'Minimum 1 karakter hosszúnak kell lennie a cikkszámnak!').max(21, 'Túl lépted a maximum 21 karaktert!')
+    value: zod_1.z.string().min(1, 'Minimum 1 karakter hosszúnak kell lennie a cikkszámnak!').max(21, 'Túl lépted a maximum 21 karaktert!'),
+    validType: zod_1.z.enum(["etk" /* ValidTypes.etk */]).describe('Valid EAN type'),
 });
 exports.ProductListOutput = zod_1.z.object({
     data: zod_1.z.array(exports.ProductDataOutput),

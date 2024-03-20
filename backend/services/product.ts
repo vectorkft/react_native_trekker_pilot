@@ -10,10 +10,10 @@ const prisma = new PrismaClient()
 
 
 
-export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
+export async function getCikkByCikkszam(input: ZProductNumberSchemaInput) {
     const cikk = await prisma.raktar_eancikkek.findMany({
         where: {
-            etk: cikkszam.cikkszam
+            etk: input.value
         }
     })
     if (cikk.length===0) {
@@ -23,17 +23,16 @@ export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput) {
 
 }
 
-
-export async function getCikkByEanKod(eankod: ZProductEANSchemaInput){
-        const cikk = await prisma.raktar_eancikkek.findMany({
-            where: {
-                jellemzo: eankod.eankod
-            }
-        });
-        if (cikk.length === 0) {
-            return false;
+export async function getCikkByEanKod(input: ZProductEANSchemaInput){
+    const cikk = await prisma.raktar_eancikkek.findMany({
+        where: {
+            jellemzo: input.value
         }
-        return processArticles(cikk);
+    });
+    if (cikk.length === 0) {
+        return false;
+    }
+    return processArticles(cikk);
 
 
 }

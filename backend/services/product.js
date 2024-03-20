@@ -13,11 +13,11 @@ exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
 const product_dto_1 = require("../../shared/dto/product.dto");
 const prisma = new client_1.PrismaClient();
-function getCikkByCikkszam(cikkszam) {
+function getCikkByCikkszam(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const cikk = yield prisma.raktar_eancikkek.findMany({
             where: {
-                etk: cikkszam.cikkszam
+                etk: input.value
             }
         });
         if (cikk.length === 0) {
@@ -27,11 +27,11 @@ function getCikkByCikkszam(cikkszam) {
     });
 }
 exports.getCikkByCikkszam = getCikkByCikkszam;
-function getCikkByEanKod(eankod) {
+function getCikkByEanKod(input) {
     return __awaiter(this, void 0, void 0, function* () {
         const cikk = yield prisma.raktar_eancikkek.findMany({
             where: {
-                jellemzo: eankod.eankod
+                jellemzo: input.value
             }
         });
         if (cikk.length === 0) {

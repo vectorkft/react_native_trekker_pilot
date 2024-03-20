@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAccessTokenInDatabase = exports.signTokensFromTokenPayload = exports.signTokens = exports.refreshToken = exports.deleteTokensByLogout = exports.deleteExpiredTokens_new = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const chalk_1 = __importDefault(require("chalk"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
 const user_dto_1 = require("../../shared/dto/user.dto");
@@ -75,10 +76,10 @@ function deleteExpiredTokens_new() {
                     }
                 }
             });
-            console.log('-------------------------------');
-            console.log('Deleted Access token(s) ' + deletedAccessTokens.count + '\n' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count);
-            console.log('Deleted record(s) ' + deleteTheWholeRecord.count);
-            console.log('-------------------------------');
+            console.log(chalk_1.default.green('-------------------------------'));
+            console.log(chalk_1.default.green('Deleted Access token(s) ' + deletedAccessTokens.count + '\n' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count));
+            console.log(chalk_1.default.green('Deleted record(s) ' + deleteTheWholeRecord.count));
+            console.log(chalk_1.default.green('-------------------------------'));
         }
         catch (err) {
             console.log(err);

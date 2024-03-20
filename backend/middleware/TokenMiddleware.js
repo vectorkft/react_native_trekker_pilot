@@ -40,6 +40,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const tokenService = __importStar(require("../services/token"));
 const library_1 = require("@prisma/client/runtime/library");
+const chalk_1 = __importDefault(require("chalk"));
 dotenv_1.default.config();
 function verifyToken(req, res, next) {
     var _a;
@@ -50,7 +51,7 @@ function verifyToken(req, res, next) {
             const token = authHeader.split(' ')[1];
             try {
                 if (!(yield tokenService.isAccessTokenInDatabase({ accessToken: token }))) {
-                    console.log('Invalid token');
+                    console.log(chalk_1.default.red('Invalid token'));
                     return res.sendStatus(403);
                 }
             }
@@ -61,10 +62,10 @@ function verifyToken(req, res, next) {
             }
             jsonwebtoken_1.default.verify(token, secretKey, (err, user) => {
                 if (err) {
-                    console.log('Invalid token :' + err);
+                    console.log(chalk_1.default.red('Invalid token :' + err));
                     return res.sendStatus(403);
                 }
-                console.log('Valid token');
+                console.log(chalk_1.default.green('Valid token'));
                 next();
             });
         }

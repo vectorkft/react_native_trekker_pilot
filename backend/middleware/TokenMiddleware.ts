@@ -3,6 +3,7 @@ import {NextFunction, Request, Response} from 'express';
 import dotenv from 'dotenv';
 import * as tokenService from "../services/token"
 import {PrismaClientInitializationError} from "@prisma/client/runtime/library";
+import Chalk from "chalk";
 
 
 dotenv.config()
@@ -14,7 +15,7 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
         const token = authHeader.split(' ')[1];
         try{
             if(!await tokenService.isAccessTokenInDatabase({accessToken: token})){
-                console.log('Invalid token');
+                console.log(Chalk.red('Invalid token'));
                 return res.sendStatus(403);
             }
         }catch(err){
@@ -27,10 +28,10 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
 
         jwt.verify(token, secretKey, (err, user) => {
             if (err) {
-                console.log('Invalid token :' + err);
+                console.log(Chalk.red('Invalid token :' + err));
                 return res.sendStatus(403);
             }
-            console.log('Valid token');
+            console.log(Chalk.green('Valid token'));
 
 
             next();

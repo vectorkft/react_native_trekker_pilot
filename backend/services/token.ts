@@ -1,7 +1,7 @@
 import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
 import {JwtPayload} from "../models/JwtPayload";
-
+import Chalk from 'chalk';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {
     RefreshBodyErrorMessage,
@@ -81,10 +81,10 @@ export async function deleteExpiredTokens_new(){
                 }
             }
         })
-        console.log('-------------------------------');
-        console.log('Deleted Access token(s) '+deletedAccessTokens.count + '\n'+'Deleted Refresh Token(s) '+deletedRefreshTokens.count);
-        console.log('Deleted record(s) ' +deleteTheWholeRecord.count);
-        console.log('-------------------------------');
+        console.log(Chalk.green('-------------------------------'));
+        console.log(Chalk.green('Deleted Access token(s) '+deletedAccessTokens.count + '\n'+'Deleted Refresh Token(s) '+deletedRefreshTokens.count));
+        console.log(Chalk.green('Deleted record(s) ' +deleteTheWholeRecord.count));
+        console.log(Chalk.green('-------------------------------'));
 
     } catch (err){
         console.log(err);
