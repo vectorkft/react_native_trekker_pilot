@@ -1,4 +1,10 @@
-import React, {JSX, useContext, useState} from 'react';
+import React, {
+  Dispatch,
+  JSX,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 import {View} from 'react-native';
 import {ProductService} from '../services/product';
 import {validateZDTOForm} from '../../../shared/services/zod-dto.service';
@@ -13,6 +19,7 @@ import {AppNavigation} from '../interfaces/navigation';
 import {
   ProductEANSchemaInput,
   ProductNumberSchemaInput,
+  ZProductListOutput,
 } from '../../../shared/dto/product.dto';
 import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
@@ -30,6 +37,7 @@ import {ValidationResult} from '../interfaces/validation-result';
 import {darkModeContent} from '../styles/dark-mode-content';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
+import {DeviceInfoEnum} from '../../../shared/enums/device-info';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -61,25 +69,34 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       {schema: ProductNumberSchemaInput, formData: {cikkszam: value}},
     ];
 
+    let validTypes: string[] = [];
+    let error: ZodError | null = null;
+
     for (let i = 0; i < pairs.length; i++) {
       const {schema, formData} = pairs[i];
       const validation = await validateZDTOForm(schema, formData);
 
       if (validation.isValid) {
-        return {...validation, validType: Object.keys(formData)[0]};
+        validTypes.push(Object.keys(formData)[0]);
+      }
+
+      if (validation.error) {
+        error = validation.error;
       }
     }
 
     return {
-      isValid: false,
-      error: new ZodError([
-        {
-          code: ZodIssueCode.custom,
-          message: 'Nem megfelelő formátum, ellenőrizd az adatot!',
-          path: [],
-        },
-      ]),
-      validType: null,
+      isValid: validTypes.length > 0,
+      error:
+        error ||
+        new ZodError([
+          {
+            code: ZodIssueCode.custom,
+            message: 'Nem megfelelő formátum, ellenőrizd az adatot!',
+            path: [],
+          },
+        ]),
+      validTypes: validTypes,
     };
   };
 
@@ -96,9 +113,9 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     setSearchQuery,
   );
   const {isCameraActive, handleOnClose, clickCamera, setIsCameraActive} =
-    useCamera(setErrorMessage);
+    useCamera(setErrorMessage as Dispatch<SetStateAction<string | null>>);
   const onBarCodeRead = useOnBarCodeRead(
-    onChangeHandler,
+    onChangeHandler as (value: string) => void,
     setIsCameraActive,
     beep,
   );
@@ -124,7 +141,11 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         handleEvent={() => setWasDisconnected(false)}
       />
       {errorMessage && (
-        <VAlert type="error" title={'Hibás eankód!'} message={errorMessage} />
+        <VAlert
+          type="error"
+          title={'Hibás eankód!'}
+          message={errorMessage as string}
+        />
       )}
       <VBackButton navigation={navigation} />
       <View style={{flex: 1, justifyContent: 'flex-start'}}>
@@ -133,10 +154,14 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             inputProps={{
               ref: inputRef,
               value: searchQuery,
-              showSoftInputOnFocus: deviceType === 'mobile' || keyboardActive,
+              showSoftInputOnFocus:
+                deviceType === DeviceInfoEnum.mobile || keyboardActive,
               autoFocus: true,
               onChangeText: setSearchQuery,
-              onSubmitEditing: async () => await onChangeHandler(searchQuery),
+              onSubmitEditing: async () =>
+                await (onChangeHandler as (value: string) => Promise<void>)(
+                  searchQuery,
+                ),
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
               rightIcon: (
@@ -149,7 +174,9 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     disabled={!searchQuery || !isConnected}
                     disabledStyle={{backgroundColor: 'transparent'}}
                     onPress={async () => {
-                      await onChangeHandler(searchQuery);
+                      await (
+                        onChangeHandler as (value: string) => Promise<void>
+                      )(searchQuery);
                     }}
                   />
                   {searchQuery && (
@@ -170,7 +197,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
           />
         </View>
         <View style={{marginLeft: '80%', marginTop: -60}}>
-          {deviceType === 'mobile' && (
+          {deviceType === DeviceInfoEnum.mobile && (
             <VCameraIconButton toggleCameraIcon={clickCamera} />
           )}
           {deviceType === 'trekker' && (
@@ -187,17 +214,36 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             />
           )}
         </View>
-        {changeHandlerResult?.status === 200 && (
-          <View>
-            <VDataTable data={changeHandlerResult} />
-            {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
-          </View>
-        )}
-        {changeHandlerResult?.status === 204 && (
-          <View>
-            <VCardNotFound title={'Not Found'} value={searchQueryVal} />
-          </View>
-        )}
+        {Array.isArray(changeHandlerResult) &&
+          changeHandlerResult?.map(
+            (result: ZProductListOutput | Response, index: number) => (
+              <View key={index}>
+                {'status' in result && result.status === 200 && (
+                  <View>
+                    <VDataTable
+                      data={
+                        'count' in result &&
+                        typeof result.count === 'number' &&
+                        'data' in result &&
+                        Array.isArray(result.data)
+                          ? {data: result.data, count: result.count}
+                          : {data: [{value: '', key: '', title: ''}], count: 0}
+                      }
+                    />
+                    {/*<VCardSuccess title={'Találatok'} content={result} />*/}
+                  </View>
+                )}
+                {'status' in result && result.status === 204 && (
+                  <View>
+                    <VCardNotFound
+                      title={'Not Found'}
+                      value={searchQueryVal as string}
+                    />
+                  </View>
+                )}
+              </View>
+            ),
+          )}
       </View>
     </View>
   );

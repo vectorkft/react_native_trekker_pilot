@@ -27,7 +27,7 @@ export const useCamera = (
 };
 
 export const useBeepSound = () => {
-  return useMemo(
+  const beep = useMemo(
     () =>
       new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
         if (error) {
@@ -37,12 +37,25 @@ export const useBeepSound = () => {
       }),
     [],
   );
+
+  const alternativeBeep = useMemo(
+    () =>
+      new Sound('alternative_sound.mp3', Sound.MAIN_BUNDLE, error => {
+        if (error) {
+          Sentry.captureException(error);
+          throw error;
+        }
+      }),
+    [],
+  );
+
+  return {beep, alternativeBeep};
 };
 
 export const useOnBarCodeRead = (
   onChangeHandler: (value: string) => void,
   setIsCameraActive: React.Dispatch<React.SetStateAction<boolean>>,
-  beep: Sound,
+  {beep, alternativeBeep}: {beep: Sound; alternativeBeep: Sound},
 ) => {
   return useCallback(
     (scanResult: BarCodeReadEvent) => {
@@ -52,12 +65,12 @@ export const useOnBarCodeRead = (
         beep.play(success => {
           if (!success) {
             Sentry.captureMessage('A hang nem játszódott le', 'warning');
-            // TODO: alternatív hang
+            alternativeBeep.play();
           }
         });
       }
       return;
     },
-    [onChangeHandler, setIsCameraActive, beep],
+    [onChangeHandler, setIsCameraActive, beep, alternativeBeep],
   );
 };
