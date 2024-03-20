@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAccessTokenInDatabase = exports.signTokensFromTokenPayload = exports.signTokens = exports.refreshToken = exports.deleteTokensByLogout = exports.deleteExpiredTokens_new = exports.deleteExpiredTokens = exports.addTokenAtLogin = void 0;
+exports.isAccessTokenInDatabase = exports.signTokensFromTokenPayload = exports.signTokens = exports.refreshToken = exports.deleteTokensByLogout = exports.deleteExpiredTokens_new = exports.addTokenAtLogin = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
@@ -41,51 +41,6 @@ function addTokenAtLogin(accessToken, refreshToken, userInput) {
     });
 }
 exports.addTokenAtLogin = addTokenAtLogin;
-function deleteExpiredTokens() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const currentTime = Math.floor(Date.now() / 1000);
-        try {
-            const deletedAccessTokens = yield prisma.tokens_v1.updateMany({
-                where: {
-                    accessExpireDate: {
-                        lt: currentTime
-                    }
-                },
-                data: {
-                    accessToken: null,
-                }
-            });
-            const deletedRefreshTokens = yield prisma.tokens_v1.updateMany({
-                where: {
-                    refreshExpireDate: {
-                        lt: currentTime
-                    }
-                },
-                data: {
-                    refreshToken: null,
-                }
-            });
-            const deleteTheWholeRecord = yield prisma.tokens_v1.deleteMany({
-                where: {
-                    accessExpireDate: {
-                        lt: currentTime
-                    },
-                    refreshExpireDate: {
-                        lt: currentTime
-                    }
-                }
-            });
-            console.log('-------------------------------');
-            console.log('Deleted Access token(s) ' + deletedAccessTokens.count + ' || ' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count);
-            console.log('Deleted record(s) ' + deleteTheWholeRecord.count);
-            console.log('-------------------------------');
-        }
-        catch (err) {
-            console.log(err);
-        }
-    });
-}
-exports.deleteExpiredTokens = deleteExpiredTokens;
 function deleteExpiredTokens_new() {
     return __awaiter(this, void 0, void 0, function* () {
         const currentTime = Math.floor(Date.now() / 1000);
@@ -120,7 +75,8 @@ function deleteExpiredTokens_new() {
                     }
                 }
             });
-            console.log('Deleted Access token(s) ' + deletedAccessTokens.count + ' || ' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count);
+            console.log('-------------------------------');
+            console.log('Deleted Access token(s) ' + deletedAccessTokens.count + '\n' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count);
             console.log('Deleted record(s) ' + deleteTheWholeRecord.count);
             console.log('-------------------------------');
         }
