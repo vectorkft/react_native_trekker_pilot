@@ -1,13 +1,14 @@
 import express, {Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {userSchemaInput} from "../../shared/dto/user.dto";
-import * as userService from "../services/userServices";
+import * as userService from "../services/user";
 import {ZodDTO} from "../dto/zodDTO";
-import * as tokenService from "../services/tokenServices";
+import * as tokenService from "../services/token";
 // TESTING
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
-import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
+import {PrismaClientInitializationError, PrismaClientKnownRequestError, PrismaClientRustPanicError} from "@prisma/client/runtime/library";
+import {UserLoginDTOInput} from "../../shared/dto/user-login.dto";
 // TESTING
 
 // Public endpoints
@@ -17,7 +18,7 @@ const protectedUserRouter = express.Router();
 userRouter.post('/login', async (req: Request, res: Response) => {
 
     try {
-        const validData= await zParse(userSchemaInput,req.body);
+        const validData= await zParse(UserLoginDTOInput,req.body);
         const body=await userService.loginUser(validData);
         if("errormessage" in body){
             return res.status(401).json(body);
@@ -26,6 +27,9 @@ userRouter.post('/login', async (req: Request, res: Response) => {
     } catch (err) {
         if(err instanceof PrismaClientRustPanicError){
             return res.status(401).json('Invalid username or password');
+        }
+        if(err instanceof PrismaClientInitializationError){
+            return res.status(500).json('Cannot connect to the database');
         }
         return res.status(400).send(err);
     }
@@ -40,7 +44,10 @@ userRouter.post('/register', async (req: Request, res: Response) => {
             return res.status(409 ).json(body);
         }
         return res.status(200).json(body)
-    } catch (err: any) {
+    } catch (err) {
+        if(err instanceof PrismaClientInitializationError){
+            return res.status(500).json('Cannot connect to the database');
+        }
         return res.status(400).send(ZodDTO.fromZodError(err));
     }
 });
@@ -50,10 +57,13 @@ protectedUserRouter.get('/logout', async (req: Request, res : Response) =>{
     const authHeader = req.headers.authorization??'';
     const accessToken = authHeader.split(' ')[1];
     try {
-        await tokenService.deleteTokensByLogout({ accessToken: accessToken });
-        return res.status(200).json('Logout successful');
+        const isSuccess=await tokenService.deleteTokensByLogout({ accessToken: accessToken });
+        if(isSuccess){
+            return res.status(200).json('Logout successful');
+        }
+
     }catch (e) {
-        return res.status(403).json('err' + e);
+        return res.status(403).json(e);
     }
 });
 

@@ -1,10 +1,13 @@
 import express, {Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {ZodDTO} from "../dto/zodDTO";
-import * as tokenService from "../services/tokenServices";
+import * as tokenService from "../services/token";
 import {RefreshBodySchemaInput} from "../../shared/dto/refresh.token.dto";
 
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew"
+import {PrismaClientInitializationError} from '@prisma/client/runtime/library';
+
+
 
 
 export const tokenRouter = express.Router();
@@ -15,12 +18,13 @@ tokenRouter.post('/refresh', async (req : Request, res : Response) => {
         const validData = await zParse(RefreshBodySchemaInput, req.body);
         const body = await tokenService.refreshToken({ refreshToken: validData.refreshToken });
         if('errorMessage' in body){
-            //Ha van errorMessage akkor rossz a token amit kaptunk
             return res.status(403).json(body);
         }
         return res.status(200).json(body);
     } catch (e) {
-        //ha zodError van
+        if(e instanceof PrismaClientInitializationError){
+            return res.status(500).json('Cannot connect to the database');
+        }
         return res.status(400).json(ZodDTO.fromZodError(e));
 
     }
@@ -36,7 +40,9 @@ tokenRouter.post('/refreshTeszt', async (req:Request, res : Response)=>{
         }
         return res.status(200).json(body);
     } catch (e) {
-        //ha zodError van
+        // if(e instanceof PrismaClientInitializationError){
+        //     return res.status(500).json('Cannot connect to the database');
+        // }
         return res.status(400).json(e);
 
     }

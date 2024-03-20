@@ -39,7 +39,7 @@ exports.protectedProductRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const product_dto_1 = require("../../shared/dto/product.dto");
-const cikkService = __importStar(require("../services/cikkService"));
+const cikkService = __importStar(require("../services/product"));
 const zodDTO_1 = require("../dto/zodDTO");
 const cikkServiceNew = __importStar(require("../services/servicesNew/cikkServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
@@ -62,8 +62,8 @@ exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, 
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
         const body = yield cikkService.getCikkByCikkszam(validData);
-        if (body === "Not found") {
-            return res.status(204).json({ message: 'Not found' });
+        if (!body) {
+            return res.status(204).json(body);
         }
         return res.status(200).json(body);
     }

@@ -28,31 +28,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cron = __importStar(require("node-cron"));
-const tokenServices_1 = require("./services/tokenServices");
+const token_1 = require("./services/token");
 const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
 const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
-const userRoutes_1 = require("./routes/userRoutes");
-const tokenRoutes_1 = require("./routes/tokenRoutes");
-const productRoutes_1 = require("./routes/productRoutes");
+const user_1 = require("./routes/user");
+const token_2 = require("./routes/token");
+const product_1 = require("./routes/product");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 // Body parsing middleware
 app.use(express_1.default.json(), LogMiddleWare_1.Logger);
 app.use(express_1.default.urlencoded({ extended: false }));
 // Public endpoints
-app.use('/user', userRoutes_1.userRouter);
-app.use('/token', tokenRoutes_1.tokenRouter);
+app.use('/user', user_1.userRouter);
+app.use('/token', token_2.tokenRouter);
 // Protected endpoints
-app.use('/protected/user', TokenMiddleware_1.verifyToken, userRoutes_1.protectedUserRouter);
-app.use('/protected/product', TokenMiddleware_1.verifyToken, productRoutes_1.protectedProductRouter);
+app.use('/protected/user', TokenMiddleware_1.verifyToken, user_1.protectedUserRouter);
+app.use('/protected/product', TokenMiddleware_1.verifyToken, product_1.protectedProductRouter);
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
 app.get('/', (req, res) => {
     return res.status(200).json('Check postman for guidance');
 });
-cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens);
-cron.schedule("* * * * *", tokenServices_1.deleteExpiredTokens_new);
+cron.schedule("* * * * *", token_1.deleteExpiredTokens);
+cron.schedule("* * * * *", token_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
 app.all('/check', (res) => {
     return res.status(200).json({

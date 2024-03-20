@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userDeletedOutPutError = exports.userDeletedOutPut = exports.userAlreadyExistDTOOutput = exports.userSchemaInput = exports.UserIdInput = exports.userLoginFailedOutput = exports.userRegisterDTOOutput = exports.userLoginDTOOutputNew = exports.userLoginDTOOutput = void 0;
+exports.userPayLoadInput = exports.userDeletedOutPutError = exports.userDeletedOutPut = exports.userAlreadyExistDTOOutput = exports.userSchemaInput = exports.UserIdInput = exports.userLoginFailedOutput = exports.userRegisterDTOOutput = exports.userLoginDTOOutputNew = exports.userLoginDTOOutput = void 0;
 const zod_1 = require("zod");
 exports.userLoginDTOOutput = zod_1.z.object({
     message: zod_1.z.string(),
@@ -39,4 +39,8 @@ exports.userDeletedOutPut = zod_1.z.object({
 });
 exports.userDeletedOutPutError = zod_1.z.object({
     errormessage: zod_1.z.string(),
+});
+exports.userPayLoadInput = zod_1.z.object({
+    name: zod_1.z.string(),
+    szemelykod: zod_1.z.number(),
 });

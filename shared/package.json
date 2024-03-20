@@ -3,6 +3,7 @@
     "@babel/runtime": "^7.23.9",
     "@sentry/react": "^7.106.1",
     "luhn-validation": "^1.0.3",
+    "react": "^18.2.0",
     "zod": "^3.22.4"
   }
 }
