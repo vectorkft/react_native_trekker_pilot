@@ -45,6 +45,7 @@ import {
   RESPONSE_SUCCESS,
 } from '../constants/response-status';
 import {AlertTypes, ToastTypes} from '../enums/types';
+import {ValidTypes} from '../../../shared/enums/types';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -55,13 +56,6 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchQuery);
   const beep = useBeepSound();
-  const getProductByEAN = async (value: string) => {
-    return await ProductService.getProductByEAN({eankod: value});
-  };
-
-  const getProductByNumber = async (value: string) => {
-    return await ProductService.getProductByNumber({cikkszam: value});
-  };
 
   type TSchemaDataPair = {
     schema: AnyZodObject;
@@ -72,11 +66,18 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     value: string,
   ): Promise<ValidationResult> => {
     const pairs: TSchemaDataPair[] = [
-      {schema: ProductEANSchemaInput, formData: {eankod: value}},
-      {schema: ProductNumberSchemaInput, formData: {cikkszam: value}},
+      {
+        schema: ProductEANSchemaInput,
+        formData: {value: value, validType: ValidTypes.ean},
+      },
+      {
+        schema: ProductNumberSchemaInput,
+        formData: {value: value, validType: ValidTypes.etk},
+      },
     ];
 
     const validTypes: string[] = [];
+    const MAX_LENGTH_ARRAY = 2;
     let error: ZodError | null = null;
 
     for (let i = 0; i < pairs.length; i++) {
@@ -84,7 +85,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       const validation = await validateZDTOForm(schema, formData);
 
       if (validation.isValid) {
-        validTypes.push(Object.keys(formData)[0]);
+        validTypes.push(formData.validType);
       }
 
       if (validation.error) {
@@ -92,8 +93,16 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       }
     }
 
+    let resultType = '';
+    if (validTypes.length === MAX_LENGTH_ARRAY) {
+      resultType = ValidTypes.both;
+    } else if (validTypes.length === 1) {
+      resultType = validTypes[0];
+    }
+
     return {
       isValid: validTypes.length > 0,
+      validType: resultType as ValidTypes,
       error:
         error ||
         new ZodError([
@@ -103,8 +112,14 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             path: [],
           },
         ]),
-      validTypes: validTypes,
     };
+  };
+
+  const getProduct = async (value: string, validType: ValidTypes) => {
+    return await ProductService.getProduct({
+      value: value,
+      validType: validType,
+    });
   };
 
   const [
@@ -113,12 +128,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     changeHandlerResult,
     onChangeHandler,
     setErrorMessage,
-  ] = useOnChangeHandler(
-    validateFormArray,
-    getProductByEAN,
-    getProductByNumber,
-    setSearchQuery,
-  );
+  ] = useOnChangeHandler(validateFormArray, getProduct, setSearchQuery);
   const {isCameraActive, handleOnClose, clickCamera, setIsCameraActive} =
     useCamera(setErrorMessage as Dispatch<SetStateAction<string | null>>);
   const onBarCodeRead = useOnBarCodeRead(
@@ -221,46 +231,25 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             )}
           </HamburgerMenu>
         </View>
-        {Array.isArray(changeHandlerResult) &&
-          changeHandlerResult?.map(
-            (result: ZProductListOutput | Response, index: number) => (
-              <View key={index}>
-                {'status' in result && result.status === RESPONSE_SUCCESS && (
-                  <View>
-                    <VDataTable
-                      data={
-                        'count' in result &&
-                        typeof result.count === 'number' &&
-                        'data' in result &&
-                        Array.isArray(result.data)
-                          ? {data: result.data, count: result.count}
-                          : {data: [{value: '', key: '', title: ''}], count: 0}
-                      }
-                    />
-                    {/*<VCardSuccess*/}
-                    {/*  title={'Találatok'}*/}
-                    {/*  content={*/}
-                    {/*    'count' in result &&*/}
-                    {/*    typeof result.count === 'number' &&*/}
-                    {/*    'data' in result &&*/}
-                    {/*    Array.isArray(result.data)*/}
-                    {/*      ? {data: result.data, count: result.count}*/}
-                    {/*      : {data: [{value: '', key: '', title: ''}], count: 0}*/}
-                    {/*  }*/}
-                    {/*/>*/}
-                  </View>
-                )}
-                {'status' in result &&
-                  result.status === RESPONSE_NO_CONTENT && (
-                    <View>
-                      <VCardNotFound
-                        title={'Not Found'}
-                        value={searchQueryVal as string}
-                      />
-                    </View>
-                  )}
-              </View>
-            ),
+        {changeHandlerResult &&
+          typeof changeHandlerResult === 'object' &&
+          'status' in changeHandlerResult &&
+          changeHandlerResult.status === RESPONSE_SUCCESS && (
+            <View>
+              <VDataTable data={changeHandlerResult as ZProductListOutput} />
+              {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
+            </View>
+          )}
+        {changeHandlerResult &&
+          typeof changeHandlerResult === 'object' &&
+          'status' in changeHandlerResult &&
+          changeHandlerResult.status === RESPONSE_NO_CONTENT && (
+            <View>
+              <VCardNotFound
+                title={'Not Found'}
+                value={searchQueryVal as string}
+              />
+            </View>
           )}
       </View>
     </View>

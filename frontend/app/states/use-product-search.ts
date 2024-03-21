@@ -5,6 +5,7 @@ import {ValidationResult} from '../interfaces/validation-result';
 import {parseZodError} from '../../../shared/services/zod-dto.service';
 import {ZodError} from 'zod';
 import {ZProductListOutput} from '../../../shared/dto/product.dto';
+import {ValidTypes} from '../../../shared/enums/types';
 
 export const useInputChange = (searchQuery: string) => {
   const inputRef = useRef<TextInput | null>(null);
@@ -22,8 +23,10 @@ export const useInputChange = (searchQuery: string) => {
 
 export const useOnChangeHandler = (
   validateFormArray: (value: string) => Promise<ValidationResult>,
-  getProductByEAN: (value: string) => Promise<any>,
-  getProductByNumber: (value: string) => Promise<any>,
+  getProduct: (
+    value: string,
+    validType: ValidTypes,
+  ) => Promise<ZProductListOutput | Response | undefined>,
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>,
 ) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -31,7 +34,7 @@ export const useOnChangeHandler = (
   const [changeHandlerResult, setChangeHandlerResult] = useState<
     | string
     | React.Dispatch<React.SetStateAction<string | null>>
-    | ZProductListOutput[]
+    | ZProductListOutput
     | ((value: string) => Promise<void>)
     | null
   >(null);
@@ -41,7 +44,7 @@ export const useOnChangeHandler = (
       setErrorMessage(null);
 
       try {
-        const {isValid, error, validTypes} = await validateFormArray(value);
+        const {isValid, error, validType} = await validateFormArray(value);
 
         if (!isValid) {
           const msg = await parseZodError(<ZodError>error);
@@ -50,25 +53,10 @@ export const useOnChangeHandler = (
           return;
         }
 
-        let responses = [];
+        const response = await getProduct(value, validType as ValidTypes);
 
-        let valuesAreEqual =
-          validTypes?.includes('eankod') && validTypes?.includes('cikkszam');
-
-        if (valuesAreEqual) {
-          responses.push(await getProductByEAN(value));
-        } else {
-          if (validTypes?.includes('eankod')) {
-            responses.push(await getProductByEAN(value));
-          }
-
-          if (validTypes?.includes('cikkszam')) {
-            responses.push(await getProductByNumber(value));
-          }
-        }
-
-        if (responses.length > 0) {
-          setChangeHandlerResult([].concat(...responses));
+        if (response) {
+          setChangeHandlerResult(response as ZProductListOutput);
         }
 
         setSearchQueryVal(value);
@@ -77,7 +65,7 @@ export const useOnChangeHandler = (
         Sentry.captureException(e);
       }
     },
-    [validateFormArray, getProductByEAN, getProductByNumber, setSearchQuery],
+    [validateFormArray, getProduct, setSearchQuery],
   );
 
   return [

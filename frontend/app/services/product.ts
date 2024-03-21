@@ -40,6 +40,26 @@ export const ProductService = {
 
     try {
       return await ApiService.doRequest(
+        '/protected/product/getCikkByETK',
+        options,
+        ProductListOutput,
+      );
+    } catch (e) {
+      Sentry.captureException(e);
+      throw e;
+    }
+  },
+  getProduct: async (
+    value: ZProductNumberSchemaInput | ZProductEANSchemaInput,
+  ): Promise<ZProductListOutput | Response | undefined> => {
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(value),
+      accessToken: await TokenHandlingService.getTokenIfValid(),
+    };
+
+    try {
+      return await ApiService.doRequest(
         '/protected/product/getCikk',
         options,
         ProductListOutput,
