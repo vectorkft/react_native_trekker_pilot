@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {
-    ProductEANSchemaInput,
+    ProductEANSchemaInput, ProductGeneralSchema,
     ProductNumberSchemaInput,
 } from "../../shared/dto/product.dto";
 import * as cikkService from "../services/product";
@@ -9,7 +9,7 @@ import {ZodDTO} from "../dto/zodDTO";
 
 import * as cikkServiceNew from "../services/servicesNew/cikkServiceNew"
 import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
-import {ValidTypes} from "../../shared/enums/types";
+
 
 
 export const protectedProductRouter = express.Router();
@@ -33,26 +33,17 @@ protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response)
 })
 
 protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
-     const body = req.body;
-     if(body.validType===ValidTypes.both || body.validType=== ValidTypes.ean){
-         const validData=await zParse(ProductEANSchemaInput,body);
-         const result = await cikkService.getCikkByEanKod(validData);
-         if(!result){
-             return res.status(204).json(body);
-         }
-         return res.status(200).json(result);
-
-     }else if (body.validType === ValidTypes.etk){
-         const validData= await zParse(ProductNumberSchemaInput,body);
-         const result = await cikkService.getCikkByCikkszam(validData);
-         if(!result){
-             return res.status(204).json(body);
-         }
-         return res.status(200).json(result);
-
-
-     }
-     return res.status(200).json('Under construction');
+    try{
+        const body = req.body;
+        const validData  = await zParse(ProductGeneralSchema,body);
+        const result= await cikkService.getCikkHelper(validData);
+        if(!result) {
+            return res.status(204).json(result);
+        }
+        return res.status(200).json(result);
+    } catch (e){
+        return res.status(400).json(e);
+    }
 })
 protectedProductRouter.post('/getCikkByETK', async (req: Request, res)=>{
     try{

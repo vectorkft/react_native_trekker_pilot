@@ -39,11 +39,11 @@ exports.registerUser = exports.loginUser = void 0;
 const tokenService = __importStar(require("./token"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
-const user_dto_1 = require("../../shared/dto/user.dto");
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const db_connection_check_1 = require("./db-connection-check");
 const user_login_dto_1 = require("../../shared/dto/user-login.dto");
 const device_info_1 = require("../../shared/enums/device-info");
+const error_message_dto_1 = require("../../shared/dto/error-message-dto");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {
@@ -54,7 +54,7 @@ function loginUser(userInput) {
             where: { name: userInput.name, pw: userInput.pw }
         });
         if (!user) {
-            return yield (0, zod_dto_service_1.zParse)(user_dto_1.userLoginFailedOutput, { errormessage: 'Wrong username or Password' });
+            return yield (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'Wrong username or Password' });
         }
         const accessToken = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput);
         const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput);
@@ -75,12 +75,12 @@ function registerUser(user) {
             where: { name: user.name }
         });
         if (existentUser) {
-            return (0, zod_dto_service_1.zParse)(user_dto_1.userAlreadyExistDTOOutput, { message: 'Username already exists', name: user.name });
+            return (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'Username already exists : ' + user.name });
         }
         yield prisma.pilot_user.create({
             data: { name: user.name, pw: user.pw }
         });
-        return (0, zod_dto_service_1.zParse)(user_dto_1.userRegisterDTOOutput, { message: 'User registration successful', name: user.name, password: user.pw });
+        return (0, zod_dto_service_1.zParse)(user_login_dto_1.userSchemaInput, { name: user.name, pw: user.pw });
     });
 }
 exports.registerUser = registerUser;

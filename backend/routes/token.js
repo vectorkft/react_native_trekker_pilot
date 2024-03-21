@@ -40,13 +40,13 @@ const express_1 = __importDefault(require("express"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const zodDTO_1 = require("../dto/zodDTO");
 const tokenService = __importStar(require("../services/token"));
-const refresh_token_dto_1 = require("../../shared/dto/refresh.token.dto");
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
+const token_dto_1 = require("../../shared/dto/token.dto");
 exports.tokenRouter = express_1.default.Router();
 exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(token_dto_1.TokenDTOInput, req.body);
         const body = yield tokenService.refreshToken({ refreshToken: validData.refreshToken });
         if ('errorMessage' in body) {
             return res.status(403).json(body);
@@ -63,7 +63,7 @@ exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, voi
 //// FOR TESTING PURPOSE ONLY
 exports.tokenRouter.post('/refreshTeszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(refresh_token_dto_1.RefreshBodySchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(token_dto_1.TokenDTOInput, req.body);
         const body = yield tokenServiceNew.refreshToken_new({ refreshToken: validData.refreshToken });
         if ('errorMessage' in body) {
             //Ha van errorMessage akkor rossz a token amit kaptunk
@@ -72,9 +72,6 @@ exports.tokenRouter.post('/refreshTeszt', (req, res) => __awaiter(void 0, void 0
         return res.status(200).json(body);
     }
     catch (e) {
-        // if(e instanceof PrismaClientInitializationError){
-        //     return res.status(500).json('Cannot connect to the database');
-        // }
         return res.status(400).json(e);
     }
 }));
