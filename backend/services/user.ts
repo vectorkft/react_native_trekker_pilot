@@ -2,17 +2,17 @@ import * as tokenService from './token';
 import {PrismaClient} from '@prisma/client'
 import dotenv from 'dotenv';
 
-import {
-    userAlreadyExistDTOOutput,
-    userLoginFailedOutput,
-    userRegisterDTOOutput,
-    ZUserSchemaInput
-} from "../../shared/dto/user.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
 
 import {dbConnectionCheck} from "./db-connection-check";
-import {UserLoginDTOOutput, ZUserLoginDTOInput} from "../../shared/dto/user-login.dto";
+import {
+    UserLoginDTOOutput,
+    userSchemaInput,
+    ZUserLoginDTOInput,
+    ZUserSchemaInput
+} from "../../shared/dto/user-login.dto";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
+import {errorMessageDTO} from "../../shared/dto/error-message-dto";
 
 
 
@@ -32,7 +32,7 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
         });
 
         if (!user) {
-            return await zParse(userLoginFailedOutput,{errormessage: 'Wrong username or Password'});
+            return await zParse(errorMessageDTO,{errorMessage: 'Wrong username or Password'});
         }
 
         const accessToken =await tokenService.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput);
@@ -58,8 +58,8 @@ export async function registerUser(user: ZUserSchemaInput) {
 
     if (existentUser) {
         return zParse(
-            userAlreadyExistDTOOutput,
-            { message: 'Username already exists', name: user.name }
+            errorMessageDTO,
+            { errorMessage: 'Username already exists : '+ user.name },
         );
     }
 
@@ -68,8 +68,8 @@ export async function registerUser(user: ZUserSchemaInput) {
     });
 
     return zParse(
-        userRegisterDTOOutput,
-        { message: 'User registration successful', name: user.name, password: user.pw }
+        userSchemaInput,
+        { name: user.name, pw: user.pw }
     );
 }
 

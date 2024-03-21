@@ -1,18 +1,13 @@
-import {
-    RefreshBodyErrorMessage, refreshTokenDTOOutput,
-    ZAccessTokenInput,
-    ZrefreshTokenInput,
-    ZrefreshTokenOutput
-} from "../../../shared/dto/refresh.token.dto";
-import {userSchemaInput, ZUserSchemaInput} from "../../../shared/dto/user.dto";
 import jwt, {JsonWebTokenError} from "jsonwebtoken";
 import {JwtPayload} from "../../models/JwtPayload";
 import {dbConnect} from "./dbConnectService";
 import {zParse} from "../../../shared/services/zod-dto.service";
-import {undefined, unknown} from "zod";
+import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput} from "../../../shared/dto/token.dto";
+import {errorMessageDTO} from "../../../shared/dto/error-message-dto";
+import {userSchemaInput, ZUserSchemaInput} from "../../../shared/dto/user-login.dto";
 
 
-export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshToken: ZrefreshTokenInput, userInput: ZUserSchemaInput){
+export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserSchemaInput){
     const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
     const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as JwtPayload;
     if (!decodedRefreshToken || !decodedAccessToken) {
@@ -40,7 +35,7 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshTok
 
 }
 
-export async function deleteTokensByLogout_new(accessToken:ZAccessTokenInput){
+export async function deleteTokensByLogout_new(accessToken:ZAccessTokenDTOInput){
 
     try{
         const userInput= await retrieveUserInfoFromAccessToken(accessToken)
@@ -57,7 +52,7 @@ export async function deleteTokensByLogout_new(accessToken:ZAccessTokenInput){
 
 }
 
-export async function retrieveUserInfoFromAccessToken(token: ZAccessTokenInput){
+export async function retrieveUserInfoFromAccessToken(token: ZAccessTokenDTOInput){
 
     const secretKey = process.env.JWT_SECRET_KEY?? '';
     const payload: any= jwt.verify(token.accessToken,secretKey);
@@ -65,7 +60,7 @@ export async function retrieveUserInfoFromAccessToken(token: ZAccessTokenInput){
 
 }
 
-async function retrieveUserInfoFromRefreshToken(token: ZrefreshTokenInput){
+async function retrieveUserInfoFromRefreshToken(token: ZTokenDTOInput){
 
     const secretKey = process.env.JWT_SECRET_KEY?? '';
     const payload: any= jwt.verify(token.refreshToken,secretKey);
@@ -75,10 +70,10 @@ async function retrieveUserInfoFromRefreshToken(token: ZrefreshTokenInput){
 }
 
 
-export async function refreshToken_new(refreshToken: ZrefreshTokenInput) {
+export async function refreshToken_new(refreshToken: ZTokenDTOInput) {
 
     if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
-        return await zParse(RefreshBodyErrorMessage,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
+        return await zParse(errorMessageDTO,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
     }
     const expireDate= Math.floor(Date.now() / 1000) + 30;
     const secretKey = process.env.JWT_SECRET_KEY ?? '';
@@ -95,18 +90,17 @@ export async function refreshToken_new(refreshToken: ZrefreshTokenInput) {
             where: { userName: userInput.name },
             data: { accessToken: newAccessToken, accessExpireDate: expireDate },
         });
-        const body : ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: newAccessToken });
-        return body;
+        return await zParse(TokenDTOOutput, {newAccessToken: newAccessToken});
     } catch (err) {
         console.log(`An error occurred during refreshing the access token ${err}`);
-        return zParse(RefreshBodyErrorMessage,
+        return zParse(errorMessageDTO,
             {errorMessage: (err instanceof JsonWebTokenError) ? err.message : JSON.stringify(err)});
     }
 }
 
 
 
-async function isRefreshTokenInDatabase(refreshToken: ZrefreshTokenInput): Promise<boolean> {
+async function isRefreshTokenInDatabase(refreshToken: ZTokenDTOInput): Promise<boolean> {
     const userInput= await retrieveUserInfoFromRefreshToken(refreshToken);
     const prismaA =await dbConnect(userInput);
     return prismaA.tokens_v2.findFirst({

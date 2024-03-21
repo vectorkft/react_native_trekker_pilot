@@ -3,15 +3,14 @@ import jwt from "jsonwebtoken";
 import {JwtPayload} from "../models/JwtPayload";
 import Chalk from 'chalk';
 import {zParse} from "../../shared/services/zod-dto.service";
-import {
-    RefreshBodyErrorMessage,
-    refreshTokenDTOOutput,
-    ZAccessTokenInput,
-    ZrefreshTokenInput,
-    ZrefreshTokenOutput
-} from "../../shared/dto/refresh.token.dto";
-import {userPayLoadInput, ZuserPayloadInput, ZUserSchemaInput} from "../../shared/dto/user.dto";
 import dotenv from "dotenv";
+import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput, ZTokenDTOOutput} from "../../shared/dto/token.dto";
+import {errorMessageDTO} from "../../shared/dto/error-message-dto";
+import {
+    userPayLoadInput,
+    ZUserLoginDTOInput,
+    ZuserPayloadInput, ZUserSchemaInput
+} from "../../shared/dto/user-login.dto";
 
 
 const prisma = new PrismaClient()
@@ -19,7 +18,7 @@ const prisma = new PrismaClient()
 
 dotenv.config()
 
-export async function addTokenAtLogin(accessToken: ZAccessTokenInput, refreshToken: ZrefreshTokenInput, userInput: ZUserSchemaInput){
+export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserLoginDTOInput){
         const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
         const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as JwtPayload;
         if (!decodedRefreshToken || !decodedAccessToken) {
@@ -93,7 +92,7 @@ export async function deleteExpiredTokens_new(){
 
 }
 
-export async function deleteTokensByLogout(accessToken:ZAccessTokenInput){
+export async function deleteTokensByLogout(accessToken:ZAccessTokenDTOInput){
 
         return prisma.tokens_v2.deleteMany({
             where: {
@@ -103,10 +102,10 @@ export async function deleteTokensByLogout(accessToken:ZAccessTokenInput){
 }
 
 
-export async function refreshToken(refreshToken: ZrefreshTokenInput) {
+export async function refreshToken(refreshToken: ZTokenDTOInput) {
 
         if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
-            return await zParse(RefreshBodyErrorMessage,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
+            return await zParse(errorMessageDTO,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
         }
 
         const payload= await retrieveUserInfoFromRefreshToken(refreshToken);
@@ -120,7 +119,7 @@ export async function refreshToken(refreshToken: ZrefreshTokenInput) {
             data: { accessToken: accessToken, accessExpireDate: decodedAccessToken.exp },
         });
 
-        const body : ZrefreshTokenOutput = await zParse(refreshTokenDTOOutput, { message: 'New access token generated', newAccessToken: accessToken });
+        const body : ZTokenDTOOutput = await zParse(TokenDTOOutput, {newAccessToken: accessToken });
 
         return body;
 
@@ -128,7 +127,7 @@ export async function refreshToken(refreshToken: ZrefreshTokenInput) {
 
 
 
-async function isRefreshTokenInDatabase(refreshToken: ZrefreshTokenInput): Promise<boolean> {
+async function isRefreshTokenInDatabase(refreshToken: ZTokenDTOInput): Promise<boolean> {
 
     return prisma.tokens_v2.findFirst({
         where: {
@@ -155,7 +154,7 @@ export async function signTokensFromTokenPayload(tokenType: string, expiresIn: s
 
 }
 
-export async function isAccessTokenInDatabase(accessToken: ZAccessTokenInput):Promise<boolean>{
+export async function isAccessTokenInDatabase(accessToken: ZAccessTokenDTOInput):Promise<boolean>{
     return prisma.tokens_v2.findFirst({
         where: {
             accessToken: accessToken.accessToken
@@ -164,7 +163,7 @@ export async function isAccessTokenInDatabase(accessToken: ZAccessTokenInput):Pr
 
 }
 
-async function retrieveUserInfoFromRefreshToken(token: ZrefreshTokenInput){
+async function retrieveUserInfoFromRefreshToken(token: ZTokenDTOInput){
 
     const secretKey = process.env.JWT_SECRET_KEY?? '';
     const payload: any= jwt.verify(token.refreshToken,secretKey);

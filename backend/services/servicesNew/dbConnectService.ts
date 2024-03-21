@@ -1,5 +1,6 @@
-import {ZUserSchemaInput} from "../../../shared/dto/user.dto";
+
 import {PrismaClient} from "@prisma/client";
+import {ZUserSchemaInput} from "../../../shared/dto/user-login.dto";
 
 export async function dbConnect(userInput: ZUserSchemaInput): Promise<PrismaClient> {
 
