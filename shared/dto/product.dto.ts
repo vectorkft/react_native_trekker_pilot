@@ -1,4 +1,4 @@
-import {z} from "zod";
+import {z} from '../../node_modules/zod';
 import { ean } from 'luhn-validation';
 import {ValidTypes} from "../enums/types";
 

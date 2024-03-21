@@ -1,4 +1,4 @@
-import {z} from "zod";
+import {z} from '../../node_modules/zod';
 
 export const ApiError = z.object({
     status: z.number(),
