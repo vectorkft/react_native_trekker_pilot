@@ -221,7 +221,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         </View>
         <View style={productStyles.hamburgerMenuView}>
           <HamburgerMenu>
-            {deviceType === DeviceInfoEnum.trekker && (
+            {deviceType === DeviceInfoEnum.mobile && (
               <VCameraIconButton toggleCameraIcon={clickCamera} />
             )}
             {deviceType === DeviceInfoEnum.trekker && (
