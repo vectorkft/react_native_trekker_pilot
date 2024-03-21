@@ -23,7 +23,7 @@ export async function parseZodError(error: ZodError) : Promise<string> {
         return messages.join(', ');
     } catch (e) {
         Sentry.withScope(scope => {
-            scope.setContext('myContext', { info: 'Hiba az üzenet feldolgozásakor' });
+            scope.setContext('myContext', { info: 'Hiba az üzenet feldolgozásakor.' });
             Sentry.captureException(error);
         });
         return '';

@@ -1,19 +1,16 @@
-import React, {
-  Dispatch,
-  JSX,
-  SetStateAction,
-  useContext,
-  useState,
-} from 'react';
+import React, {JSX, useContext, useState} from 'react';
 import {View} from 'react-native';
 import {ProductService} from '../services/product';
-import {validateZDTOForm} from '../../../shared/services/zod-dto.service';
+import {
+  parseZodError,
+  validateZDTOForm,
+} from '../../../shared/services/zod-dto.service';
 import VCardNotFound from '../components/Vcard-not-found';
 import VCamera from '../components/Vcamera';
 import VCameraIconButton from '../components/Vcamera-icon-button';
 import VInput from '../components/Vinput';
 import VAlert from '../components/Valert';
-import {useInputChange, useOnChangeHandler} from '../states/use-product-search';
+import {useInputChange} from '../states/use-product';
 import VBackButton from '../components/Vback-button';
 import {AppNavigation} from '../interfaces/navigation';
 import {
@@ -25,13 +22,9 @@ import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
 import VDataTable from '../components/Vdata-table';
-import {
-  useBeepSound,
-  useCamera,
-  useOnBarCodeRead,
-} from '../states/use-camera-scan';
+import {useBeepSound, useCamera} from '../states/use-camera-scan';
 import {Icon} from 'react-native-elements';
-import {AnyZodObject, ZodError, ZodIssueCode} from 'zod';
+import {ZodError, ZodIssueCode} from 'zod';
 import {ValidationResult} from '../interfaces/validation-result';
 import {darkModeContent} from '../styles/dark-mode-content';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
@@ -46,21 +39,25 @@ import {
 } from '../constants/response-status';
 import {AlertTypes, ToastTypes} from '../enums/types';
 import {ValidTypes} from '../../../shared/enums/types';
+import {TSchemaDataPair} from '../interfaces/t-schema-data-pair';
+import {useAlert} from '../states/use-alert';
+import * as Sentry from '@sentry/react';
+import {BarCodeReadEvent} from 'react-native-camera';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
+  const {errorMessage, setErrorMessage} = useAlert();
   const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQueryVal, setSearchQueryVal] = useState('');
+  const [changeHandlerResult, setChangeHandlerResult] = useState<
+    ZProductListOutput | Response | undefined
+  >(undefined);
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchQuery);
   const beep = useBeepSound();
-
-  type TSchemaDataPair = {
-    schema: AnyZodObject;
-    formData: {[key: string]: string};
-  };
 
   const validateFormArray = async (
     value: string,
@@ -115,27 +112,66 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     };
   };
 
-  const getProduct = async (value: string, validType: ValidTypes) => {
-    return await ProductService.getProduct({
-      value: value,
-      validType: validType,
-    });
+  const handleValidationError = async (validation: ValidationResult) => {
+    if (!validation.isValid) {
+      const msg = await parseZodError(validation.error as ZodError);
+      setErrorMessage(msg);
+      setSearchQuery('');
+      return false;
+    }
+    return true;
   };
 
-  const [
-    errorMessage,
-    searchQueryVal,
-    changeHandlerResult,
-    onChangeHandler,
-    setErrorMessage,
-  ] = useOnChangeHandler(validateFormArray, getProduct, setSearchQuery);
+  const getProduct = async (barcode?: string) => {
+    try {
+      const validateResult = await validateFormArray(
+        searchQuery || (barcode as string),
+      );
+      const errorHandled = await handleValidationError(validateResult);
+
+      if (!errorHandled) {
+        return;
+      }
+
+      const res = await ProductService.getProduct({
+        value: searchQuery || (barcode as string),
+        validType: validateResult.validType as ValidTypes,
+      });
+
+      setChangeHandlerResult(res);
+      setSearchQueryVal(searchQuery || (barcode as string));
+      setSearchQuery('');
+    } catch (e) {
+      Sentry.captureException(e);
+      setErrorMessage('Hiba történt próbálja újra!');
+    }
+  };
+
   const {isCameraActive, handleOnClose, clickCamera, setIsCameraActive} =
-    useCamera(setErrorMessage as Dispatch<SetStateAction<string | null>>);
-  const onBarCodeRead = useOnBarCodeRead(
-    onChangeHandler as (value: string) => void,
-    setIsCameraActive,
-    beep,
-  );
+    useCamera(setErrorMessage);
+
+  const useOnBarCodeRead = () => {
+    const onBarCodeRead = async (event: BarCodeReadEvent) => {
+      if (event.data) {
+        try {
+          await getProduct(event.data);
+          setIsCameraActive(false);
+          beep.beep.play(success => {
+            if (!success) {
+              Sentry.captureMessage('A hang nem játszódott le', 'warning');
+              beep.alternativeBeep.play();
+            }
+          });
+        } catch (e) {
+          Sentry.captureException(e);
+        }
+      }
+    };
+
+    return {onBarCodeRead};
+  };
+
+  const {onBarCodeRead} = useOnBarCodeRead();
 
   if (isCameraActive) {
     return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
@@ -173,10 +209,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                 deviceType === DeviceInfoEnum.mobile || keyboardActive,
               autoFocus: true,
               onChangeText: setSearchQuery,
-              onSubmitEditing: async () =>
-                await (onChangeHandler as (value: string) => Promise<void>)(
-                  searchQuery,
-                ),
+              onSubmitEditing: () => getProduct(),
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
               rightIcon: (
@@ -188,11 +221,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     color={isDarkMode ? '#ffffff' : '#000000'}
                     disabled={!searchQuery || !isConnected}
                     disabledStyle={productStyles.iconDisabledStyle}
-                    onPress={async () => {
-                      await (
-                        onChangeHandler as (value: string) => Promise<void>
-                      )(searchQuery);
-                    }}
+                    onPress={() => getProduct()}
                   />
                   {searchQuery && (
                     <Icon
@@ -213,7 +242,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         </View>
         <View style={productStyles.hamburgerMenuView}>
           <HamburgerMenu>
-            {deviceType === DeviceInfoEnum.mobile && (
+            {deviceType === DeviceInfoEnum.trekker && (
               <VCameraIconButton toggleCameraIcon={clickCamera} />
             )}
             {deviceType === DeviceInfoEnum.trekker && (
@@ -232,16 +261,16 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
           </HamburgerMenu>
         </View>
         {changeHandlerResult &&
-          typeof changeHandlerResult === 'object' &&
           'status' in changeHandlerResult &&
           changeHandlerResult.status === RESPONSE_SUCCESS && (
             <View>
-              <VDataTable data={changeHandlerResult as ZProductListOutput} />
+              <VDataTable
+                data={changeHandlerResult as unknown as ZProductListOutput}
+              />
               {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
             </View>
           )}
         {changeHandlerResult &&
-          typeof changeHandlerResult === 'object' &&
           'status' in changeHandlerResult &&
           changeHandlerResult.status === RESPONSE_NO_CONTENT && (
             <View>
