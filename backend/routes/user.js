@@ -38,7 +38,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.protectedUserRouter = exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
-const user_dto_1 = require("../../shared/dto/user.dto");
 const userService = __importStar(require("../services/user"));
 const zodDTO_1 = require("../dto/zodDTO");
 const tokenService = __importStar(require("../services/token"));
@@ -56,7 +55,7 @@ userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
         const body = yield userService.loginUser(validData);
-        if ("errormessage" in body) {
+        if ("errorMessage" in body) {
             return res.status(401).json(body);
         }
         return res.status(200).json(body);
@@ -68,14 +67,14 @@ userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (err instanceof library_1.PrismaClientInitializationError) {
             return res.status(500).json('Cannot connect to the database');
         }
-        return res.status(400).send(err);
+        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
     }
 }));
 userRouter.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_dto_1.userSchemaInput, req.body);
+        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.userSchemaInput, req.body);
         const body = yield userService.registerUser(validData);
-        if ('message' in body && body.message === 'Username already exists' /*body instanceof MessageDTO*/) {
+        if ("errorMessage" in body) {
             return res.status(409).json(body);
         }
         return res.status(200).json(body);
@@ -109,7 +108,7 @@ userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
         const body = yield userServiceNew.loginWithDB(validData);
-        if ('errormessage' in body) {
+        if ('errorMessage' in body) {
             return res.status(401).json(body);
         }
         return res.status(200).json(body);

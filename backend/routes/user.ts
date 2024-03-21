@@ -1,6 +1,5 @@
 import express, {Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
-import {userSchemaInput} from "../../shared/dto/user.dto";
 import * as userService from "../services/user";
 import {ZodDTO} from "../dto/zodDTO";
 import * as tokenService from "../services/token";
@@ -8,7 +7,8 @@ import * as tokenService from "../services/token";
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
 import {PrismaClientInitializationError,PrismaClientRustPanicError} from "@prisma/client/runtime/library";
-import {UserLoginDTOInput} from "../../shared/dto/user-login.dto";
+import {UserLoginDTOInput, userSchemaInput} from "../../shared/dto/user-login.dto";
+
 
 // Public endpoints
 const userRouter = express.Router();
@@ -19,7 +19,7 @@ userRouter.post('/login', async (req: Request, res: Response) => {
     try {
         const validData= await zParse(UserLoginDTOInput,req.body);
         const body=await userService.loginUser(validData);
-        if("errormessage" in body){
+        if("errorMessage" in body){
             return res.status(401).json(body);
         }
         return res.status(200).json(body);
@@ -30,7 +30,8 @@ userRouter.post('/login', async (req: Request, res: Response) => {
         if(err instanceof PrismaClientInitializationError){
             return res.status(500).json('Cannot connect to the database');
         }
-        return res.status(400).send(err);
+        return res.status(400).json(ZodDTO.fromZodError(err));
+
     }
 });
 
@@ -39,7 +40,7 @@ userRouter.post('/register', async (req: Request, res: Response) => {
     try {
         const validData= await zParse(userSchemaInput,req.body);
         const body=await userService.registerUser(validData);
-        if('message' in body && body.message === 'Username already exists'/*body instanceof MessageDTO*/) {
+        if("errorMessage" in body) {
             return res.status(409 ).json(body);
         }
         return res.status(200).json(body)
@@ -76,7 +77,7 @@ userRouter.post('/teszt', async(req: Request, res : Response) => {
     try{
         const validData= await zParse(UserLoginDTOInput,req.body);
         const body=await userServiceNew.loginWithDB(validData);
-        if('errormessage' in body){
+        if('errorMessage' in body){
             return res.status(401).json(body);
         }
         return res.status(200).json(body);

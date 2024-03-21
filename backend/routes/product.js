@@ -59,24 +59,18 @@ exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(voi
     }
 }));
 exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = req.body;
-    if (body.validType === "both" /* ValidTypes.both */ || body.validType === "ean" /* ValidTypes.ean */) {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, body);
-        const result = yield cikkService.getCikkByEanKod(validData);
+    try {
+        const body = req.body;
+        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductGeneralSchema, body);
+        const result = yield cikkService.getCikkHelper(validData);
         if (!result) {
-            return res.status(204).json(body);
+            return res.status(204).json(result);
         }
         return res.status(200).json(result);
     }
-    else if (body.validType === "etk" /* ValidTypes.etk */) {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, body);
-        const result = yield cikkService.getCikkByCikkszam(validData);
-        if (!result) {
-            return res.status(204).json(body);
-        }
-        return res.status(200).json(result);
+    catch (e) {
+        return res.status(400).json(e);
     }
-    return res.status(200).json('Under construction');
 }));
 exports.protectedProductRouter.post('/getCikkByETK', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
