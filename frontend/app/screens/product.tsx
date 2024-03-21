@@ -23,7 +23,7 @@ import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
 import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
-import {ZodError, ZodIssueCode} from 'zod';
+import {ZodError} from 'zod';
 import {ValidationResult} from '../interfaces/validation-result';
 import {darkModeContent} from '../styles/dark-mode-content';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
@@ -37,7 +37,7 @@ import {
   RESPONSE_SUCCESS,
 } from '../constants/response-status';
 import {AlertTypes, ToastTypes} from '../enums/types';
-import {ValidTypes} from '../../../shared/enums/types';
+import {ValidatorProps, ValidTypes} from '../../../shared/enums/types';
 import {TSchemaDataPair} from '../interfaces/t-schema-data-pair';
 import {useAlert} from '../states/use-alert';
 import * as Sentry from '@sentry/react';
@@ -47,7 +47,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {errorMessage, setErrorMessage} = useAlert();
   const {isCameraActive, setIsCameraActive, handleOnClose, clickCamera} =
-    useCamera();
+    useCamera(setErrorMessage);
   const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
@@ -61,28 +61,31 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
 
   const validateFormArray = async (
     value: string,
+    rules: ValidatorProps,
   ): Promise<ValidationResult> => {
-    const pairs: TSchemaDataPair[] = [
-      {
-        schema: ProductEANSchemaInput,
-        formData: {value: value, validType: ValidTypes.ean},
-      },
-      {
-        schema: ProductNumberSchemaInput,
-        formData: {value: value, validType: ValidTypes.etk},
-      },
-    ];
+    // const pairs: TSchemaDataPair[] = [
+    //   {
+    //     schema: ProductEANSchemaInput,
+    //     formData: {value: value, validType: ValidTypes.ean},
+    //   },
+    //   {
+    //     schema: ProductNumberSchemaInput,
+    //     formData: {value: value, validType: ValidTypes.etk},
+    //   },
+    // ];
 
-    const validTypes: string[] = [];
-    const MAX_LENGTH_ARRAY = 2;
+    const validTypes: ValidatorProps = {propList: []};
     let error: ZodError | null = null;
 
-    for (let i = 0; i < pairs.length; i++) {
-      const {schema, formData} = pairs[i];
-      const validation = await validateZDTOForm(schema, formData);
+    for (let i = 0; i < rules.propList.length; i++) {
+      const {parseType, name} = rules.propList[i];
+      const validation = await validateZDTOForm(parseType, {
+        value: value,
+        validType: name,
+      });
 
       if (validation.isValid) {
-        validTypes.push(formData.validType);
+        validTypes.propList.push(rules.propList[i]);
       }
 
       if (validation.error) {
@@ -90,29 +93,35 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       }
     }
 
+    // for (let i = 0; i < pairs.length; i++) {
+    //   const {schema, formData} = pairs[i];
+    //   const validation = await validateZDTOForm(schema, formData);
+    //
+    //   if (validation.isValid) {
+    //     validTypes.push(formData.validType);
+    //   }
+    //
+    //   if (validation.error) {
+    //     error = validation.error;
+    //   }
+    // }
+
     let resultType = '';
-    if (validTypes.length === MAX_LENGTH_ARRAY) {
+    if (validTypes.propList.length === 2) {
       resultType = ValidTypes.both;
-    } else if (validTypes.length === 1) {
-      resultType = validTypes[0];
+    } else if (validTypes.propList.length === 1) {
+      resultType = validTypes.propList[0].name;
     }
 
     return {
-      isValid: validTypes.length > 0,
+      isValid: validTypes.propList.length > 0,
       validType: resultType as ValidTypes,
-      error:
-        error ||
-        new ZodError([
-          {
-            code: ZodIssueCode.custom,
-            message: 'Nem megfelelő formátum, ellenőrizd az adatot!',
-            path: [],
-          },
-        ]),
+      error: error,
     };
   };
 
   const handleValidationError = async (validation: ValidationResult) => {
+    setErrorMessage(null);
     if (!validation.isValid) {
       const msg = await parseZodError(validation.error as ZodError);
       setErrorMessage(msg);
@@ -122,11 +131,15 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     return true;
   };
 
-  const getProduct = async (barcode?: string) => {
+  const getProduct = async (value: string) => {
     try {
-      const validateResult = await validateFormArray(
-        searchQuery || (barcode as string),
-      );
+      setErrorMessage(null);
+      const validateResult = await validateFormArray(value, {
+        propList: [
+          {name: ValidTypes.etk, parseType: ProductNumberSchemaInput},
+          {name: ValidTypes.ean, parseType: ProductEANSchemaInput},
+        ],
+      });
       const errorHandled = await handleValidationError(validateResult);
 
       if (!errorHandled) {
@@ -134,12 +147,11 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       }
 
       const res = await ProductService.getProduct({
-        value: searchQuery || (barcode as string),
-        validType: validateResult.validType as ValidTypes,
+        value: value,
       });
 
       setChangeHandlerResult(res);
-      setSearchQueryVal(searchQuery || (barcode as string));
+      setSearchQueryVal(value);
       setSearchQuery('');
     } catch (e) {
       Sentry.captureException(e);
@@ -174,7 +186,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         <VAlert
           type={AlertTypes.error}
           title={'Hibás eankód!'}
-          message={errorMessage as string}
+          message={errorMessage}
         />
       )}
       <VBackButton navigation={navigation} />
@@ -188,7 +200,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                 deviceType === DeviceInfoEnum.mobile || keyboardActive,
               autoFocus: true,
               onChangeText: setSearchQuery,
-              onSubmitEditing: () => getProduct(),
+              onSubmitEditing: () => getProduct(searchQuery),
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
               rightIcon: (
@@ -200,7 +212,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     color={isDarkMode ? '#ffffff' : '#000000'}
                     disabled={!searchQuery || !isConnected}
                     disabledStyle={productStyles.iconDisabledStyle}
-                    onPress={() => getProduct()}
+                    onPress={() => getProduct(searchQuery)}
                   />
                   {searchQuery && (
                     <Icon

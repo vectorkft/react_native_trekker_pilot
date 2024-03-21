@@ -4,18 +4,19 @@ import {BarCodeReadEvent} from 'react-native-camera';
 import React, {useState} from 'react';
 import {useAlert} from '../states/use-alert';
 
-export const useCamera = () => {
-  const {setErrorMessage} = useAlert();
+export const useCamera = (
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>,
+) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
 
   const handleOnClose = () => {
-    setIsCameraActive(false);
     setErrorMessage(null);
+    setIsCameraActive(false);
   };
 
   const clickCamera = () => {
-    setIsCameraActive(true);
     setErrorMessage(null);
+    setIsCameraActive(true);
   };
 
   return {
@@ -57,7 +58,7 @@ const useBeepSound = () => {
 
 export const CameraService = {
   useOnBarCodeRead: (
-    getProduct: (value?: string) => Promise<void>,
+    getProduct: (value: string) => Promise<void>,
     setIsCameraActive: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
     const {setErrorMessage} = useAlert();

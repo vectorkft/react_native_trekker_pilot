@@ -12,7 +12,6 @@ import {useLoginState} from '../states/use-login';
 import VAlert from '../components/Valert';
 import {useAlert} from '../states/use-alert';
 import {CheckBox, Icon, Switch, Text} from 'react-native-elements';
-import {darkModeContent} from '../styles/dark-mode-content';
 import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
 import {UserLoginDTOInput} from '../../../shared/dto/user-login.dto';
@@ -25,8 +24,12 @@ import {LoadingContext} from '../providers/loading';
 import {deviceData} from '../constants/device-data';
 import {AlertTypes} from '../enums/types';
 import {loginScreenStyles} from '../styles/login-screen';
+import {colors} from '../enums/colors';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
+  const BUTTON_FONT_SIZE = 20;
+  const BUTTON_HEIGHT = 50;
+  const BUTTON_BORDER_RADIUS = 10;
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
   const {loading, setLoadingState} = useContext(LoadingContext);
   const passwordInput = useRef<TextInput | null>(null);
@@ -129,17 +132,11 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
           message={errorMessage}
         />
       )}
-      <View style={{flex: 1, alignItems: 'center'}}>
-        <Text
-          style={{
-            fontFamily: 'Roboto',
-            fontSize: 30,
-            fontWeight: 'bold',
-            color: isDarkMode ? 'white' : 'black',
-          }}>
+      <View style={loginScreenStyles().innerView}>
+        <Text style={loginScreenStyles(isDarkMode).titleStyle}>
           Bejelentkezés
         </Text>
-        <View style={{width: '90%'}}>
+        <View style={loginScreenStyles().inputView}>
           <VInput
             inputProps={{
               value: username,
@@ -166,42 +163,36 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                     type={'material'}
                     name={isPasswordVisible ? 'visibility-off' : 'visibility'}
                     size={24}
-                    color={isDarkMode ? '#fff' : '#000'}
+                    color={
+                      isDarkMode ? colors.lightContent : colors.darkContent
+                    }
                   />
                 </>
               ),
             }}
           />
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={loginScreenStyles().checkBoxView}>
             <CheckBox
               title="Emlékezz rám"
               checkedColor="#00EDAE"
-              uncheckedColor={isDarkMode ? 'white' : 'black'}
-              containerStyle={{
-                backgroundColor: 'transparent',
-                borderWidth: 0,
-                alignSelf: 'flex-start',
-                marginLeft: -8,
-              }}
-              textStyle={{color: isDarkMode ? 'white' : 'black', fontSize: 16}}
+              uncheckedColor={
+                isDarkMode ? colors.lightContent : colors.darkContent
+              }
+              containerStyle={loginScreenStyles().checkBoxContainerStyle}
+              textStyle={loginScreenStyles(isDarkMode).checkBoxTextStyle}
               checked={rememberMe}
               onPress={() => setRememberMe(!rememberMe)}
             />
-            <View style={darkModeContent.switchMode}>
-              <Text
-                style={
-                  isDarkMode
-                    ? darkModeContent.darkModeText
-                    : darkModeContent.lightModeText
-                }>
+            <View style={loginScreenStyles().switchMode}>
+              <Text style={loginScreenStyles(isDarkMode).switchModeText}>
                 Sötét mód
               </Text>
               <Switch
                 trackColor={{
                   false: isDarkMode ? '#424242' : '#E0E0E0',
-                  true: '#ffffff',
+                  true: '#fff',
                 }}
-                thumbColor={isDarkMode ? '#00EDAE' : '#616161'}
+                thumbColor={isDarkMode ? colors.primary : '#616161'}
                 onValueChange={toggleDarkMode}
                 value={isDarkMode}
               />
@@ -212,14 +203,14 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
               title: 'Bejelentkezés',
               titleStyle: {
                 fontFamily: 'Roboto',
-                fontSize: 20,
+                fontSize: BUTTON_FONT_SIZE,
                 fontWeight: '700',
                 color: isDarkMode ? '#fff' : '#000',
               },
               buttonStyle: {
                 backgroundColor: '#00EDAE',
-                height: 50,
-                borderRadius: 10,
+                height: BUTTON_HEIGHT,
+                borderRadius: BUTTON_BORDER_RADIUS,
               },
               onPress: handleFormSubmit,
               disabled: !username || !password,

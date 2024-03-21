@@ -26,7 +26,7 @@ export const ApiService = {
     requestOptions: any = {},
     schema?: AnyZodObject,
   ) => {
-    const url: string = `${API_URL}${endpoint}`;
+    const url = `${API_URL}${endpoint}`;
     const response: Response = await fetch(
       url,
       createRequestInit(requestOptions),

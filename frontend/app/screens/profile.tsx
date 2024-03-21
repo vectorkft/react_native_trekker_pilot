@@ -10,6 +10,7 @@ import VToast from '../components/Vtoast';
 import Header from './header';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
+import {ToastTypes} from '../enums/types';
 
 const Profile = ({navigation}: AppNavigation): JSX.Element => {
   const {setWasDisconnected} = useStore.getState();
@@ -21,8 +22,7 @@ const Profile = ({navigation}: AppNavigation): JSX.Element => {
   useEffect(() => {
     let cancelled = false;
     setLoadingState(true);
-    ProfileService
-      .handleUserProfileRequest()
+    ProfileService.handleUserProfileRequest()
       .then(() => {
         if (!cancelled) {
           setLoadingState(false);
@@ -51,7 +51,7 @@ const Profile = ({navigation}: AppNavigation): JSX.Element => {
       <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
-        type={'check'}
+        type={ToastTypes.success}
         handleEvent={() => setWasDisconnected(false)}
       />
     </View>
