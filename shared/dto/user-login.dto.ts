@@ -1,4 +1,4 @@
-import {z} from '../node_modules/zod';
+import {z} from '../../node_modules/zod';
 import {DeviceInfoDTO} from "./device-info.dto";
 import {DeviceInfoEnum} from "../enums/device-info";
 
