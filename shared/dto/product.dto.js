@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductListOutput = exports.ProductGeneralSchema = exports.ProductNumberSchemaInput = exports.ProductEANSchemaInput = exports.ProductDataOutput = void 0;
-const zod_1 = require("zod");
+const zod_1 = require("../../node_modules/zod");
 const luhn_validation_1 = require("luhn-validation");
 exports.ProductDataOutput = zod_1.z.object({
     key: zod_1.z.string(),
