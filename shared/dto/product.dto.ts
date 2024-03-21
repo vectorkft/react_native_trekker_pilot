@@ -20,6 +20,11 @@ export const ProductNumberSchemaInput = z.object({
     validType: z.enum([ValidTypes.etk]).describe('Valid EAN type'),
 });
 
+export const ProductGeneralSchema = z.object({
+    value: z.string(),
+    validType: z.enum([ValidTypes.ean,ValidTypes.both,ValidTypes.etk]).describe('Valid EAN type'),
+});
+
 export const ProductListOutput = z.object({
     data: z.array(ProductDataOutput),
     count: z.number(),
@@ -28,7 +33,7 @@ export const ProductListOutput = z.object({
 export type ZProductEANSchemaInput = z.infer<typeof ProductEANSchemaInput>
 export type ZProductNumberSchemaInput = z.infer<typeof ProductNumberSchemaInput>
 export type ZProductListOutput = z.infer<typeof ProductListOutput>
-
+export type ZProductGeneralSchema= z.infer<typeof ProductGeneralSchema>
 
 
 

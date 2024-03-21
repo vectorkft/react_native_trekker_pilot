@@ -7,6 +7,11 @@ export const TokenDTOInput = z.object({
     .string()
     .refine(token => jwtRegex.test(token), 'Érvénytelen JWT token'),
 });
+export const AccessTokenDTOInput = z.object({
+  accessToken: z
+      .string()
+      .refine(token => jwtRegex.test(token), 'Érvénytelen JWT token'),
+});
 export const TokenDTOOutput = z.object({
   newAccessToken: z
     .string()
@@ -16,3 +21,5 @@ export const TokenDTOOutput = z.object({
 export type ZTokenDTOInput = z.infer<typeof TokenDTOInput>;
 
 export type ZTokenDTOOutput = z.infer<typeof TokenDTOOutput>;
+
+export type ZAccessTokenDTOInput= z.infer<typeof AccessTokenDTOInput>

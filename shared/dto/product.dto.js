@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductListOutput = exports.ProductNumberSchemaInput = exports.ProductEANSchemaInput = exports.ProductDataOutput = void 0;
+exports.ProductListOutput = exports.ProductGeneralSchema = exports.ProductNumberSchemaInput = exports.ProductEANSchemaInput = exports.ProductDataOutput = void 0;
 const zod_1 = require("zod");
 const luhn_validation_1 = require("luhn-validation");
 exports.ProductDataOutput = zod_1.z.object({
@@ -16,6 +16,10 @@ exports.ProductEANSchemaInput = zod_1.z.object({
 exports.ProductNumberSchemaInput = zod_1.z.object({
     value: zod_1.z.string().min(1, 'Minimum 1 karakter hosszúnak kell lennie a cikkszámnak!').max(21, 'Túl lépted a maximum 21 karaktert!'),
     validType: zod_1.z.enum(["etk" /* ValidTypes.etk */]).describe('Valid EAN type'),
+});
+exports.ProductGeneralSchema = zod_1.z.object({
+    value: zod_1.z.string(),
+    validType: zod_1.z.enum(["ean" /* ValidTypes.ean */, "both" /* ValidTypes.both */, "etk" /* ValidTypes.etk */]).describe('Valid EAN type'),
 });
 exports.ProductListOutput = zod_1.z.object({
     data: zod_1.z.array(exports.ProductDataOutput),
