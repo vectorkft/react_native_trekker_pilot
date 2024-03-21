@@ -9,7 +9,7 @@ const logDivider = "-------------------------------------------------";
 function Logger(req, res, next) {
     const timestamp = new Date().toISOString();
     const { method, url, ip, body } = req;
-    console.log(chalk_1.default.cyan(`
+    console.log(chalk_1.default.cyanBright(`
           ${logDivider}
           Incoming Request
           
@@ -29,7 +29,7 @@ function Logger(req, res, next) {
         catch (e) {
             parsedBody = body;
         }
-        console.log(chalk_1.default.yellow(`
+        console.log(chalk_1.default.yellowBright(`
             ${logDivider}
             Outgoing Response
 

@@ -7,7 +7,7 @@ const logDivider = "-------------------------------------------------";
 export function Logger(req: Request, res: Response, next: NextFunction){
     const timestamp = new Date().toISOString();
     const { method, url, ip, body } = req;
-    console.log(Chalk.cyan(`
+    console.log(Chalk.cyanBright(`
           ${logDivider}
           Incoming Request
           
@@ -29,7 +29,7 @@ export function Logger(req: Request, res: Response, next: NextFunction){
             parsedBody = body;
         }
 
-        console.log(Chalk.yellow(`
+        console.log(Chalk.yellowBright(`
             ${logDivider}
             Outgoing Response
 

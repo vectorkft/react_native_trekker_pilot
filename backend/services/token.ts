@@ -80,13 +80,14 @@ export async function deleteExpiredTokens_new(){
                 }
             }
         })
-        console.log(Chalk.green('-------------------------------'));
-        console.log(Chalk.green('Deleted Access token(s) '+deletedAccessTokens.count + '\n'+'Deleted Refresh Token(s) '+deletedRefreshTokens.count));
-        console.log(Chalk.green('Deleted record(s) ' +deleteTheWholeRecord.count));
-        console.log(Chalk.green('-------------------------------'));
+        console.log(Chalk.greenBright('-------------------------------'));
+        console.log(Chalk.greenBright('Deleting expired tokens...'))
+        console.log(Chalk.greenBright('Deleted Access token(s) '+deletedAccessTokens.count + '\n'+'Deleted Refresh Token(s) '+deletedRefreshTokens.count));
+        console.log(Chalk.greenBright('Deleted record(s) ' +deleteTheWholeRecord.count));
+        console.log(Chalk.greenBright('-------------------------------'));
 
     } catch (err){
-        console.log(err);
+        console.log(Chalk.red(err));
     }
 
 

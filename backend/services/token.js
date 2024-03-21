@@ -77,13 +77,14 @@ function deleteExpiredTokens_new() {
                     }
                 }
             });
-            console.log(chalk_1.default.green('-------------------------------'));
-            console.log(chalk_1.default.green('Deleted Access token(s) ' + deletedAccessTokens.count + '\n' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count));
-            console.log(chalk_1.default.green('Deleted record(s) ' + deleteTheWholeRecord.count));
-            console.log(chalk_1.default.green('-------------------------------'));
+            console.log(chalk_1.default.greenBright('-------------------------------'));
+            console.log(chalk_1.default.greenBright('Deleting expired tokens...'));
+            console.log(chalk_1.default.greenBright('Deleted Access token(s) ' + deletedAccessTokens.count + '\n' + 'Deleted Refresh Token(s) ' + deletedRefreshTokens.count));
+            console.log(chalk_1.default.greenBright('Deleted record(s) ' + deleteTheWholeRecord.count));
+            console.log(chalk_1.default.greenBright('-------------------------------'));
         }
         catch (err) {
-            console.log(err);
+            console.log(chalk_1.default.red(err));
         }
     });
 }
