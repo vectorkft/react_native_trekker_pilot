@@ -6,6 +6,7 @@ import * as tokenService from "../services/token";
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew"
 import {PrismaClientInitializationError} from '@prisma/client/runtime/library';
 import {TokenDTOInput} from "../../shared/dto/token.dto";
+import {JsonWebTokenError} from "jsonwebtoken";
 
 
 
@@ -24,6 +25,9 @@ tokenRouter.post('/refresh', async (req : Request, res : Response) => {
     } catch (e) {
         if(e instanceof PrismaClientInitializationError){
             return res.status(500).json('Cannot connect to the database');
+        }
+        if(e instanceof JsonWebTokenError){
+            return res.status(403).json(e);
         }
         return res.status(400).json(ZodDTO.fromZodError(e));
 

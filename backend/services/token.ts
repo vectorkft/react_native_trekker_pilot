@@ -1,6 +1,6 @@
 import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
-import {JwtPayload} from "../models/JwtPayload";
+import {VPayload} from "../models/VPayload";
 import Chalk from 'chalk';
 import {zParse} from "../../shared/services/zod-dto.service";
 import dotenv from "dotenv";
@@ -19,8 +19,8 @@ const prisma = new PrismaClient()
 dotenv.config()
 
 export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserLoginDTOInput){
-        const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
-        const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as JwtPayload;
+        const decodedAccessToken = jwt.decode(accessToken.accessToken) as VPayload;
+        const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as VPayload;
         if (!decodedRefreshToken || !decodedAccessToken) {
             throw new Error('Cannot decode token');
 
@@ -37,7 +37,7 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refresh
 
                 }
         })
-        console.log('Tokens added')
+        console.log(Chalk.greenBright('Tokens added'))
 
 }
 
@@ -105,15 +105,15 @@ export async function deleteTokensByLogout(accessToken:ZAccessTokenDTOInput){
 
 export async function refreshToken(refreshToken: ZTokenDTOInput) {
 
+        const payload= await retrieveUserInfoFromRefreshToken(refreshToken);
+
         if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
             return await zParse(errorMessageDTO,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
         }
 
-        const payload= await retrieveUserInfoFromRefreshToken(refreshToken);
-
         const accessToken = await signTokensFromTokenPayload('accessToken','ACCESS_TOKEN_EXPIRE',payload);
 
-        const decodedAccessToken=jwt.decode(accessToken) as JwtPayload;
+        const decodedAccessToken=jwt.decode(accessToken) as VPayload;
 
         await prisma.tokens_v2.updateMany({
             where: { userName: payload.name },
@@ -137,10 +137,10 @@ async function isRefreshTokenInDatabase(refreshToken: ZTokenDTOInput): Promise<b
     }).then(token => !!token);
 }
 
-export async function signTokens(tokenType: string, expiresIn: string, userInput: ZUserSchemaInput){
+export async function signTokens(tokenType: string, expiresIn: string, userInput: ZUserSchemaInput, szemelyKod: number){
 
     return jwt.sign(
-        {name: userInput.name, szemelykod: 1, tokenType},
+        {name: userInput.name, szemelykod: szemelyKod, tokenType},
         process.env.JWT_SECRET_KEY ?? '',
         {expiresIn: process.env[expiresIn] ?? '1h'}
     );
@@ -167,7 +167,7 @@ export async function isAccessTokenInDatabase(accessToken: ZAccessTokenDTOInput)
 async function retrieveUserInfoFromRefreshToken(token: ZTokenDTOInput){
 
     const secretKey = process.env.JWT_SECRET_KEY?? '';
-    const payload: any= jwt.verify(token.refreshToken,secretKey);
+    const payload  = jwt.verify(token.refreshToken,secretKey) as VPayload;
     return zParse(userPayLoadInput,{name: payload.name,szemelykod: payload.szemelykod});
 
 

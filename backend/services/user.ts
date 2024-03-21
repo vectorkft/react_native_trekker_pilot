@@ -27,17 +27,19 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
 
         const device=await deviceInfoHelper(JSON.stringify(userInput.deviceData));
 
-        const user= await prisma.pilot_user.findFirst({
-            where:{ name: userInput.name, pw: userInput.pw}
-        });
+        const user=await prisma.sTATION.findFirst({
+            where:{USERNEV: userInput.name }
+        })
+
 
         if (!user) {
-            return await zParse(errorMessageDTO,{errorMessage: 'Wrong username or Password'});
+            return await zParse(errorMessageDTO,{errorMessage: 'Wrong username'});
         }
+        const szemelyKod=user.UGYINTEZO;
 
-        const accessToken =await tokenService.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput);
+        const accessToken =await tokenService.signTokens('accessToken','ACCESS_TOKEN_EXPIRE',userInput,szemelyKod??0);
 
-        const refreshToken=await  tokenService.signTokens('refreshToken','REFRESH_TOKEN_EXPIRE',userInput);
+        const refreshToken=await  tokenService.signTokens('refreshToken','REFRESH_TOKEN_EXPIRE',userInput,szemelyKod??0);
 
         await tokenService.addTokenAtLogin({accessToken}, {refreshToken}, userInput);
 
@@ -45,7 +47,7 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
             message: 'Login Success, token added successfully',
             accessToken,
             refreshToken,
-            userName: user.name,
+            userName: user.USERNEV,
             deviceType: device,
         });
 }

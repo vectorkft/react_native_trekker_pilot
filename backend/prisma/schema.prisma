@@ -16,7 +16,7 @@ model pilot_user {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model STATION {
-  USERNEV               String?   @unique(map: "aaaaa_PrimaryKey", clustered: true) @db.VarChar(50)
+  USERNEV               String    @unique(map: "aaaaa_PrimaryKey", clustered: true) @db.VarChar(50)
   EXPORTOS              String    @db.Char(1)
   BRUTTOS               String    @db.Char(1)
   ARJOG                 String    @db.Char(1)
@@ -97,7 +97,6 @@ model STATION {
   NYUGTA_TART           Int?
 
   @@index([USERNEV, TELEP, UGYINTEZO], map: "tttel")
-  @@ignore
 }
 
 model Tokens_v1 {

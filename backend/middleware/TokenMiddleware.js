@@ -51,7 +51,7 @@ function verifyToken(req, res, next) {
             const token = authHeader.split(' ')[1];
             try {
                 if (!(yield tokenService.isAccessTokenInDatabase({ accessToken: token }))) {
-                    console.log(chalk_1.default.red('Invalid token'));
+                    console.log(chalk_1.default.redBright('Invalid token'));
                     return res.sendStatus(403);
                 }
             }
@@ -60,12 +60,12 @@ function verifyToken(req, res, next) {
                     return res.status(500).json('Cannot connect to the database');
                 }
             }
-            jsonwebtoken_1.default.verify(token, secretKey, (err, user) => {
+            jsonwebtoken_1.default.verify(token, secretKey, (err) => {
                 if (err) {
-                    console.log(chalk_1.default.red('Invalid token :' + err));
+                    console.log(chalk_1.default.redBright('Invalid token :' + err));
                     return res.sendStatus(403);
                 }
-                console.log(chalk_1.default.green('Valid token'));
+                console.log(chalk_1.default.greenBright('Valid token'));
                 next();
             });
         }

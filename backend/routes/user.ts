@@ -8,6 +8,8 @@ import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
 import {PrismaClientInitializationError,PrismaClientRustPanicError} from "@prisma/client/runtime/library";
 import {UserLoginDTOInput, userSchemaInput} from "../../shared/dto/user-login.dto";
+import {ZodError} from "zod";
+import {UserLoginDTOInputASD} from "../dto/teszt-dto";
 
 
 // Public endpoints
@@ -17,8 +19,9 @@ const protectedUserRouter = express.Router();
 userRouter.post('/login', async (req: Request, res: Response) => {
 
     try {
-        const validData= await zParse(UserLoginDTOInput,req.body);
-        const body=await userService.loginUser(validData);
+        //const validData= await zParse(UserLoginDTOInput,req.body);
+        const validData_new = UserLoginDTOInputASD.parse(req.body);
+        const body=await userService.loginUser(validData_new);
         if("errorMessage" in body){
             return res.status(401).json(body);
         }
@@ -30,7 +33,11 @@ userRouter.post('/login', async (req: Request, res: Response) => {
         if(err instanceof PrismaClientInitializationError){
             return res.status(500).json('Cannot connect to the database');
         }
-        return res.status(400).json(ZodDTO.fromZodError(err));
+        if(err instanceof ZodError){
+            return res.status(400).json(ZodDTO.fromZodError(err));
+        }
+
+        return res.status(500).json('Unexpected error');
 
 
 

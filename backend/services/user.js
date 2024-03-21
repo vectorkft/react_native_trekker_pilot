@@ -50,20 +50,21 @@ function loginUser(userInput) {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, db_connection_check_1.dbConnectionCheck)(userInput);
         const device = yield deviceInfoHelper(JSON.stringify(userInput.deviceData));
-        const user = yield prisma.pilot_user.findFirst({
-            where: { name: userInput.name, pw: userInput.pw }
+        const user = yield prisma.sTATION.findFirst({
+            where: { USERNEV: userInput.name }
         });
         if (!user) {
-            return yield (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'Wrong username or Password' });
+            return yield (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'Wrong username' });
         }
-        const accessToken = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput);
-        const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput);
+        const szemelyKod = user.UGYINTEZO;
+        const accessToken = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
+        const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
         yield tokenService.addTokenAtLogin({ accessToken }, { refreshToken }, userInput);
         return (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',
             accessToken,
             refreshToken,
-            userName: user.name,
+            userName: user.USERNEV,
             deviceType: device,
         });
     });

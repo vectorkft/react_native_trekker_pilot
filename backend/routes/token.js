@@ -43,6 +43,7 @@ const tokenService = __importStar(require("../services/token"));
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
 const token_dto_1 = require("../../shared/dto/token.dto");
+const jsonwebtoken_1 = require("jsonwebtoken");
 exports.tokenRouter = express_1.default.Router();
 exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -56,6 +57,9 @@ exports.tokenRouter.post('/refresh', (req, res) => __awaiter(void 0, void 0, voi
     catch (e) {
         if (e instanceof library_1.PrismaClientInitializationError) {
             return res.status(500).json('Cannot connect to the database');
+        }
+        if (e instanceof jsonwebtoken_1.JsonWebTokenError) {
+            return res.status(403).json(e);
         }
         return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(e));
     }

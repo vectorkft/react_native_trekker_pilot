@@ -39,7 +39,7 @@ function addTokenAtLogin(accessToken, refreshToken, userInput) {
                 userName: userInput.name,
             }
         });
-        console.log('Tokens added');
+        console.log(chalk_1.default.greenBright('Tokens added'));
     });
 }
 exports.addTokenAtLogin = addTokenAtLogin;
@@ -101,10 +101,10 @@ function deleteTokensByLogout(accessToken) {
 exports.deleteTokensByLogout = deleteTokensByLogout;
 function refreshToken(refreshToken) {
     return __awaiter(this, void 0, void 0, function* () {
+        const payload = yield retrieveUserInfoFromRefreshToken(refreshToken);
         if (!(yield isRefreshTokenInDatabase({ refreshToken: refreshToken.refreshToken }))) {
             return yield (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'You tried to use AccessToken as RefreshToken' });
         }
-        const payload = yield retrieveUserInfoFromRefreshToken(refreshToken);
         const accessToken = yield signTokensFromTokenPayload('accessToken', 'ACCESS_TOKEN_EXPIRE', payload);
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
         yield prisma.tokens_v2.updateMany({
@@ -125,10 +125,10 @@ function isRefreshTokenInDatabase(refreshToken) {
         }).then(token => !!token);
     });
 }
-function signTokens(tokenType, expiresIn, userInput) {
+function signTokens(tokenType, expiresIn, userInput, szemelyKod) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        return jsonwebtoken_1.default.sign({ name: userInput.name, szemelykod: 1, tokenType }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: (_b = process.env[expiresIn]) !== null && _b !== void 0 ? _b : '1h' });
+        return jsonwebtoken_1.default.sign({ name: userInput.name, szemelykod: szemelyKod, tokenType }, (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '', { expiresIn: (_b = process.env[expiresIn]) !== null && _b !== void 0 ? _b : '1h' });
     });
 }
 exports.signTokens = signTokens;
