@@ -42,7 +42,7 @@ protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
         }
         return res.status(200).json(result);
     } catch (e){
-        return res.status(400).json(e);
+        return res.status(400).json(ZodDTO.fromZodError(e));
     }
 })
 protectedProductRouter.post('/getCikkByETK', async (req: Request, res)=>{

@@ -1,5 +1,5 @@
 import jwt, {JsonWebTokenError} from "jsonwebtoken";
-import {JwtPayload} from "../../models/JwtPayload";
+import {VPayload} from "../../models/VPayload";
 import {dbConnect} from "./dbConnectService";
 import {zParse} from "../../../shared/services/zod-dto.service";
 import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput} from "../../../shared/dto/token.dto";
@@ -8,8 +8,8 @@ import {userSchemaInput, ZUserSchemaInput} from "../../../shared/dto/user-login.
 
 
 export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserSchemaInput){
-    const decodedAccessToken = jwt.decode(accessToken.accessToken) as JwtPayload;
-    const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as JwtPayload;
+    const decodedAccessToken = jwt.decode(accessToken.accessToken) as VPayload;
+    const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as VPayload;
     if (!decodedRefreshToken || !decodedAccessToken) {
         throw new Error('Cannot decode token');
 

@@ -15,7 +15,7 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
         const token = authHeader.split(' ')[1];
         try{
             if(!await tokenService.isAccessTokenInDatabase({accessToken: token})){
-                console.log(Chalk.red('Invalid token'));
+                console.log(Chalk.redBright('Invalid token'));
                 return res.sendStatus(403);
             }
         }catch(err){
@@ -26,12 +26,12 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
         }
 
 
-        jwt.verify(token, secretKey, (err, user) => {
+        jwt.verify(token, secretKey, (err) => {
             if (err) {
-                console.log(Chalk.red('Invalid token :' + err));
+                console.log(Chalk.redBright('Invalid token :' + err));
                 return res.sendStatus(403);
             }
-            console.log(Chalk.green('Valid token'));
+            console.log(Chalk.greenBright('Valid token'));
 
 
             next();

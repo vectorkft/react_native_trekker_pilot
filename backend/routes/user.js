@@ -45,6 +45,8 @@ const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServi
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
 const user_login_dto_1 = require("../../shared/dto/user-login.dto");
+const zod_1 = require("zod");
+const teszt_dto_1 = require("../dto/teszt-dto");
 // Public endpoints
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
@@ -53,8 +55,9 @@ const protectedUserRouter = express_1.default.Router();
 exports.protectedUserRouter = protectedUserRouter;
 userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
-        const body = yield userService.loginUser(validData);
+        //const validData= await zParse(UserLoginDTOInput,req.body);
+        const validData_new = teszt_dto_1.UserLoginDTOInputASD.parse(req.body);
+        const body = yield userService.loginUser(validData_new);
         if ("errorMessage" in body) {
             return res.status(401).json(body);
         }
@@ -67,7 +70,10 @@ userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (err instanceof library_1.PrismaClientInitializationError) {
             return res.status(500).json('Cannot connect to the database');
         }
-        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+        if (err instanceof zod_1.ZodError) {
+            return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+        }
+        return res.status(500).json('Unexpected error');
     }
 }));
 userRouter.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
