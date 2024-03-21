@@ -22,7 +22,6 @@ import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
 import VDataTable from '../components/Vdata-table';
-import {useBeepSound, useCamera} from '../states/use-camera-scan';
 import {Icon} from 'react-native-elements';
 import {ZodError, ZodIssueCode} from 'zod';
 import {ValidationResult} from '../interfaces/validation-result';
@@ -42,11 +41,13 @@ import {ValidTypes} from '../../../shared/enums/types';
 import {TSchemaDataPair} from '../interfaces/t-schema-data-pair';
 import {useAlert} from '../states/use-alert';
 import * as Sentry from '@sentry/react';
-import {BarCodeReadEvent} from 'react-native-camera';
+import {CameraService, useCamera} from '../services/camera';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {errorMessage, setErrorMessage} = useAlert();
+  const {isCameraActive, setIsCameraActive, handleOnClose, clickCamera} =
+    useCamera();
   const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
@@ -57,7 +58,6 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   >(undefined);
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchQuery);
-  const beep = useBeepSound();
 
   const validateFormArray = async (
     value: string,
@@ -147,31 +147,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     }
   };
 
-  const {isCameraActive, handleOnClose, clickCamera, setIsCameraActive} =
-    useCamera(setErrorMessage);
-
-  const useOnBarCodeRead = () => {
-    const onBarCodeRead = async (event: BarCodeReadEvent) => {
-      if (event.data) {
-        try {
-          await getProduct(event.data);
-          setIsCameraActive(false);
-          beep.beep.play(success => {
-            if (!success) {
-              Sentry.captureMessage('A hang nem játszódott le', 'warning');
-              beep.alternativeBeep.play();
-            }
-          });
-        } catch (e) {
-          Sentry.captureException(e);
-        }
-      }
-    };
-
-    return {onBarCodeRead};
-  };
-
-  const {onBarCodeRead} = useOnBarCodeRead();
+  const {onBarCodeRead} = CameraService.useOnBarCodeRead(
+    getProduct,
+    setIsCameraActive,
+  );
 
   if (isCameraActive) {
     return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
