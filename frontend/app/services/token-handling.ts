@@ -5,25 +5,25 @@ import {ApiService} from './api';
 import {
   parseZodError,
   validateZDTOForm,
-} from '../../../shared/services/zod-dto.service';
+} from '../../../shared/services/zod';
 import {
   TokenDTOInput,
   TokenDTOOutput,
   ZTokenDTOInput,
   ZTokenDTOOutput,
-} from '../../../shared/dto/token.dto';
-import {NavigationService} from './navigation';
+} from '../../../shared/dto/token';
 import {ZodError} from 'zod';
 import * as Sentry from '@sentry/react-native';
 
 const isTokenExpired = (token: string): boolean => {
+  const MILLISECONDS_PER_SECOND = 1000;
   if (!token) {
     return false;
   }
 
   try {
     const decoded: ExpInterface = jwtDecode(token);
-    const currentTime = Date.now() / 1000;
+    const currentTime = Date.now() / MILLISECONDS_PER_SECOND;
 
     return decoded.exp >= currentTime;
   } catch (error) {
@@ -81,7 +81,5 @@ export const TokenHandlingService = {
         Sentry.setTag('Invalid token', msg);
       }
     }
-
-    NavigationService.redirectToLogin();
   },
 };

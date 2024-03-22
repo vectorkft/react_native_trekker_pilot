@@ -37,10 +37,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
+const zod_dto_service_1 = require("../../shared/services/zod");
 const tokenService = __importStar(require("../services/token"));
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
-const token_dto_1 = require("../../shared/dto/token.dto");
+const token_dto_1 = require("../../shared/dto/token");
 exports.tokenRouter = express_1.default.Router();
 exports.tokenRouter.post('/refresh', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

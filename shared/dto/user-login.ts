@@ -1,5 +1,5 @@
 import {z} from '../node_modules/zod';
-import {DeviceInfoDTO} from "./device-info.dto";
+import {DeviceInfoDTO} from "./device-info";
 import {DeviceInfoEnum} from "../enums/device-info";
 
 const jwtRegex = /(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/;

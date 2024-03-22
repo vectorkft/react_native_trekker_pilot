@@ -9,6 +9,7 @@ const SHADOW_OFFSET_HEIGHT = 6;
 const SHADOW_OPACITY = 0.5;
 const SHADOW_RADIUS = 6;
 const SHADOW_ELEVATION = 6;
+const FONT_SIZE = 16;
 
 export const toastStylesheet = (isDarkMode?: boolean) =>
   StyleSheet.create({
@@ -24,7 +25,7 @@ export const toastStylesheet = (isDarkMode?: boolean) =>
       alignItems: 'center',
       alignSelf: 'center',
       justifyContent: 'space-between',
-      shadowColor: '#000',
+      shadowColor: colors.darkContent,
       shadowOffset: {
         width: 0,
         height: SHADOW_OFFSET_HEIGHT,
@@ -35,5 +36,10 @@ export const toastStylesheet = (isDarkMode?: boolean) =>
       backgroundColor: isDarkMode
         ? colors.bgColorComponentsDark
         : colors.placeholderLight,
+    },
+    vtoastLabel: {
+      fontSize: FONT_SIZE,
+      fontWeight: 'bold',
+      color: isDarkMode ? colors.lightContent : colors.darkContent,
     },
   });

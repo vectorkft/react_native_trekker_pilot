@@ -1,7 +1,5 @@
 import {z} from '../node_modules/zod';
 import { ean } from 'luhn-validation';
-import {ValidTypes} from "../enums/types";
-
 
 export const ProductDataOutput = z.object({
     key: z.string(),

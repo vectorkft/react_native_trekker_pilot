@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Animated, Text, Dimensions} from 'react-native';
 import {ToastProps} from '../interfaces/Vtoast';
-import {darkModeContent} from '../styles/dark-mode-content';
 import {Icon} from 'react-native-elements';
 import {toastStylesheet} from '../styles/Vtoast';
 import {DarkModeContext} from '../providers/dark-mode';
@@ -9,6 +8,7 @@ import {
   TIMEOUT_DELAY_TOAST,
   VTOAST_ANIMATION_DURATION,
 } from '../constants/time';
+import {colors} from '../enums/colors';
 
 const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
   const [slideAnim] = useState(
@@ -46,18 +46,11 @@ const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
         ...toastStylesheet(isDarkMode).toast,
         transform: [{translateY: slideAnim}],
       }}>
-      <Text
-        style={
-          isDarkMode
-            ? darkModeContent.darkModeText
-            : darkModeContent.lightModeText
-        }>
-        {label}
-      </Text>
+      <Text style={toastStylesheet(isDarkMode).vtoastLabel}>{label}</Text>
       <Icon
         name={type as string}
         type="material"
-        color={isDarkMode ? '#fff' : '#000'}
+        color={isDarkMode ? colors.lightContent : colors.darkContent}
       />
     </Animated.View>
   );

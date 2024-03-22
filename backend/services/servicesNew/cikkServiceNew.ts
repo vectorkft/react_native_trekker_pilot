@@ -3,10 +3,10 @@ import {
     ProductListOutput,
     ZProductEANSchemaInput,
     ZProductNumberSchemaInput
-} from "../../../shared/dto/product.dto";
+} from "../../../shared/dto/product";
 import {dbConnect} from "./dbConnectService";
 import * as tokenServiceNew from "../servicesNew/tokenServiceNew"
-import {ZAccessTokenDTOInput} from "../../../shared/dto/token.dto";
+import {ZAccessTokenDTOInput} from "../../../shared/dto/token";
 
 export async function getCikkByCikkszam(cikkszam: ZProductNumberSchemaInput,accessToken: ZAccessTokenDTOInput) {
     const userInput= await tokenServiceNew.retrieveUserInfoFromAccessToken(accessToken)

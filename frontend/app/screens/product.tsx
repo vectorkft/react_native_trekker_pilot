@@ -4,7 +4,7 @@ import {ProductService} from '../services/product';
 import {
   parseZodError,
   validateFormArray,
-} from '../../../shared/services/zod-dto.service';
+} from '../../../shared/services/zod';
 import VCardNotFound from '../components/Vcard-not-found';
 import VCamera from '../components/Vcamera';
 import VCameraIconButton from '../components/Vcamera-icon-button';
@@ -17,7 +17,7 @@ import {
   ProductEANSchemaInput,
   ProductNumberSchemaInput,
   ZProductListOutput,
-} from '../../../shared/dto/product.dto';
+} from '../../../shared/dto/product';
 import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
@@ -25,13 +25,12 @@ import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
 import {ZodError} from 'zod';
 import {ValidationResult} from '../../../shared/interfaces/validation-result';
-import {darkModeContent} from '../styles/dark-mode-content';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
 import {DeviceInfoEnum} from '../../../shared/enums/device-info';
 import {TIMEOUT_DELAY} from '../constants/time';
 import HamburgerMenu from '../components/Vhamburger-menu';
-import {productStyles} from '../styles/product';
+import {productStyles} from '../styles/product-screen';
 import {
   RESPONSE_NO_CONTENT,
   RESPONSE_SUCCESS,
@@ -41,6 +40,7 @@ import {ValidTypes} from '../../../shared/enums/types';
 import {useAlert} from '../states/use-alert';
 import * as Sentry from '@sentry/react';
 import {CameraService, useCamera} from '../services/camera';
+import {colors} from '../enums/colors';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -108,12 +108,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   }
 
   return (
-    <View
-      style={
-        isDarkMode
-          ? {...darkModeContent.darkContainer}
-          : {...darkModeContent.lightContainer}
-      }>
+    <View style={productStyles(isDarkMode).mainContainer}>
       <VInternetToast isVisible={!isConnected} />
       <VToast
         isVisible={wasDisconnected && isConnected}
@@ -129,8 +124,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         />
       )}
       <VBackButton navigation={navigation} />
-      <View style={productStyles.container}>
-        <View style={productStyles.innerView}>
+      <View style={productStyles().container}>
+        <View style={productStyles().innerView}>
           <VInput
             inputProps={{
               ref: inputRef,
@@ -143,14 +138,16 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
               rightIcon: (
-                <View style={productStyles.iconView}>
+                <View style={productStyles().iconView}>
                   <Icon
                     type="antdesign"
                     name="search1"
                     size={25}
-                    color={isDarkMode ? '#ffffff' : '#000000'}
+                    color={
+                      isDarkMode ? colors.lightContent : colors.darkContent
+                    }
                     disabled={!searchQuery || !isConnected}
-                    disabledStyle={productStyles.iconDisabledStyle}
+                    disabledStyle={productStyles().iconDisabledStyle}
                     onPress={() => getProduct(searchQuery)}
                   />
                   {searchQuery && (
@@ -158,8 +155,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                       type="antdesign"
                       name="closecircle"
                       size={25}
-                      containerStyle={productStyles.iconContainerStyle}
-                      color={isDarkMode ? '#fff' : '#000'}
+                      containerStyle={productStyles().iconContainerStyle}
+                      color={
+                        isDarkMode ? colors.lightContent : colors.darkContent
+                      }
                       onPress={() => {
                         setSearchQuery('');
                       }}
@@ -170,7 +169,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             }}
           />
         </View>
-        <View style={productStyles.hamburgerMenuView}>
+        <View style={productStyles().hamburgerMenuView}>
           <HamburgerMenu>
             {deviceType === DeviceInfoEnum.mobile && (
               <VCameraIconButton toggleCameraIcon={clickCamera} />

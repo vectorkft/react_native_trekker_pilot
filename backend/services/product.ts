@@ -6,8 +6,8 @@ import {
     ZProductEANSchemaInput,
     ZProductGeneralSchema,
     ZProductNumberSchemaInput,
-} from "../../shared/dto/product.dto";
-import {zParse} from "../../shared/services/zod-dto.service";
+} from "../../shared/dto/product";
+import {zParse} from "../../shared/services/zod";
 
 const prisma = new PrismaClient()
 

@@ -1,9 +1,9 @@
 import express, {NextFunction, Request, Response} from 'express';
-import {zParse} from "../../shared/services/zod-dto.service";
+import {zParse} from "../../shared/services/zod";
 import {
     ProductEANSchemaInput, ProductGeneralSchema,
     ProductNumberSchemaInput,
-} from "../../shared/dto/product.dto";
+} from "../../shared/dto/product";
 import * as cikkService from "../services/product";
 import {ZodDTO} from "../dto/zodDTO";
 

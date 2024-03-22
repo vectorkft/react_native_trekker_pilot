@@ -1,10 +1,10 @@
 import express, {NextFunction, Request, Response} from 'express';
-import {zParse} from "../../shared/services/zod-dto.service";
+import {zParse} from "../../shared/services/zod";
 import * as userService from "../services/user";
 import * as tokenService from "../services/token";
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew";
 import * as userServiceNew from "../services/servicesNew/userServiceNew"
-import {UserLoginDTOInput} from "../../shared/dto/user-login.dto";
+import {UserLoginDTOInput} from "../../shared/dto/user-login";
 
 
 

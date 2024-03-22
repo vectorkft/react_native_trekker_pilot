@@ -37,8 +37,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.protectedProductRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
-const product_dto_1 = require("../../shared/dto/product.dto");
+const zod_dto_service_1 = require("../../shared/services/zod");
+const product_dto_1 = require("../../shared/dto/product");
 const cikkService = __importStar(require("../services/product"));
 const zodDTO_1 = require("../dto/zodDTO");
 const cikkServiceNew = __importStar(require("../services/servicesNew/cikkServiceNew"));

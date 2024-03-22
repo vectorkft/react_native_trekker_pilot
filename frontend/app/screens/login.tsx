@@ -5,7 +5,7 @@ import {useStore} from '../states/zustand';
 import {
   parseZodError,
   validateZDTOForm,
-} from '../../../shared/services/zod-dto.service';
+} from '../../../shared/services/zod';
 import {ZodError} from 'zod';
 import {Dimensions, Image, TextInput, View} from 'react-native';
 import {useLoginState} from '../states/use-login';
@@ -14,7 +14,7 @@ import {useAlert} from '../states/use-alert';
 import {CheckBox, Icon, Switch, Text} from 'react-native-elements';
 import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
-import {UserLoginDTOInput} from '../../../shared/dto/user-login.dto';
+import {UserLoginDTOInput} from '../../../shared/dto/user-login';
 import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
 import {LocalStorageService} from '../services/local-storage';
@@ -205,10 +205,10 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                 fontFamily: 'Roboto',
                 fontSize: BUTTON_FONT_SIZE,
                 fontWeight: '700',
-                color: isDarkMode ? '#fff' : '#000',
+                color: isDarkMode ? colors.lightContent : colors.darkContent,
               },
               buttonStyle: {
-                backgroundColor: '#00EDAE',
+                backgroundColor: colors.primary,
                 height: BUTTON_HEIGHT,
                 borderRadius: BUTTON_BORDER_RADIUS,
               },

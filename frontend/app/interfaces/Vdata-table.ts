@@ -1,4 +1,4 @@
-import {ZProductListOutput} from '../../../shared/dto/product.dto';
+import {ZProductListOutput} from '../../../shared/dto/product';
 
 export interface ZProductOutput {
   data: ZProductListOutput;

@@ -1,7 +1,7 @@
 import {dbConnect} from "./dbConnectService";
-import {zParse} from "../../../shared/services/zod-dto.service";
+import {zParse} from "../../../shared/services/zod";
 import * as tokenServiceNew from "./tokenServiceNew";
-import {UserLoginDTOOutput, ZUserLoginDTOInput} from "../../../shared/dto/user-login.dto";
+import {UserLoginDTOOutput, ZUserLoginDTOInput} from "../../../shared/dto/user-login";
 import {DeviceInfoEnum} from "../../../shared/enums/device-info";
 
 

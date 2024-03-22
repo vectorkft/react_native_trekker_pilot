@@ -1,10 +1,10 @@
 import jwt, {JsonWebTokenError} from "jsonwebtoken";
 import {VPayload} from "../../models/VPayload";
 import {dbConnect} from "./dbConnectService";
-import {zParse} from "../../../shared/services/zod-dto.service";
-import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput} from "../../../shared/dto/token.dto";
-import {errorMessageDTO} from "../../../shared/dto/error-message-dto";
-import {userSchemaInput, ZUserSchemaInput} from "../../../shared/dto/user-login.dto";
+import {zParse} from "../../../shared/services/zod";
+import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput} from "../../../shared/dto/token";
+import {errorMessageDTO} from "../../../shared/dto/error-message";
+import {userSchemaInput, ZUserSchemaInput} from "../../../shared/dto/user-login";
 
 
 export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserSchemaInput){

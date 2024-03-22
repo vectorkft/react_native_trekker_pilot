@@ -2,15 +2,15 @@ import * as tokenService from './token';
 import {PrismaClient} from '@prisma/client'
 import dotenv from 'dotenv';
 
-import {zParse} from "../../shared/services/zod-dto.service";
+import {zParse} from "../../shared/services/zod";
 
 import {dbConnectionCheck} from "./db-connection-check";
 import {
     UserLoginDTOOutput,
     ZUserLoginDTOInput,
-} from "../../shared/dto/user-login.dto";
+} from "../../shared/dto/user-login";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
-import {errorMessageDTO} from "../../shared/dto/error-message-dto";
+import {errorMessageDTO} from "../../shared/dto/error-message";
 
 
 

@@ -1,4 +1,4 @@
-import {ZDeviceInfoDTO} from '../../../shared/dto/device-info.dto';
+import {ZDeviceInfoDTO} from '../../../shared/dto/device-info';
 import DeviceInfo from 'react-native-device-info';
 
 export const deviceData: ZDeviceInfoDTO = {

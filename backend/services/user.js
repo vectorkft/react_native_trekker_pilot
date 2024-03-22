@@ -39,11 +39,11 @@ exports.loginUser = void 0;
 const tokenService = __importStar(require("./token"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
-const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
+const zod_dto_service_1 = require("../../shared/services/zod");
 const db_connection_check_1 = require("./db-connection-check");
-const user_login_dto_1 = require("../../shared/dto/user-login.dto");
+const user_login_dto_1 = require("../../shared/dto/user-login");
 const device_info_1 = require("../../shared/enums/device-info");
-const error_message_dto_1 = require("../../shared/dto/error-message-dto");
+const error_message_dto_1 = require("../../shared/dto/error-message");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {

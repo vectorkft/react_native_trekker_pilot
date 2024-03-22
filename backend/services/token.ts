@@ -2,15 +2,15 @@ import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
 import {VPayload} from "../models/VPayload";
 import Chalk from 'chalk';
-import {zParse} from "../../shared/services/zod-dto.service";
+import {zParse} from "../../shared/services/zod";
 import dotenv from "dotenv";
-import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput, ZTokenDTOOutput} from "../../shared/dto/token.dto";
-import {errorMessageDTO} from "../../shared/dto/error-message-dto";
+import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput, ZTokenDTOOutput} from "../../shared/dto/token";
+import {errorMessageDTO} from "../../shared/dto/error-message";
 import {
     userPayLoadInput,
     ZUserLoginDTOInput,
     ZuserPayloadInput, ZUserSchemaInput
-} from "../../shared/dto/user-login.dto";
+} from "../../shared/dto/user-login";
 
 
 const prisma = new PrismaClient()

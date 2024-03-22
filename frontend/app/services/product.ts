@@ -4,7 +4,7 @@ import {
   ZProductListOutput,
   ZProductEANSchemaInput,
   ZProductNumberSchemaInput,
-} from '../../../shared/dto/product.dto';
+} from '../../../shared/dto/product';
 import {TokenHandlingService} from './token-handling';
 import * as Sentry from '@sentry/react-native';
 import {ValidatedValue} from '../interfaces/types';

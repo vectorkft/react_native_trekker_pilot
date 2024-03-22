@@ -4,7 +4,7 @@ import {
   UserLoginDTOOutput,
   ZUserLoginDTOInput,
   ZUserLoginDTOOutput,
-} from '../../../shared/dto/user-login.dto';
+} from '../../../shared/dto/user-login';
 import {LocalStorageService} from './local-storage';
 import * as Sentry from '@sentry/react-native';
 import {ZApiError} from '../../../shared/dto/api-error';

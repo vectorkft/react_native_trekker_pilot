@@ -1,10 +1,16 @@
 import {StyleSheet} from 'react-native';
+import {colors} from '../enums/colors';
+
+const MARGIN = 20;
+const MARGIN_TOP = 15;
+const BORDER_RADIUS = 20;
+const PADDING = 35;
 
 export const alertStylesheet = StyleSheet.create({
   modalView: {
-    margin: 20,
-    borderRadius: 20,
-    padding: 35,
+    margin: MARGIN,
+    borderRadius: BORDER_RADIUS,
+    padding: PADDING,
     alignItems: 'center',
   },
   alertHeader: {
@@ -15,11 +21,11 @@ export const alertStylesheet = StyleSheet.create({
   },
   alertTitle: {
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.lightContent,
   },
   alertMessage: {
-    marginTop: 15,
-    color: '#fff',
+    marginTop: MARGIN_TOP,
+    color: colors.lightContent,
     textAlign: 'center',
   },
 });

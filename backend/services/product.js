@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCikkHelper = exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
-const product_dto_1 = require("../../shared/dto/product.dto");
-const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
+const product_dto_1 = require("../../shared/dto/product");
+const zod_dto_service_1 = require("../../shared/services/zod");
 const prisma = new client_1.PrismaClient();
 function getCikkByCikkszam(input) {
     return __awaiter(this, void 0, void 0, function* () {

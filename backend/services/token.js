@@ -16,11 +16,11 @@ exports.isAccessTokenInDatabase = exports.signTokensFromTokenPayload = exports.s
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const chalk_1 = __importDefault(require("chalk"));
-const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
+const zod_dto_service_1 = require("../../shared/services/zod");
 const dotenv_1 = __importDefault(require("dotenv"));
-const token_dto_1 = require("../../shared/dto/token.dto");
-const error_message_dto_1 = require("../../shared/dto/error-message-dto");
-const user_login_dto_1 = require("../../shared/dto/user-login.dto");
+const token_dto_1 = require("../../shared/dto/token");
+const error_message_dto_1 = require("../../shared/dto/error-message");
+const user_login_dto_1 = require("../../shared/dto/user-login");
 const prisma = new client_1.PrismaClient();
 dotenv_1.default.config();
 function addTokenAtLogin(accessToken, refreshToken, userInput) {

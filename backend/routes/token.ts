@@ -1,10 +1,10 @@
 import express, {NextFunction, Request, Response} from 'express';
-import {zParse} from "../../shared/services/zod-dto.service";
+import {zParse} from "../../shared/services/zod";
 import {ZodDTO} from "../dto/zodDTO";
 import * as tokenService from "../services/token";
 import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew"
 import {PrismaClientInitializationError} from '@prisma/client/runtime/library';
-import {TokenDTOInput} from "../../shared/dto/token.dto";
+import {TokenDTOInput} from "../../shared/dto/token";
 import {JsonWebTokenError} from "jsonwebtoken";
 
 export const tokenRouter = express.Router();
