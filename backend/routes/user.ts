@@ -46,20 +46,6 @@ protectedUserRouter.post('/profile',async (_req: Request, res: Response)=>{
 
 });
 
-protectedUserRouter.post('/menu', async(_req: Request, res: Response, _next : NextFunction)=>{
-    return res.status(200).json('Menu endpoint works');
-})
-
-
-
-
-
-
-
-
-
-
-
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', async(req: Request, res : Response) => {
     try{

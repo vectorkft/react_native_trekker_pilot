@@ -7,6 +7,7 @@ import {userRouter, protectedUserRouter} from './routes/user';
 import {tokenRouter} from "./routes/token";
 import {protectedProductRouter} from "./routes/product";
 import {handleErrors} from "./middleware/error-handler";
+import {menuRouter} from "./routes/menu";
 
 const app = express();
 const HTTP_PORT = 8000;
@@ -23,6 +24,7 @@ app.use('/token', tokenRouter);
 // Protected endpoints
 app.use('/protected/user',verifyToken, protectedUserRouter);
 app.use('/protected/product',verifyToken, protectedProductRouter);
+app.use('/protected/',verifyToken,menuRouter);
 
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
@@ -32,7 +34,7 @@ app.get('/', (_req: Request, res: Response) => {
     return res.status(200).json('Check postman for guidance');
 });
 app.use(handleErrors);
-cron.schedule("*/10 * * * * *", deleteExpiredTokens_new);
+cron.schedule("* * * * *", deleteExpiredTokens_new);
 
 // Státusz ellenőrzések, nem fontos
 

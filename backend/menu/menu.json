@@ -1,0 +1,49 @@
+{
+  "data": [
+    {
+      "id"      :"uj_feltoltesi_cikk",
+      "title"   :"Új feltöltési cikk",
+      "hotkey"  :1
+    },
+    {
+      "id"      :"cel_polc_modositasa",
+      "title"   :"Cél polc módosítása",
+      "hotkey"  :2
+    },
+    {
+      "id"      :"egyeb",
+      "title"   :"Egyéb",
+      "hotkey"  :3
+    },
+    {
+      "id"      :"polc_valasztas",
+      "title"   :"Polc választás",
+      "hotkey"  :4
+    },
+    {
+      "id"      :"attekintes",
+      "title"   :"Áttekintés",
+      "hotkey"  :5
+    },
+    {
+      "id"      :"felfuggesztes",
+      "title"   :"Felfüggesztés",
+      "hotkey"  :7
+    },
+    {
+      "id"       :"visszavonas",
+      "title"    :"Visszavonás",
+      "hotkey"   :8
+    },
+    {
+      "id"       :"lezaras",
+      "title"    :"Lezárás",
+      "hotkey"   :9
+    },
+    {
+      "id"       :"gyujtopolcra_szedes",
+      "title"    :"Gyüjtőpolca szedés",
+      "hotkey"   :0
+    }
+  ]
+}

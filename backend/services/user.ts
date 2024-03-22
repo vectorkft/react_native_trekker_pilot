@@ -51,6 +51,7 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
 }
 
 
+//TODO: Itt a Zebrát is enumból kéne vagy ilyesmi
 async function deviceInfoHelper(deviceData: string){
         if(deviceData.includes('Zebra')){
             return DeviceInfoEnum.trekker;
