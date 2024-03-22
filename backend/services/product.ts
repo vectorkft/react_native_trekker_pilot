@@ -8,6 +8,7 @@ import {
     ZProductNumberSchemaInput,
 } from "../../shared/dto/product.dto";
 import {zParse} from "../../shared/services/zod-dto.service";
+import {ValidTypes} from "../../shared/enums/types";
 
 const prisma = new PrismaClient()
 
@@ -66,14 +67,12 @@ const processArticles = (articles: any[]) => {
 }
 
 export async function getCikkHelper(input: ZProductGeneralSchema){
-    if(input.validType==='ean' || input.validType==='both'){
-        const validData= await zParse(ProductEANSchemaInput,input);
+    if(input.validTypesArray.includes(ValidTypes.ean)){
+        const validData= await zParse(ProductEANSchemaInput, input);
         return await getCikkByEanKod(validData);
-
-    } else if(input.validType==='etk'){
-        const validData= await zParse(ProductNumberSchemaInput,input);
+    }else if(input.validTypesArray.includes(ValidTypes.etk)){
+        const validData= await zParse(ProductNumberSchemaInput, input);
         return await getCikkByCikkszam(validData);
-
     }
     return 'Invalid validType';
 

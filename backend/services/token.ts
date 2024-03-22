@@ -18,7 +18,7 @@ const prisma = new PrismaClient()
 
 dotenv.config()
 
-export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserLoginDTOInput){
+export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserLoginDTOInput, szemelyKod: number){
         const decodedAccessToken = jwt.decode(accessToken.accessToken) as VPayload;
         const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as VPayload;
         if (!decodedRefreshToken || !decodedAccessToken) {
@@ -34,6 +34,7 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refresh
                     refreshToken: refreshToken.refreshToken,
                     refreshExpireDate: decodedRefreshToken.exp,
                     userName: userInput.name,
+                    szemelykod: szemelyKod
 
                 }
         })
@@ -56,6 +57,7 @@ export async function deleteExpiredTokens_new(){
             },
             data : {
                 accessToken:null,
+                accessExpireDate:null,
 
             }
         });
@@ -67,17 +69,15 @@ export async function deleteExpiredTokens_new(){
             },
             data : {
                 refreshToken:null,
+                refreshExpireDate:null,
 
             }
         });
         const deleteTheWholeRecord = await prisma.tokens_v2.deleteMany({
             where: {
-                accessExpireDate:{
-                    lt: currentTime
-                },
-                refreshExpireDate:{
-                    lt: currentTime
-                }
+                accessToken: null,
+                refreshExpireDate: null,
+
             }
         })
         console.log(Chalk.greenBright('-------------------------------'));

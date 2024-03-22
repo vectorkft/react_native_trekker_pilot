@@ -23,7 +23,7 @@ const error_message_dto_1 = require("../../shared/dto/error-message-dto");
 const user_login_dto_1 = require("../../shared/dto/user-login.dto");
 const prisma = new client_1.PrismaClient();
 dotenv_1.default.config();
-function addTokenAtLogin(accessToken, refreshToken, userInput) {
+function addTokenAtLogin(accessToken, refreshToken, userInput, szemelyKod) {
     return __awaiter(this, void 0, void 0, function* () {
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken.accessToken);
         const decodedRefreshToken = jsonwebtoken_1.default.decode(refreshToken.refreshToken);
@@ -37,6 +37,7 @@ function addTokenAtLogin(accessToken, refreshToken, userInput) {
                 refreshToken: refreshToken.refreshToken,
                 refreshExpireDate: decodedRefreshToken.exp,
                 userName: userInput.name,
+                szemelykod: szemelyKod
             }
         });
         console.log(chalk_1.default.greenBright('Tokens added'));
@@ -55,6 +56,7 @@ function deleteExpiredTokens_new() {
                 },
                 data: {
                     accessToken: null,
+                    accessExpireDate: null,
                 }
             });
             const deletedRefreshTokens = yield prisma.tokens_v2.updateMany({
@@ -65,16 +67,13 @@ function deleteExpiredTokens_new() {
                 },
                 data: {
                     refreshToken: null,
+                    refreshExpireDate: null,
                 }
             });
             const deleteTheWholeRecord = yield prisma.tokens_v2.deleteMany({
                 where: {
-                    accessExpireDate: {
-                        lt: currentTime
-                    },
-                    refreshExpireDate: {
-                        lt: currentTime
-                    }
+                    accessToken: null,
+                    refreshExpireDate: null,
                 }
             });
             console.log(chalk_1.default.greenBright('-------------------------------'));
