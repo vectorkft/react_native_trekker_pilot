@@ -19,7 +19,7 @@ export const ProductNumberSchemaInput = z.object({
 });
 
 export const ProductGeneralSchema = z.object({
-    value: z.object({value: z.string()}),
+    value: z.string(),
     validTypesArray: z.array(z.string())
 });
 
