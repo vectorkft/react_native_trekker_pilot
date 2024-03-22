@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, {NextFunction, Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod-dto.service";
 import {
     ProductEANSchemaInput, ProductGeneralSchema,
@@ -14,7 +14,7 @@ import {PrismaClientRustPanicError} from "@prisma/client/runtime/library";
 
 export const protectedProductRouter = express.Router();
 
-protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response)=>{
+protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response, next : NextFunction)=>{
     try{
 
         const validData=await zParse(ProductEANSchemaInput,req.body);
@@ -26,13 +26,12 @@ protectedProductRouter.post('/getCikkByEAN', async (req: Request, res: Response)
         return res.status(200).json(body);
 
     } catch (err){
-        console.error(err);
-        return res.status(400).json(err);
+        next(err);
     }
 
 })
 
-protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
+protectedProductRouter.post('/getCikk', async (req: Request, res: Response, next : NextFunction)=>{
     try{
         const body = req.body;
         const validData  = await zParse(ProductGeneralSchema,body);
@@ -42,10 +41,10 @@ protectedProductRouter.post('/getCikk', async (req: Request, res: Response)=>{
         }
         return res.status(200).json(result);
     } catch (e){
-        return res.status(400).json(ZodDTO.fromZodError(e));
+        next(e);
     }
 })
-protectedProductRouter.post('/getCikkByETK', async (req: Request, res)=>{
+protectedProductRouter.post('/getCikkByETK', async (req: Request, res : Response, next : NextFunction)=>{
     try{
         const validData = await zParse(ProductNumberSchemaInput,req.body);
 
@@ -55,7 +54,7 @@ protectedProductRouter.post('/getCikkByETK', async (req: Request, res)=>{
         }
         return res.status(200).json(body);
     } catch (err){
-        return res.status(400).json(ZodDTO.fromZodError(err));
+        next(err);
     }
 })
 //// TESTING

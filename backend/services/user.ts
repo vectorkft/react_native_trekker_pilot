@@ -7,9 +7,7 @@ import {zParse} from "../../shared/services/zod-dto.service";
 import {dbConnectionCheck} from "./db-connection-check";
 import {
     UserLoginDTOOutput,
-    userSchemaInput,
     ZUserLoginDTOInput,
-    ZUserSchemaInput
 } from "../../shared/dto/user-login.dto";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
 import {errorMessageDTO} from "../../shared/dto/error-message-dto";
@@ -52,28 +50,6 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
         });
 }
 
-export async function registerUser(user: ZUserSchemaInput) {
-
-    const existentUser = await prisma.pilot_user.findFirst({
-        where: { name: user.name }
-    });
-
-    if (existentUser) {
-        return zParse(
-            errorMessageDTO,
-            { errorMessage: 'Username already exists : '+ user.name },
-        );
-    }
-
-    await prisma.pilot_user.create({
-        data: { name: user.name, pw: user.pw }
-    });
-
-    return zParse(
-        userSchemaInput,
-        { name: user.name, pw: user.pw }
-    );
-}
 
 async function deviceInfoHelper(deviceData: string){
         if(deviceData.includes('Zebra')){

@@ -34,6 +34,7 @@ const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
 const user_1 = require("./routes/user");
 const token_2 = require("./routes/token");
 const product_1 = require("./routes/product");
+const error_handler_1 = require("./middleware/error-handler");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 // Body parsing middleware
@@ -51,6 +52,7 @@ app.listen(HTTP_PORT, () => {
 app.get('/', (_req, res) => {
     return res.status(200).json('Check postman for guidance');
 });
+app.use(error_handler_1.handleErrors);
 cron.schedule("* * * * *", token_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
 app.all('/check', (_req, res) => {

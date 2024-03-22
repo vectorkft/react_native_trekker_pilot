@@ -39,60 +39,30 @@ exports.protectedUserRouter = exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const zod_dto_service_1 = require("../../shared/services/zod-dto.service");
 const userService = __importStar(require("../services/user"));
-const zodDTO_1 = require("../dto/zodDTO");
 const tokenService = __importStar(require("../services/token"));
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
-const library_1 = require("@prisma/client/runtime/library");
 const user_login_dto_1 = require("../../shared/dto/user-login.dto");
-const zod_1 = require("zod");
-const teszt_dto_1 = require("../dto/teszt-dto");
 // Public endpoints
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
 // Protected endpoints
 const protectedUserRouter = express_1.default.Router();
 exports.protectedUserRouter = protectedUserRouter;
-userRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+userRouter.post('/login', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //const validData= await zParse(UserLoginDTOInput,req.body);
-        const validData_new = teszt_dto_1.UserLoginDTOInputASD.parse(req.body);
-        const body = yield userService.loginUser(validData_new);
+        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
+        const body = yield userService.loginUser(validData);
         if ("errorMessage" in body) {
             return res.status(401).json(body);
         }
         return res.status(200).json(body);
     }
     catch (err) {
-        if (err instanceof library_1.PrismaClientRustPanicError) {
-            return res.status(401).json('Invalid username or password');
-        }
-        if (err instanceof library_1.PrismaClientInitializationError) {
-            return res.status(500).json('Cannot connect to the database');
-        }
-        if (err instanceof zod_1.ZodError) {
-            return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
-        }
-        return res.status(500).json('Unexpected error');
+        next(err);
     }
 }));
-userRouter.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.userSchemaInput, req.body);
-        const body = yield userService.registerUser(validData);
-        if ("errorMessage" in body) {
-            return res.status(409).json(body);
-        }
-        return res.status(200).json(body);
-    }
-    catch (err) {
-        if (err instanceof library_1.PrismaClientInitializationError) {
-            return res.status(500).json('Cannot connect to the database');
-        }
-        return res.status(400).send(zodDTO_1.ZodDTO.fromZodError(err));
-    }
-}));
-protectedUserRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+protectedUserRouter.get('/logout', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
     const accessToken = authHeader.split(' ')[1];
@@ -103,7 +73,7 @@ protectedUserRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 
         }
     }
     catch (e) {
-        return res.status(403).json(e);
+        next(e);
     }
 }));
 protectedUserRouter.post('/profile', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
