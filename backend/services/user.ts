@@ -11,6 +11,7 @@ import {
 } from "../../shared/dto/user-login";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
 import {errorMessageDTO} from "../../shared/dto/error-message";
+import {UserNotFound} from "../errors/user-not-found";
 
 
 
@@ -31,7 +32,7 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
 
 
         if (!user) {
-            return await zParse(errorMessageDTO,{errorMessage: 'Wrong username'});
+            throw new UserNotFound(userInput.name);
         }
         const szemelyKod=user.UGYINTEZO;
 

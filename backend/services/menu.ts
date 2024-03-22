@@ -1,11 +1,12 @@
 import menu from '../menu/menu.json';
 import {MenuData, MenuListOutput, ZMenuInput} from "../../shared/dto/menu";
 import {MenuElement} from "../interface/menu";
+import {MenuNotFound} from "../errors/menu-not-found";
 
 export async function getMenuElement(input: ZMenuInput ){
     const data=menu.data.find(item => item.id === input.id);
     if (!data) {
-        throw new Error(`MENU_NOT_FOUND: The menu with id ${input.id} not found.`);
+        throw new MenuNotFound(input.id);
     }
     return processMenu([data]);
 }
@@ -20,7 +21,7 @@ async function processMenu(input: MenuElement[]){
             }),
         ]),
         count: input.length,
-        info: "Menu data loaded",
+        info: "Valami info",
     }
     return MenuListOutput.parse(result);
 

@@ -11,6 +11,7 @@ import {
     ZUserLoginDTOInput,
     ZuserPayloadInput, ZUserSchemaInput
 } from "../../shared/dto/user-login";
+import {RefreshError} from "../errors/refresh-error";
 
 
 const prisma = new PrismaClient()
@@ -108,7 +109,7 @@ export async function refreshToken(refreshToken: ZTokenDTOInput) {
         const payload= await retrieveUserInfoFromRefreshToken(refreshToken);
 
         if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
-            return await zParse(errorMessageDTO,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
+            throw new RefreshError();
         }
 
         const accessToken = await signTokensFromTokenPayload('accessToken','ACCESS_TOKEN_EXPIRE',payload);

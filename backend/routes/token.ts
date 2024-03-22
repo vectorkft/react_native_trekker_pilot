@@ -14,9 +14,6 @@ tokenRouter.post('/refresh', async (req : Request, res : Response, next : NextFu
     try {
         const validData = await zParse(TokenDTOInput, req.body);
         const body = await tokenService.refreshToken({ refreshToken: validData.refreshToken });
-        if('errorMessage' in body){
-            return res.status(403).json(body);
-        }
         return res.status(200).json(body);
     } catch (e) {
         next(e);
