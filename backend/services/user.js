@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = exports.loginUser = void 0;
+exports.loginUser = void 0;
 const tokenService = __importStar(require("./token"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -70,21 +70,6 @@ function loginUser(userInput) {
     });
 }
 exports.loginUser = loginUser;
-function registerUser(user) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const existentUser = yield prisma.pilot_user.findFirst({
-            where: { name: user.name }
-        });
-        if (existentUser) {
-            return (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'Username already exists : ' + user.name });
-        }
-        yield prisma.pilot_user.create({
-            data: { name: user.name, pw: user.pw }
-        });
-        return (0, zod_dto_service_1.zParse)(user_login_dto_1.userSchemaInput, { name: user.name, pw: user.pw });
-    });
-}
-exports.registerUser = registerUser;
 function deviceInfoHelper(deviceData) {
     return __awaiter(this, void 0, void 0, function* () {
         if (deviceData.includes('Zebra')) {

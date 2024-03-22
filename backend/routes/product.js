@@ -44,7 +44,7 @@ const zodDTO_1 = require("../dto/zodDTO");
 const cikkServiceNew = __importStar(require("../services/servicesNew/cikkServiceNew"));
 const library_1 = require("@prisma/client/runtime/library");
 exports.protectedProductRouter = express_1.default.Router();
-exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.protectedProductRouter.post('/getCikkByEAN', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, req.body);
         const body = yield cikkService.getCikkByEanKod(validData);
@@ -54,11 +54,10 @@ exports.protectedProductRouter.post('/getCikkByEAN', (req, res) => __awaiter(voi
         return res.status(200).json(body);
     }
     catch (err) {
-        console.error(err);
-        return res.status(400).json(err);
+        next(err);
     }
 }));
-exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.protectedProductRouter.post('/getCikk', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
         const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductGeneralSchema, body);
@@ -69,10 +68,10 @@ exports.protectedProductRouter.post('/getCikk', (req, res) => __awaiter(void 0, 
         return res.status(200).json(result);
     }
     catch (e) {
-        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(e));
+        next(e);
     }
 }));
-exports.protectedProductRouter.post('/getCikkByETK', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.protectedProductRouter.post('/getCikkByETK', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
         const body = yield cikkService.getCikkByCikkszam(validData);
@@ -82,7 +81,7 @@ exports.protectedProductRouter.post('/getCikkByETK', (req, res) => __awaiter(voi
         return res.status(200).json(body);
     }
     catch (err) {
-        return res.status(400).json(zodDTO_1.ZodDTO.fromZodError(err));
+        next(err);
     }
 }));
 //// TESTING
