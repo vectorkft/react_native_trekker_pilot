@@ -91,196 +91,214 @@
 			"name": "Protected",
 			"item": [
 				{
-					"name": "Profile",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwic3plbWVseWtvZCI6MSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTA4NTQ1MTIsImV4cCI6MTcxMDg1NTExMn0.IpKDx411rW9RIJ1d1FKQoYfbAjup-GWCH2NBr5oEd70",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "User",
+					"item": [
+						{
+							"name": "Profile",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwic3plbWVseWtvZCI6MSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTA4NTQ1MTIsImV4cCI6MTcxMDg1NTExMn0.IpKDx411rW9RIJ1d1FKQoYfbAjup-GWCH2NBr5oEd70",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/protected/user/profile",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"protected",
+										"user",
+										"profile"
+									]
+								},
+								"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait.\n\n200 OK ha szupi az accessToken\n\n403 Forbidden ha nem szupi az accessToken\n\n500 ha nem megy a db szerver"
+							},
+							"response": []
+						},
+						{
+							"name": "Logout",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTQ1ODMsImV4cCI6MTcwOTg5NjM4M30.TPa3mcEYHTxga5lNA3u3rV7r5V9UYF4qADUIirPL5OY",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/protected/user/logout",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"protected",
+										"user",
+										"logout"
+									]
+								},
+								"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja.\n\n200 OK Ha sikeres a kijelentkezés\n\n403 Forbidden ha nem jó az accessToken  \n(akkor is ezjön ha sikeres kilépés után meg pingeled mert hát ugye kitörölted az előbb a tokent)\n\n500 Ha nem megy a db szerver"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "getCikk",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"value\":\"000005\",\r\n\"validTypesArray\":[\"etk\"]\r\n\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/protected/product/getCikk",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"protected",
+										"product",
+										"getCikk"
+									]
+								},
+								"description": "Cikk lekérdezése vagy ETK vagy EAN alapján\n\n- value: ETK vagy EAN kód\n    \n- validType: vagy etk vagy ean vagy both (both esetén ean-t adok vissza)\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk\n\n500 Ha nem megy a db szerver"
+							},
+							"response": []
+						},
+						{
+							"name": "getCikkByETK",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"cikkszam\":\"000002\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/protected/product/getCikkByETK",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"protected",
+										"product",
+										"getCikkByETK"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{url}}/protected/user/profile",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"protected",
-								"user",
-								"profile"
-							]
-						},
-						"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait.\n\n200 OK ha szupi az accessToken\n\n403 Forbidden ha nem szupi az accessToken\n\n500 ha nem megy a db szerver"
-					},
-					"response": []
+						{
+							"name": "getCikkByEAN",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzOTkxNDQsImV4cCI6MTcxMDQwMDk0NH0.zDet9aun10vuI3iZNzHcIQwaiNKCVHP5wCNzjK4BAmY",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"eankod\": \"4061462985683\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/protected/product/getCikkByEAN",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"protected",
+										"product",
+										"getCikkByEAN"
+									]
+								},
+								"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk\n\n500 ha nem megy a db szerver"
+							},
+							"response": []
+						}
+					]
 				},
 				{
 					"name": "Menu",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":\"polc_valasztas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{url}}/protected/user/menu",
+							"raw": "{{url}}/protected/menu",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"protected",
-								"user",
 								"menu"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "getCikk",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\r\n\"value\":\"000005\",\r\n\"validType\":\"etk\"\r\n\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/protected/product/getCikk",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"protected",
-								"product",
-								"getCikk"
-							]
-						},
-						"description": "Cikk lekérdezése vagy ETK vagy EAN alapján\n\n- value: ETK vagy EAN kód\n    \n- validType: vagy etk vagy ean vagy both (both esetén ean-t adok vissza)\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk\n\n500 Ha nem megy a db szerver"
-					},
-					"response": []
-				},
-				{
-					"name": "getCikkByETK",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\"cikkszam\":\"000002\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/protected/product/getCikkByETK",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"protected",
-								"product",
-								"getCikkByETK"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getCikkByEAN",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzOTkxNDQsImV4cCI6MTcxMDQwMDk0NH0.zDet9aun10vuI3iZNzHcIQwaiNKCVHP5wCNzjK4BAmY",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"eankod\": \"4061462985683\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/protected/product/getCikkByEAN",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"protected",
-								"product",
-								"getCikkByEAN"
-							]
-						},
-						"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk\n\n500 ha nem megy a db szerver"
-					},
-					"response": []
-				},
-				{
-					"name": "Logout",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTQ1ODMsImV4cCI6MTcwOTg5NjM4M30.TPa3mcEYHTxga5lNA3u3rV7r5V9UYF4qADUIirPL5OY",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/protected/user/logout",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"protected",
-								"user",
-								"logout"
-							]
-						},
-						"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja.\n\n200 OK Ha sikeres a kijelentkezés\n\n403 Forbidden ha nem jó az accessToken  \n(akkor is ezjön ha sikeres kilépés után meg pingeled mert hát ugye kitörölted az előbb a tokent)\n\n500 Ha nem megy a db szerver"
 					},
 					"response": []
 				}
