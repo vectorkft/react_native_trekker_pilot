@@ -1,10 +1,7 @@
 import React, {JSX, useContext, useState} from 'react';
 import {View} from 'react-native';
 import {ProductService} from '../services/product';
-import {
-  parseZodError,
-  validateFormArray,
-} from '../../../shared/services/zod';
+import {parseZodError, validateFormArray} from '../../../shared/services/zod';
 import VCardNotFound from '../components/Vcard-not-found';
 import VCamera from '../components/Vcamera';
 import VCameraIconButton from '../components/Vcamera-icon-button';
@@ -62,6 +59,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     setErrorMessage(null);
     if (!validation.isValid) {
       const msg = await parseZodError(validation.error as ZodError);
+      console.log(validation.error);
       setErrorMessage(msg);
       setSearchQuery('');
       return false;
@@ -74,8 +72,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       setErrorMessage(null);
       const validateResult = await validateFormArray(value, {
         propList: [
-          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
           {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
+          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
         ],
       });
       const errorHandled = await handleValidationError(validateResult);
@@ -134,7 +132,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                 deviceType === DeviceInfoEnum.mobile || keyboardActive,
               autoFocus: true,
               onChangeText: setSearchQuery,
-              onSubmitEditing: () => getProduct(searchQuery),
+              onSubmitEditing: async () => {
+                const cleanedValue = searchQuery.trim().replace(/\s+/g, ' ');
+                await getProduct(cleanedValue);
+              },
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
               rightIcon: (
@@ -204,7 +205,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
           changeHandlerResult.status === RESPONSE_NO_CONTENT && (
             <View>
               <VCardNotFound
-                title={'Not Found'}
+                title={'Nem található'}
                 value={searchQueryVal as string}
               />
             </View>
