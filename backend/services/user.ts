@@ -39,7 +39,7 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
 
         const refreshToken=await  tokenService.signTokens('refreshToken','REFRESH_TOKEN_EXPIRE',userInput,szemelyKod??0);
 
-        await tokenService.addTokenAtLogin({accessToken}, {refreshToken}, userInput);
+        await tokenService.addTokenAtLogin({accessToken}, {refreshToken}, userInput, szemelyKod??0);
 
         return zParse(UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',

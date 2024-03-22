@@ -79,6 +79,9 @@ protectedUserRouter.get('/logout', (req, res, next) => __awaiter(void 0, void 0,
 protectedUserRouter.post('/profile', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(200).json('OK');
 }));
+protectedUserRouter.post('/menu', (_req, res, _next) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.status(200).json('Menu endpoint works');
+}));
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

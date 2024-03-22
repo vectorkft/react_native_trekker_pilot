@@ -67,11 +67,11 @@ const processArticles = (articles) => {
 };
 function getCikkHelper(input) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (input.validType === 'ean' || input.validType === 'both') {
+        if (input.validTypesArray.includes("ean" /* ValidTypes.ean */)) {
             const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, input);
             return yield getCikkByEanKod(validData);
         }
-        else if (input.validType === 'etk') {
+        else if (input.validTypesArray.includes("etk" /* ValidTypes.etk */)) {
             const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, input);
             return yield getCikkByCikkszam(validData);
         }

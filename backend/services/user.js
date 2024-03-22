@@ -59,7 +59,7 @@ function loginUser(userInput) {
         const szemelyKod = user.UGYINTEZO;
         const accessToken = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
         const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
-        yield tokenService.addTokenAtLogin({ accessToken }, { refreshToken }, userInput);
+        yield tokenService.addTokenAtLogin({ accessToken }, { refreshToken }, userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
         return (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',
             accessToken,
