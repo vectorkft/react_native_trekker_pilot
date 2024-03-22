@@ -29,8 +29,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cron = __importStar(require("node-cron"));
 const token_1 = require("./services/token");
-const TokenMiddleware_1 = require("./middleware/TokenMiddleware");
-const LogMiddleWare_1 = require("./middleware/LogMiddleWare");
+const token_validator_1 = require("./middleware/token-validator");
+const log_to_console_1 = require("./middleware/log-to-console");
 const user_1 = require("./routes/user");
 const token_2 = require("./routes/token");
 const product_1 = require("./routes/product");
@@ -38,14 +38,14 @@ const error_handler_1 = require("./middleware/error-handler");
 const app = (0, express_1.default)();
 const HTTP_PORT = 8000;
 // Body parsing middleware
-app.use(express_1.default.json(), LogMiddleWare_1.Logger);
+app.use(express_1.default.json(), log_to_console_1.Logger);
 app.use(express_1.default.urlencoded({ extended: false }));
 // Public endpoints
 app.use('/user', user_1.userRouter);
 app.use('/token', token_2.tokenRouter);
 // Protected endpoints
-app.use('/protected/user', TokenMiddleware_1.verifyToken, user_1.protectedUserRouter);
-app.use('/protected/product', TokenMiddleware_1.verifyToken, product_1.protectedProductRouter);
+app.use('/protected/user', token_validator_1.verifyToken, user_1.protectedUserRouter);
+app.use('/protected/product', token_validator_1.verifyToken, product_1.protectedProductRouter);
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);
 });
@@ -53,7 +53,7 @@ app.get('/', (_req, res) => {
     return res.status(200).json('Check postman for guidance');
 });
 app.use(error_handler_1.handleErrors);
-cron.schedule("* * * * *", token_1.deleteExpiredTokens_new);
+cron.schedule("*/10 * * * * *", token_1.deleteExpiredTokens_new);
 // Státusz ellenőrzések, nem fontos
 app.all('/check', (_req, res) => {
     return res.status(200).json({

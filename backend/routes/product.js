@@ -37,8 +37,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.protectedProductRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const zod_dto_service_1 = require("../../shared/services/zod");
-const product_dto_1 = require("../../shared/dto/product");
+const zod_1 = require("../../shared/services/zod");
+const product_1 = require("../../shared/dto/product");
 const cikkService = __importStar(require("../services/product"));
 const zodDTO_1 = require("../dto/zodDTO");
 const cikkServiceNew = __importStar(require("../services/servicesNew/cikkServiceNew"));
@@ -46,7 +46,7 @@ const library_1 = require("@prisma/client/runtime/library");
 exports.protectedProductRouter = express_1.default.Router();
 exports.protectedProductRouter.post('/getCikkByEAN', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, req.body);
+        const validData = yield (0, zod_1.zParse)(product_1.ProductEANSchemaInput, req.body);
         const body = yield cikkService.getCikkByEanKod(validData);
         if (!body) {
             return res.status(204).json(body);
@@ -60,7 +60,7 @@ exports.protectedProductRouter.post('/getCikkByEAN', (req, res, next) => __await
 exports.protectedProductRouter.post('/getCikk', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductGeneralSchema, body);
+        const validData = yield (0, zod_1.zParse)(product_1.ProductGeneralSchema, body);
         const result = yield cikkService.getCikkHelper(validData);
         if (!result) {
             return res.status(204).json(result);
@@ -73,7 +73,7 @@ exports.protectedProductRouter.post('/getCikk', (req, res, next) => __awaiter(vo
 }));
 exports.protectedProductRouter.post('/getCikkByETK', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
+        const validData = yield (0, zod_1.zParse)(product_1.ProductNumberSchemaInput, req.body);
         const body = yield cikkService.getCikkByCikkszam(validData);
         if (!body) {
             return res.status(204).json(body);
@@ -90,7 +90,7 @@ exports.protectedProductRouter.post('/getCikkTeszt', (req, res) => __awaiter(voi
     const authHeader = (_a = req.headers.authorization) !== null && _a !== void 0 ? _a : '';
     const accessToken = authHeader.split(' ')[1];
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, req.body);
+        const validData = yield (0, zod_1.zParse)(product_1.ProductNumberSchemaInput, req.body);
         const body = yield cikkServiceNew.getCikkByCikkszam(validData, { accessToken: accessToken });
         if (body === "Not found") {
             return res.status(204).json({ message: 'Not found' });
@@ -109,7 +109,7 @@ exports.protectedProductRouter.post('/getCikkByEANTeszt', (req, res) => __awaite
     const authHeader = (_b = req.headers.authorization) !== null && _b !== void 0 ? _b : '';
     const accessToken = authHeader.split(' ')[1];
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, req.body);
+        const validData = yield (0, zod_1.zParse)(product_1.ProductEANSchemaInput, req.body);
         const body = yield cikkServiceNew.getCikkByEanKod(validData, { accessToken: accessToken });
         if (!body) {
             return res.status(204).json(body);

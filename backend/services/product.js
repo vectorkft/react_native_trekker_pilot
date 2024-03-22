@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCikkHelper = exports.getCikkByEanKod = exports.getCikkByCikkszam = void 0;
 const client_1 = require("@prisma/client");
-const product_dto_1 = require("../../shared/dto/product");
-const zod_dto_service_1 = require("../../shared/services/zod");
+const product_1 = require("../../shared/dto/product");
+const zod_1 = require("../../shared/services/zod");
 const prisma = new client_1.PrismaClient();
 function getCikkByCikkszam(input) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -45,17 +45,17 @@ exports.getCikkByEanKod = getCikkByEanKod;
 const processArticles = (articles) => {
     const result = {
         data: articles.flatMap((articleElement) => [
-            product_dto_1.ProductDataOutput.parse({
+            product_1.ProductDataOutput.parse({
                 key: 'etk',
                 title: 'ETK',
                 value: articleElement.etk,
             }),
-            product_dto_1.ProductDataOutput.parse({
+            product_1.ProductDataOutput.parse({
                 key: 'cikknev',
                 title: 'Cikknév',
                 value: articleElement.CIKKNEV1,
             }),
-            product_dto_1.ProductDataOutput.parse({
+            product_1.ProductDataOutput.parse({
                 key: 'eankod',
                 title: 'EAN Kód',
                 value: articleElement.jellemzo,
@@ -63,16 +63,16 @@ const processArticles = (articles) => {
         ]),
         count: articles.length
     };
-    return product_dto_1.ProductListOutput.parse(result);
+    return product_1.ProductListOutput.parse(result);
 };
 function getCikkHelper(input) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (input.validTypesArray.includes("ean" /* ValidTypes.ean */)) {
-            const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductEANSchemaInput, input);
+        if (input.validTypesArray.includes(ValidTypes.ean)) {
+            const validData = yield (0, zod_1.zParse)(product_1.ProductEANSchemaInput, input);
             return yield getCikkByEanKod(validData);
         }
-        else if (input.validTypesArray.includes("etk" /* ValidTypes.etk */)) {
-            const validData = yield (0, zod_dto_service_1.zParse)(product_dto_1.ProductNumberSchemaInput, input);
+        else if (input.validTypesArray.includes(ValidTypes.etk)) {
+            const validData = yield (0, zod_1.zParse)(product_1.ProductNumberSchemaInput, input);
             return yield getCikkByCikkszam(validData);
         }
         return 'Invalid validType';

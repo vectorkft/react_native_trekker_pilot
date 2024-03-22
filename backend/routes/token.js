@@ -37,14 +37,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const zod_dto_service_1 = require("../../shared/services/zod");
+const zod_1 = require("../../shared/services/zod");
 const tokenService = __importStar(require("../services/token"));
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
-const token_dto_1 = require("../../shared/dto/token");
+const token_1 = require("../../shared/dto/token");
 exports.tokenRouter = express_1.default.Router();
 exports.tokenRouter.post('/refresh', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(token_dto_1.TokenDTOInput, req.body);
+        const validData = yield (0, zod_1.zParse)(token_1.TokenDTOInput, req.body);
         const body = yield tokenService.refreshToken({ refreshToken: validData.refreshToken });
         if ('errorMessage' in body) {
             return res.status(403).json(body);
@@ -58,7 +58,7 @@ exports.tokenRouter.post('/refresh', (req, res, next) => __awaiter(void 0, void 
 //// FOR TESTING PURPOSE ONLY
 exports.tokenRouter.post('/refreshTeszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(token_dto_1.TokenDTOInput, req.body);
+        const validData = yield (0, zod_1.zParse)(token_1.TokenDTOInput, req.body);
         const body = yield tokenServiceNew.refreshToken_new({ refreshToken: validData.refreshToken });
         if ('errorMessage' in body) {
             //Ha van errorMessage akkor rossz a token amit kaptunk

@@ -1,8 +1,8 @@
 import express, {Request,Response} from 'express';
 import * as cron from 'node-cron';
 import {deleteExpiredTokens_new} from './services/token';
-import {verifyToken} from "./middleware/TokenMiddleware";
-import {Logger} from "./middleware/LogMiddleWare";
+import {verifyToken} from "./middleware/token-validator";
+import {Logger} from "./middleware/log-to-console";
 import {userRouter, protectedUserRouter} from './routes/user';
 import {tokenRouter} from "./routes/token";
 import {protectedProductRouter} from "./routes/product";
@@ -32,7 +32,7 @@ app.get('/', (_req: Request, res: Response) => {
     return res.status(200).json('Check postman for guidance');
 });
 app.use(handleErrors);
-cron.schedule("* * * * *", deleteExpiredTokens_new);
+cron.schedule("*/10 * * * * *", deleteExpiredTokens_new);
 
 // Státusz ellenőrzések, nem fontos
 

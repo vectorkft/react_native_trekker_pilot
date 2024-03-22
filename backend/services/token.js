@@ -16,11 +16,11 @@ exports.isAccessTokenInDatabase = exports.signTokensFromTokenPayload = exports.s
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const chalk_1 = __importDefault(require("chalk"));
-const zod_dto_service_1 = require("../../shared/services/zod");
+const zod_1 = require("../../shared/services/zod");
 const dotenv_1 = __importDefault(require("dotenv"));
-const token_dto_1 = require("../../shared/dto/token");
-const error_message_dto_1 = require("../../shared/dto/error-message");
-const user_login_dto_1 = require("../../shared/dto/user-login");
+const token_1 = require("../../shared/dto/token");
+const error_message_1 = require("../../shared/dto/error-message");
+const user_login_1 = require("../../shared/dto/user-login");
 const prisma = new client_1.PrismaClient();
 dotenv_1.default.config();
 function addTokenAtLogin(accessToken, refreshToken, userInput, szemelyKod) {
@@ -102,7 +102,7 @@ function refreshToken(refreshToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const payload = yield retrieveUserInfoFromRefreshToken(refreshToken);
         if (!(yield isRefreshTokenInDatabase({ refreshToken: refreshToken.refreshToken }))) {
-            return yield (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'You tried to use AccessToken as RefreshToken' });
+            return yield (0, zod_1.zParse)(error_message_1.errorMessageDTO, { errorMessage: 'You tried to use AccessToken as RefreshToken' });
         }
         const accessToken = yield signTokensFromTokenPayload('accessToken', 'ACCESS_TOKEN_EXPIRE', payload);
         const decodedAccessToken = jsonwebtoken_1.default.decode(accessToken);
@@ -110,7 +110,7 @@ function refreshToken(refreshToken) {
             where: { userName: payload.name },
             data: { accessToken: accessToken, accessExpireDate: decodedAccessToken.exp },
         });
-        const body = yield (0, zod_dto_service_1.zParse)(token_dto_1.TokenDTOOutput, { newAccessToken: accessToken });
+        const body = yield (0, zod_1.zParse)(token_1.TokenDTOOutput, { newAccessToken: accessToken });
         return body;
     });
 }
@@ -153,6 +153,6 @@ function retrieveUserInfoFromRefreshToken(token) {
     return __awaiter(this, void 0, void 0, function* () {
         const secretKey = (_a = process.env.JWT_SECRET_KEY) !== null && _a !== void 0 ? _a : '';
         const payload = jsonwebtoken_1.default.verify(token.refreshToken, secretKey);
-        return (0, zod_dto_service_1.zParse)(user_login_dto_1.userPayLoadInput, { name: payload.name, szemelykod: payload.szemelykod });
+        return (0, zod_1.zParse)(user_login_1.userPayLoadInput, { name: payload.name, szemelykod: payload.szemelykod });
     });
 }

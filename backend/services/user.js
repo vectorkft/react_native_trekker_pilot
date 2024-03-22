@@ -39,11 +39,11 @@ exports.loginUser = void 0;
 const tokenService = __importStar(require("./token"));
 const client_1 = require("@prisma/client");
 const dotenv_1 = __importDefault(require("dotenv"));
-const zod_dto_service_1 = require("../../shared/services/zod");
+const zod_1 = require("../../shared/services/zod");
 const db_connection_check_1 = require("./db-connection-check");
-const user_login_dto_1 = require("../../shared/dto/user-login");
+const user_login_1 = require("../../shared/dto/user-login");
 const device_info_1 = require("../../shared/enums/device-info");
-const error_message_dto_1 = require("../../shared/dto/error-message");
+const error_message_1 = require("../../shared/dto/error-message");
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 function loginUser(userInput) {
@@ -54,13 +54,13 @@ function loginUser(userInput) {
             where: { USERNEV: userInput.name }
         });
         if (!user) {
-            return yield (0, zod_dto_service_1.zParse)(error_message_dto_1.errorMessageDTO, { errorMessage: 'Wrong username' });
+            return yield (0, zod_1.zParse)(error_message_1.errorMessageDTO, { errorMessage: 'Wrong username' });
         }
         const szemelyKod = user.UGYINTEZO;
         const accessToken = yield tokenService.signTokens('accessToken', 'ACCESS_TOKEN_EXPIRE', userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
         const refreshToken = yield tokenService.signTokens('refreshToken', 'REFRESH_TOKEN_EXPIRE', userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
         yield tokenService.addTokenAtLogin({ accessToken }, { refreshToken }, userInput, szemelyKod !== null && szemelyKod !== void 0 ? szemelyKod : 0);
-        return (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOOutput, {
+        return (0, zod_1.zParse)(user_login_1.UserLoginDTOOutput, {
             message: 'Login Success, token added successfully',
             accessToken,
             refreshToken,

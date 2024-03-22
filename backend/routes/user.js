@@ -37,12 +37,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.protectedUserRouter = exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const zod_dto_service_1 = require("../../shared/services/zod");
+const zod_1 = require("../../shared/services/zod");
 const userService = __importStar(require("../services/user"));
 const tokenService = __importStar(require("../services/token"));
 const tokenServiceNew = __importStar(require("../services/servicesNew/tokenServiceNew"));
 const userServiceNew = __importStar(require("../services/servicesNew/userServiceNew"));
-const user_login_dto_1 = require("../../shared/dto/user-login");
+const user_login_1 = require("../../shared/dto/user-login");
 // Public endpoints
 const userRouter = express_1.default.Router();
 exports.userRouter = userRouter;
@@ -51,7 +51,7 @@ const protectedUserRouter = express_1.default.Router();
 exports.protectedUserRouter = protectedUserRouter;
 userRouter.post('/login', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
+        const validData = yield (0, zod_1.zParse)(user_login_1.UserLoginDTOInput, req.body);
         const body = yield userService.loginUser(validData);
         if ("errorMessage" in body) {
             return res.status(401).json(body);
@@ -85,7 +85,7 @@ protectedUserRouter.post('/menu', (_req, res, _next) => __awaiter(void 0, void 0
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const validData = yield (0, zod_dto_service_1.zParse)(user_login_dto_1.UserLoginDTOInput, req.body);
+        const validData = yield (0, zod_1.zParse)(user_login_1.UserLoginDTOInput, req.body);
         const body = yield userServiceNew.loginWithDB(validData);
         if ('errorMessage' in body) {
             return res.status(401).json(body);
