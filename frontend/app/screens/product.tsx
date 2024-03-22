@@ -20,8 +20,6 @@ import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
 import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
-import {ZodError} from 'zod';
-import {ValidationResult} from '../../../shared/interfaces/validation-result';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
 import {DeviceInfoEnum} from '../../../shared/enums/device-info';
@@ -38,6 +36,8 @@ import {useAlert} from '../states/use-alert';
 import * as Sentry from '@sentry/react';
 import {CameraService, useCamera} from '../services/camera';
 import {colors} from '../enums/colors';
+import {ZodError} from 'zod';
+import {ValidatedValue} from '../interfaces/types';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -55,41 +55,34 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchQuery);
 
-  const handleValidationError = async (validation: ValidationResult) => {
-    setErrorMessage(null);
-    if (!validation.isValid) {
-      const msg = await parseZodError(validation.error as ZodError);
-      console.log(validation.error);
-      setErrorMessage(msg);
-      setSearchQuery('');
-      return false;
-    }
-    return true;
+  const handleError = async (error: ZodError) => {
+    const msg = await parseZodError(error);
+    setErrorMessage(msg);
+    setSearchQuery('');
+  };
+
+  const handleSuccess = async (formData: ValidatedValue) => {
+    const res = await ProductService.getProduct(formData);
+    setChangeHandlerResult(res);
+    setSearchQuery('');
   };
 
   const getProduct = async (value: string) => {
     try {
       setErrorMessage(null);
-      const validateResult = await validateFormArray(value, {
-        propList: [
-          {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
-          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
-        ],
-      });
-      const errorHandled = await handleValidationError(validateResult);
+      await validateFormArray(
+        value,
+        {
+          propList: [
+            {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
+            {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
+          ],
+        },
+        handleError,
+        handleSuccess,
+      );
 
-      if (!errorHandled) {
-        return;
-      }
-
-      const res = await ProductService.getProduct({
-        value: value,
-        validTypesArray: validateResult.validType as ValidTypes[],
-      });
-
-      setChangeHandlerResult(res);
       setSearchQueryVal(value);
-      setSearchQuery('');
     } catch (e) {
       Sentry.captureException(e);
       setErrorMessage('Hiba történt próbálja újra!');
@@ -133,7 +126,9 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               autoFocus: true,
               onChangeText: setSearchQuery,
               onSubmitEditing: async () => {
-                const cleanedValue = searchQuery.trim().replace(/\s+/g, ' ');
+                const cleanedValue = searchQuery
+                  .replace(/\s+/g, '')
+                  .replace(/\n+/g, '');
                 await getProduct(cleanedValue);
               },
               placeholder: 'Keresés...',

@@ -2,6 +2,7 @@ import {AnyZodObject, z, ZodArray, ZodError, ZodObject} from "../node_modules/zo
 import {ValidationResult} from "../interfaces/validation-result"
 import * as Sentry from '../node_modules/@sentry/react';
 import {ValidatorProps} from "../interfaces/validator";
+import {ValidatedValue} from "../../frontend/app/interfaces/types";
 
 export async function zParse<T extends AnyZodObject | ZodArray<ZodObject<any>>>(
     schema: T,
@@ -55,8 +56,10 @@ export async function validateZDTOForm<T extends AnyZodObject>(
 export const validateFormArray = async (
     value: string,
     rules: ValidatorProps,
-): Promise<ValidationResult> => {
-    const validTypes: string[] = [];
+    handleError: (error: ZodError) => {},
+    handleSuccess: (formData: ValidatedValue) => Promise<any>,
+): Promise<void> => {
+    const validTypes: ValidatorProps = {propList: []};
     let error: ZodError | null = null;
 
     for (let i = 0; i < rules.propList.length; i++) {
@@ -64,7 +67,7 @@ export const validateFormArray = async (
         const validation = await validateZDTOForm(parseType, {value: value});
 
         if (validation.isValid) {
-            validTypes.push(rules.propList[i].type);
+            validTypes.propList.push(rules.propList[i]);
         }
 
         if (validation.error) {
@@ -72,11 +75,11 @@ export const validateFormArray = async (
         }
     }
 
-    return {
-        isValid: validTypes.length > 0,
-        validType: validTypes,
-        error: error,
-    };
+    if(validTypes.propList.length === 0){
+        handleError(error as ZodError);
+    }else {
+        await handleSuccess({value: value, validTypesArray: validTypes});
+    }
 };
 
 
