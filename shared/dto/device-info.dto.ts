@@ -1,4 +1,4 @@
-import {z} from '../../node_modules/zod';
+import {z} from '../node_modules/zod';
 
 export const DeviceInfoDTO = z.object({
     brand: z.string(),

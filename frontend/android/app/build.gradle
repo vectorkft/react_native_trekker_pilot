@@ -104,10 +104,10 @@ android {
          missingDimensionStrategy 'react-native-camera', 'general'
 
          externalNativeBuild {
-                     cmake {
-                         version "3.22.1"
-                     }
-                 }
+                              cmake {
+                                  version "3.22.1"
+                              }
+                          }
     }
 
     splits {

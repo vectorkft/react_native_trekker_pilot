@@ -1,4 +1,4 @@
-import {z} from '../../node_modules/zod';
+import {z} from '../node_modules/zod';
 
 const jwtRegex = /(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/;
 

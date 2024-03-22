@@ -7,8 +7,8 @@
 const path = require('path');
 
 const {
-  createSentryMetroSerializer
-} = require("@sentry/react-native/dist/js/tools/sentryMetroSerializer");
+  createSentryMetroSerializer,
+} = require('@sentry/react-native/dist/js/tools/sentryMetroSerializer');
 
 module.exports = {
   transformer: {
@@ -24,6 +24,6 @@ module.exports = {
   projectRoot: path.resolve(__dirname),
 
   serializer: {
-    customSerializer: createSentryMetroSerializer()
-  }
+    customSerializer: createSentryMetroSerializer(),
+  },
 };

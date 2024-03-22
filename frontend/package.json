@@ -10,13 +10,14 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^6.0.0",
+    "@react-native-community/netinfo": "^5.9.0",
     "@react-navigation/native": "^5.0.0",
     "@react-navigation/stack": "^5.0.0",
     "@sentry/react-native": "^5.19.2",
     "babel-plugin-module-resolver": "^5.0.0",
     "deprecated-react-native-prop-types": "^5.0.0",
     "jwt-decode": "^3.1.2",
+    "luhn-validation": "^1.0.3",
     "react": "18.2.0",
     "react-native": "^0.71.0",
     "react-native-camera": "^4.2.1",
@@ -35,7 +36,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.14.0",
-    "@babel/runtime": "^7.16.5",
+    "@babel/runtime": "7.16.5",
     "@react-native-community/eslint-config": "^3.0.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^29.2.1",
