@@ -7,6 +7,7 @@ import {
 } from '../../../shared/dto/product.dto';
 import {TokenHandlingService} from './token-handling';
 import * as Sentry from '@sentry/react-native';
+import {ValidatedValue} from '../interfaces/types';
 
 export const ProductService = {
   getProductByEAN: async (
@@ -50,7 +51,7 @@ export const ProductService = {
     }
   },
   getProduct: async (
-    value: ZProductNumberSchemaInput | ZProductEANSchemaInput,
+    value: ValidatedValue,
   ): Promise<ZProductListOutput | Response | undefined> => {
     const options = {
       method: 'POST',

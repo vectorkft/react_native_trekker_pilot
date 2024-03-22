@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {ProductService} from '../services/product';
 import {
   parseZodError,
-  validateZDTOForm,
+  validateFormArray,
 } from '../../../shared/services/zod-dto.service';
 import VCardNotFound from '../components/Vcard-not-found';
 import VCamera from '../components/Vcamera';
@@ -24,7 +24,7 @@ import VToast from '../components/Vtoast';
 import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
 import {ZodError} from 'zod';
-import {ValidationResult} from '../interfaces/validation-result';
+import {ValidationResult} from '../../../shared/interfaces/validation-result';
 import {darkModeContent} from '../styles/dark-mode-content';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
@@ -37,8 +37,7 @@ import {
   RESPONSE_SUCCESS,
 } from '../constants/response-status';
 import {AlertTypes, ToastTypes} from '../enums/types';
-import {ValidatorProps, ValidTypes} from '../../../shared/enums/types';
-import {TSchemaDataPair} from '../interfaces/t-schema-data-pair';
+import {ValidTypes} from '../../../shared/enums/types';
 import {useAlert} from '../states/use-alert';
 import * as Sentry from '@sentry/react';
 import {CameraService, useCamera} from '../services/camera';
@@ -59,67 +58,6 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchQuery);
 
-  const validateFormArray = async (
-    value: string,
-    rules: ValidatorProps,
-  ): Promise<ValidationResult> => {
-    // const pairs: TSchemaDataPair[] = [
-    //   {
-    //     schema: ProductEANSchemaInput,
-    //     formData: {value: value, validType: ValidTypes.ean},
-    //   },
-    //   {
-    //     schema: ProductNumberSchemaInput,
-    //     formData: {value: value, validType: ValidTypes.etk},
-    //   },
-    // ];
-
-    const validTypes: ValidatorProps = {propList: []};
-    let error: ZodError | null = null;
-
-    for (let i = 0; i < rules.propList.length; i++) {
-      const {parseType, name} = rules.propList[i];
-      const validation = await validateZDTOForm(parseType, {
-        value: value,
-        validType: name,
-      });
-
-      if (validation.isValid) {
-        validTypes.propList.push(rules.propList[i]);
-      }
-
-      if (validation.error) {
-        error = validation.error;
-      }
-    }
-
-    // for (let i = 0; i < pairs.length; i++) {
-    //   const {schema, formData} = pairs[i];
-    //   const validation = await validateZDTOForm(schema, formData);
-    //
-    //   if (validation.isValid) {
-    //     validTypes.push(formData.validType);
-    //   }
-    //
-    //   if (validation.error) {
-    //     error = validation.error;
-    //   }
-    // }
-
-    let resultType = '';
-    if (validTypes.propList.length === 2) {
-      resultType = ValidTypes.both;
-    } else if (validTypes.propList.length === 1) {
-      resultType = validTypes.propList[0].name;
-    }
-
-    return {
-      isValid: validTypes.propList.length > 0,
-      validType: resultType as ValidTypes,
-      error: error,
-    };
-  };
-
   const handleValidationError = async (validation: ValidationResult) => {
     setErrorMessage(null);
     if (!validation.isValid) {
@@ -136,8 +74,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       setErrorMessage(null);
       const validateResult = await validateFormArray(value, {
         propList: [
-          {name: ValidTypes.etk, parseType: ProductNumberSchemaInput},
-          {name: ValidTypes.ean, parseType: ProductEANSchemaInput},
+          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
+          {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
         ],
       });
       const errorHandled = await handleValidationError(validateResult);
@@ -148,6 +86,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
 
       const res = await ProductService.getProduct({
         value: value,
+        validTypesArray: validateResult.validType as ValidTypes[],
       });
 
       setChangeHandlerResult(res);
