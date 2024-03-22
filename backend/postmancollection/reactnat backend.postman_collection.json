@@ -7,511 +7,489 @@
 	},
 	"item": [
 		{
-			"name": "Login",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"name\":\"sysdba\",\r\n\"pw\":\"a\",\r\n\"deviceData\":{\"brand\":\"Zebra\",\"deviceId\":\"goldfish_x86_64\",\"deviceName\":\"Android SDK built for x86_64\",\"manufacturer\":\"Google\"}\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Public",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.collectionVariables.set('accessToken', res.accessToken);\r",
+									"pm.collectionVariables.set('refreshToken', res.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/user/login",
-					"host": [
-						"{{url}}"
 					],
-					"path": [
-						"user",
-						"login"
-					]
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"sysdba\",\r\n    \"pw\":\"a\",\r\n    \"deviceData\":{\r\n        \"brand\":\"Zebra\",\r\n        \"deviceId\":\"goldfish_x86_64\",\r\n        \"deviceName\":\"Android SDK built for x86_64\",\r\n        \"manufacturer\":\"Google\"}\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						},
+						"description": "Felhasználó belépésére szolgáló végpont  \nParaméterek\n\n- name - a felhasználó neve\n- pw - a felhasználó jelszava\n    \n\nHa rossz paramatérert adsz vissza adja hogy mit vár.\n\nHa 200 OK jön akkor minden jó.\n\nHa 400 bad request akkor amit kapott json nemjó pl: a name param helyett namet-adtál meg.\n\nHa 401 akkor hibás jelszó vagy felhasználó név\n\nHa 500 jön akkor nem megy az adatbázis"
+					},
+					"response": []
 				},
-				"description": "Felhasználó belépésére szolgáló végpont  \nParaméterek\n\n- name - a felhasználó neve\n- pw - a felhasználó jelszava\n    \n\nHa rossz paramatérert adsz vissza adja hogy mit vár.\n\nHa 200 OK jön akkor minden jó.\n\nHa 400 bad request akkor amit kapott json nemjó pl: a name param helyett namet-adtál meg.\n\nHa 401 akkor hibás jelszó vagy felhasználó név"
-			},
-			"response": []
-		},
-		{
-			"name": "Token ellenőrzés",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibGVnam9iYm5ldjIiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzA4MzUzOTE4LCJleHAiOjE3MDgzNTM5NDh9.CS6-AkUkVbdorWsEUpbBbbRP1helhzQ7di2l_RfzqAk",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/protected",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected"
-					]
-				},
-				"description": "Az accessToken ellenőrzésére szolgáló végpont\n\nA headerből olvassa ki az accesTokent\n\n- Az Authorization-be a Bearer szó után kell beilleszteni a login-nál generált accesToken-t.\n- Ha sikeres akkor jön valami message\n- Ha sikertelen akkor forbidden jön 403-as kóddal."
-			},
-			"response": []
-		},
-		{
-			"name": "Regisztráció",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Godzillaasd\",\r\n    \"pw\": \"legjobbjelszois\"    \r\n\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/user/register",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"user",
-						"register"
-					]
-				},
-				"description": "Regisztrációt szolgáló végpont.  \nParaméterek:\n\n- name - felhasználó neve\n- pw - felhasználó jelszava\n    \n\nHa nem valid paramétereket használsz akkor zod error kiirja hogy mit vár. Siker esetén felviszi az adatokat a user táblába.\n\n200 OK - Sikeres regisztráció\n\n400 Akkor a bodyban valamelyik kulcsot elirtad pl name helyett namea\n\n409 a felhasználó név már létezik"
-			},
-			"response": []
-		},
-		{
-			"name": "Delete User",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjo1MSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4MjA1MTgsImV4cCI6MTcwOTgyMjMxOH0.d3X8DzmLd5cHe9nTCQqM7k4ynA_yrROVr0V1cb7_9lo",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\r\n    \"id\": 812   \r\n    \r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/protected/deleteUser",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"deleteUser"
-					]
-				},
-				"description": "Felhasználó törlésére szánt végpont. Védett végpont, érvényes accessToken-el lehet csak elérni.  \nParaméterek:\n\n- Headerből jön a jwt token, az alapján törlődik a felhasználó\n    \n\nId alapján kitörli az adatbázisból az adott személyt.  \nNem létező user esetén 404 jön és egy prisma hiba üzenet."
-			},
-			"response": []
-		},
-		{
-			"name": "Refresh Token",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\r\n    \"refreshToken\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6ImxlZ2pvYmJqZWxzem9pcyIsImlkIjo1MiwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzA5ODkwMDg5LCJleHAiOjE3MDk4OTM2ODl9.xKjy5TA_PFAUk2yvCBpA_7UVM4ZUPs-MksM9q7FiCfg\"    \r\n    \r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/token/refresh",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"token",
-						"refresh"
-					]
-				},
-				"description": "Ez a végpont szolgál arra hogy új accessTokent generáljunk.  \nParaméterek:\n\n- refreshToken - a bejelentkezésnél generált token\n    \n\nHa nem jó refershTokent adunk meg akkor 403 status kód jön.\n\n200 OK ha jó a token és generálja is az új accessTokent\n\n403 Forbidden ha nem jó a refresh kód amit kapott\n\n400 Bad Request jön ha zod error van (ha rosszul küldtük el a bodyban a paramétereket)"
-			},
-			"response": []
-		},
-		{
-			"name": "getCikkByCikkszam",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\r\n\"cikkszam\":\"000002\"\r\n\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/protected/product/getCikk",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"product",
-						"getCikk"
-					]
-				},
-				"description": "Cikk lekérdezése cikkszám alapján. Védett végpont tehát a headerben szerepelnie kell egy érvényes accessTokennek.  \nParaméterek:\n\n- cikkszam\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
-			},
-			"response": []
-		},
-		{
-			"name": "getCikkByEAN",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzOTkxNDQsImV4cCI6MTcxMDQwMDk0NH0.zDet9aun10vuI3iZNzHcIQwaiNKCVHP5wCNzjK4BAmY",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"eankod\": \"4006050477386\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/protected/product/getCikkByEAN",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"product",
-						"getCikkByEAN"
-					]
-				},
-				"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk"
-			},
-			"response": []
-		},
-		{
-			"name": "Profile",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzNDE2NjQsImV4cCI6MTcxMDM0MzQ2NH0.gco3q24KgMO_YZw6epIwHt7zlMtJyHaGgxRVEHSh5G4",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/protected/user/profile",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"user",
-						"profile"
-					]
-				},
-				"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait.\n\n200 OK ha szupi az accessToken\n\n403 Forbidden ha nem szupi az accessToken"
-			},
-			"response": []
-		},
-		{
-			"name": "Logout",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTQ1ODMsImV4cCI6MTcwOTg5NjM4M30.TPa3mcEYHTxga5lNA3u3rV7r5V9UYF4qADUIirPL5OY",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/protected/user/logout",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"user",
-						"logout"
-					]
-				},
-				"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja.\n\n200 OK Ha sikeres a kijelentkezés\n\n403 Forbidden ha nem jó az accessToken"
-			},
-			"response": []
-		},
-		{
-			"name": "Profile2",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer protected/product/getCikk",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"cikkszam\": \"ab007\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8000/protected/product/getCikk",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"protected",
-						"product",
-						"getCikk"
-					]
+				{
+					"name": "Refresh Token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"refreshToken\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwic3plbWVseWtvZCI6MSwidG9rZW5UeXBlIjoicmVmcmVzaFRva2VuIiwiaWF0IjoxNzExMTAxNzQxLCJleHAiOjE3MTExMDUzNDF9.Ijw5WjBE2Hl5MJOtgiD0wYsWKNjttnUZMQQ-GGXQIZwaaaeqw\"    \r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/token/refresh",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"token",
+								"refresh"
+							]
+						},
+						"description": "Ez a végpont szolgál arra hogy új accessTokent generáljunk.  \nParaméterek:\n\n- refreshToken - a bejelentkezésnél generált token\n    \n\nHa nem jó refershTokent adunk meg akkor 403 status kód jön.\n\n200 OK ha jó a token és generálja is az új accessTokent\n\n403 Forbidden ha nem jó a refresh kód amit kapott\n\n400 Bad Request jön ha zod error van (ha rosszul küldtük el a bodyban a paramétereket)\n\n500 Ha nem fut az adatbázis"
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "TESZT LOGIN",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwicHciOiJhYSIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzEwODM2ODQ1LCJleHAiOjE3MTA4Mzc0NDV9.nCHaRj19h41zsFmm0u_EpgWcRc5s3EHEt1UKD2yp674",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\":\"sysdba\",\r\n    \"pw\" : \"a\"\r\n\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Protected",
+			"item": [
+				{
+					"name": "Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwic3plbWVseWtvZCI6MSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTA4NTQ1MTIsImV4cCI6MTcxMDg1NTExMn0.IpKDx411rW9RIJ1d1FKQoYfbAjup-GWCH2NBr5oEd70",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/user/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"user",
+								"profile"
+							]
+						},
+						"description": "Védett végpont tehát csak accessTokennel lehet elérni.\n\nSiker esetén vissza adja a felhasználó adatait.\n\n200 OK ha szupi az accessToken\n\n403 Forbidden ha nem szupi az accessToken\n\n500 ha nem megy a db szerver"
+					},
+					"response": []
+				},
+				{
+					"name": "Menu",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/protected/user/menu",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"user",
+								"menu"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{url}}/user/teszt",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"user",
-						"teszt"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "TESZT LOGOUT",
-			"request": {
-				"auth": {
-					"type": "noauth"
+				{
+					"name": "getCikk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n\"value\":\"000005\",\r\n\"validType\":\"etk\"\r\n\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/product/getCikk",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"product",
+								"getCikk"
+							]
+						},
+						"description": "Cikk lekérdezése vagy ETK vagy EAN alapján\n\n- value: ETK vagy EAN kód\n    \n- validType: vagy etk vagy ean vagy both (both esetén ean-t adok vissza)\n    \n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk\n\n500 Ha nem megy a db szerver"
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2Mzc1MywiZXhwIjoxNzEwNzY0MzUzfQ.EG859wmWz03k_9z_69Nbi82fESwxp8FSI93ZQOhJC9I",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{url}}/protected/user/logoutteszt",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"user",
-						"logoutteszt"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "TESZT REFRESH TOKEN",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2MzYxMywiZXhwIjoxNzEwNzY0MjEzfQ.tnhWAEaYCGAbB1LRSa6nu3l9Fd6Pv5R61aqMgu14mK8\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "getCikkByETK",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"cikkszam\":\"000002\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/product/getCikkByETK",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"product",
+								"getCikkByETK"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{url}}/token/refreshTeszt",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"token",
-						"refreshTeszt"
-					]
+				{
+					"name": "getCikkByEAN",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTAzOTkxNDQsImV4cCI6MTcxMDQwMDk0NH0.zDet9aun10vuI3iZNzHcIQwaiNKCVHP5wCNzjK4BAmY",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"eankod\": \"4061462985683\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/product/getCikkByEAN",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"product",
+								"getCikkByEAN"
+							]
+						},
+						"description": "Cikk lekérdezése EAN kód alapján. Csak 13 hosszú számot fogad el és érvényes EAN kódnak kell lennie( nem random 13 szám hanem a kimatekozott cucc).  \nParaméterek:\n\n- eankod\n    \n\nHibás kód esetén jön a zod error.\n\n200 OK akkor megvan a cikk és vissza is adjuk\n\n204 nincs meg a cikk\n\n400 akkor nem jó a body amit kapunk\n\n500 ha nem megy a db szerver"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR29kemlsbGFhc2QiLCJwdyI6NTIsImlkIjo1MiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MDk4OTQ1ODMsImV4cCI6MTcwOTg5NjM4M30.TPa3mcEYHTxga5lNA3u3rV7r5V9UYF4qADUIirPL5OY",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/user/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"user",
+								"logout"
+							]
+						},
+						"description": "Kilépést szolgáló végpont. Védett végpont tehát csak érvényes accesTokennel lehet elérni.  \nParaméterek:\n\n- refreshToken\n    \n\nHa valid az accessToken és a refreshToken is akkor ezeket kitörli az adatbázisból. Így megszűnik a felhasználó authentikációja.\n\n200 OK Ha sikeres a kijelentkezés\n\n403 Forbidden ha nem jó az accessToken  \n(akkor is ezjön ha sikeres kilépés után meg pingeled mert hát ugye kitörölted az előbb a tokent)\n\n500 Ha nem megy a db szerver"
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "TESZT GETCIKKBYCIKKSZAM",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwicHciOiJhIiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTA4MzY4NDUsImV4cCI6MTcxMDgzNzQ0NX0.6-3WuNrqaOFTEjKQwjhI4DbBAyjcB2Sxk7qwzJkGqk8",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"cikkszam\":\"000002\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Tesztelős",
+			"item": [
+				{
+					"name": "Profile2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer protected/product/getCikk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cikkszam\": \"ab007\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/protected/product/getCikk",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"protected",
+								"product",
+								"getCikk"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{url}}/protected/product/getCikkTeszt",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"product",
-						"getCikkTeszt"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "TESZT EANCIKK",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [
-					{
-						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2NjI4OCwiZXhwIjoxNzEwNzY2ODg4fQ.mn7dDRsiu-Fj7ufYEiuS5MsI29U793DGuETNsYye98A",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"eankod\": \"5997710400167\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "TESZT LOGIN",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwicHciOiJhYSIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIiwiaWF0IjoxNzEwODM2ODQ1LCJleHAiOjE3MTA4Mzc0NDV9.nCHaRj19h41zsFmm0u_EpgWcRc5s3EHEt1UKD2yp674",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"sysdba\",\r\n    \"pw\" : \"a\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/teszt",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"teszt"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{url}}/protected/product/getCikkByEANTeszt",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"protected",
-						"product",
-						"getCikkByEANTeszt"
-					]
+				{
+					"name": "TESZT LOGOUT",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2Mzc1MywiZXhwIjoxNzEwNzY0MzUzfQ.EG859wmWz03k_9z_69Nbi82fESwxp8FSI93ZQOhJC9I",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/protected/user/logoutteszt",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"user",
+								"logoutteszt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TESZT REFRESH TOKEN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2MzYxMywiZXhwIjoxNzEwNzY0MjEzfQ.tnhWAEaYCGAbB1LRSa6nu3l9Fd6Pv5R61aqMgu14mK8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/token/refreshTeszt",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"token",
+								"refreshTeszt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TESZT EANCIKK",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman.",
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoicmVhY3QiLCJwdyI6ImEiLCJ0b2tlblR5cGUiOiJhY2Nlc3NUb2tlbiIsImlhdCI6MTcxMDc2NjI4OCwiZXhwIjoxNzEwNzY2ODg4fQ.mn7dDRsiu-Fj7ufYEiuS5MsI29U793DGuETNsYye98A",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"eankod\": \"5997710400167\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/product/getCikkByEANTeszt",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"product",
+								"getCikkByEANTeszt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TESZT GETCIKKBYCIKKSZAM",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic3lzZGJhIiwicHciOiJhIiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTA4MzY4NDUsImV4cCI6MTcxMDgzNzQ0NX0.6-3WuNrqaOFTEjKQwjhI4DbBAyjcB2Sxk7qwzJkGqk8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cikkszam\":\"000002\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/protected/product/getCikkTeszt",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"protected",
+								"product",
+								"getCikkTeszt"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	],
 	"auth": {
@@ -519,7 +497,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "{{accessToken }}",
+				"value": "{{accessToken}}",
 				"type": "string"
 			}
 		]
@@ -551,14 +529,16 @@
 			"type": "string"
 		},
 		{
-			"key": "accessToken ",
-			"value": "",
-			"type": "string"
+			"key": "refreshTokenRaktarPilot",
+			"value": ""
 		},
 		{
-			"value": "",
-			"type": "string",
-			"disabled": true
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "refreshToken",
+			"value": ""
 		}
 	]
 }
