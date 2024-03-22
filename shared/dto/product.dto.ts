@@ -20,7 +20,7 @@ export const ProductNumberSchemaInput = z.object({
 
 export const ProductGeneralSchema = z.object({
     value: z.string(),
-    validType: z.enum([ValidTypes.ean,ValidTypes.both,ValidTypes.etk]).describe('Valid EAN type'),
+    validTypesArray: z.array(z.string())
 });
 
 export const ProductListOutput = z.object({
