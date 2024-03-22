@@ -1,22 +1,25 @@
 import { ZodDTO } from "../dto/zodDTO";
 import {ZodError} from "zod";
-import {PrismaClientInitializationError, PrismaClientRustPanicError} from "@prisma/client/runtime/library";
 import {NextFunction, Request, Response} from 'express';
-import {JsonWebTokenError} from "jsonwebtoken";
+
 
 export function handleErrors(err: Error, _req: Request, res: Response, _next: NextFunction) {
-    if(err instanceof PrismaClientRustPanicError){
-        return res.status(401).json({message: 'Invalid username or password'});
-    }
-    if(err instanceof PrismaClientInitializationError){
-        return res.status(500).json({message: 'Cannot connect to the database'});
-    }
-    if(err instanceof ZodError){
-        return res.status(400).json({error: ZodDTO.fromZodError(err)});
-    }
-    if(err instanceof JsonWebTokenError){
-        return res.status(403).json(err);
+    const statusMessageMapping: Record<string, {status: number, message: string}> = {
+        PrismaClientRustPanicError: {status: 401, message: 'Invalid username or password'},
+        PrismaClientInitializationError: {status: 500, message: 'Cannot connect to the database'},
+        ZodError: {status: 400, message: ''},
+        JsonWebTokenError: {status: 403, message: ''},
+        MenuNotFound: {status: 404, message: ''},
+        UserNotFound: {status: 401, message: ''},
+        RefreshError: {status: 403, message: ''}
+    };
+
+    const statusMessage = statusMessageMapping[err.constructor.name];
+    if (!statusMessage) { return res.status(500).json({message: 'Unexpected error'}); }
+
+    if (err instanceof ZodError){
+        return res.status(statusMessage.status).json({error: ZodDTO.fromZodError(err)});
     }
 
-    return res.status(500).json({message: 'Unexpected error'});
+    return res.status(statusMessage.status).json({message: statusMessage.message || err.message});
 }

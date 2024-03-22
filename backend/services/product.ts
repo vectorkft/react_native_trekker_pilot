@@ -8,6 +8,8 @@ import {
     ZProductNumberSchemaInput,
 } from "../../shared/dto/product";
 import {zParse} from "../../shared/services/zod";
+import {ValidTypes} from "../../shared/enums/types";
+import {Product} from "../interface/product";
 
 const prisma = new PrismaClient()
 
@@ -23,7 +25,7 @@ export async function getCikkByCikkszam(input: ZProductNumberSchemaInput) {
     if (cikk.length===0) {
         return false;
     }
-    return processArticles(cikk);
+    return processProducts(cikk);
 
 }
 
@@ -36,14 +38,14 @@ export async function getCikkByEanKod(input: ZProductEANSchemaInput){
     if (cikk.length === 0) {
         return false;
     }
-    return processArticles(cikk);
+    return processProducts(cikk);
 
 
 }
 
-const processArticles = (articles: any[]) => {
+const processProducts = (products: Product[]) => {
     const result = {
-        data: articles.flatMap((articleElement) => [
+        data: products.flatMap((articleElement) => [
             ProductDataOutput.parse({
                 key: 'etk',
                 title: 'ETK',
@@ -60,17 +62,22 @@ const processArticles = (articles: any[]) => {
                 value: articleElement.jellemzo,
             }),
         ]),
-        count: articles.length
+        count: products.length
     }
     return ProductListOutput.parse(result);
 }
 
 export async function getCikkHelper(input: ZProductGeneralSchema){
     if(input.validTypesArray.includes(ValidTypes.ean)){
+
         const validData= await zParse(ProductEANSchemaInput, input);
+
         return await getCikkByEanKod(validData);
+
     }else if(input.validTypesArray.includes(ValidTypes.etk)){
+
         const validData= await zParse(ProductNumberSchemaInput, input);
+
         return await getCikkByCikkszam(validData);
     }
     return 'Invalid validType';

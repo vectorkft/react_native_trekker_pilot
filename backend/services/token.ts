@@ -1,6 +1,6 @@
 import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
-import {VPayload} from "../models/VPayload";
+import {Payload} from "../interface/payload";
 import Chalk from 'chalk';
 import {zParse} from "../../shared/services/zod";
 import dotenv from "dotenv";
@@ -11,6 +11,7 @@ import {
     ZUserLoginDTOInput,
     ZuserPayloadInput, ZUserSchemaInput
 } from "../../shared/dto/user-login";
+import {RefreshError} from "../errors/refresh-error";
 
 
 const prisma = new PrismaClient()
@@ -19,8 +20,8 @@ const prisma = new PrismaClient()
 dotenv.config()
 
 export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refreshToken: ZTokenDTOInput, userInput: ZUserLoginDTOInput, szemelyKod: number){
-        const decodedAccessToken = jwt.decode(accessToken.accessToken) as VPayload;
-        const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as VPayload;
+        const decodedAccessToken = jwt.decode(accessToken.accessToken) as Payload;
+        const decodedRefreshToken= jwt.decode(refreshToken.refreshToken) as Payload;
         if (!decodedRefreshToken || !decodedAccessToken) {
             throw new Error('Cannot decode token');
 
@@ -108,12 +109,12 @@ export async function refreshToken(refreshToken: ZTokenDTOInput) {
         const payload= await retrieveUserInfoFromRefreshToken(refreshToken);
 
         if(!await isRefreshTokenInDatabase({refreshToken :refreshToken.refreshToken})){
-            return await zParse(errorMessageDTO,{errorMessage: 'You tried to use AccessToken as RefreshToken'});
+            throw new RefreshError();
         }
 
         const accessToken = await signTokensFromTokenPayload('accessToken','ACCESS_TOKEN_EXPIRE',payload);
 
-        const decodedAccessToken=jwt.decode(accessToken) as VPayload;
+        const decodedAccessToken=jwt.decode(accessToken) as Payload;
 
         await prisma.tokens_v2.updateMany({
             where: { userName: payload.name },
@@ -167,7 +168,7 @@ export async function isAccessTokenInDatabase(accessToken: ZAccessTokenDTOInput)
 async function retrieveUserInfoFromRefreshToken(token: ZTokenDTOInput){
 
     const secretKey = process.env.JWT_SECRET_KEY?? '';
-    const payload  = jwt.verify(token.refreshToken,secretKey) as VPayload;
+    const payload  = jwt.verify(token.refreshToken,secretKey) as Payload;
     return zParse(userPayLoadInput,{name: payload.name,szemelykod: payload.szemelykod});
 
 

@@ -1,12 +1,13 @@
 import express, {Request,Response} from 'express';
 import * as cron from 'node-cron';
 import {deleteExpiredTokens_new} from './services/token';
-import {verifyToken} from "./middleware/TokenMiddleware";
-import {Logger} from "./middleware/LogMiddleWare";
+import {verifyToken} from "./middleware/token-validator";
+import {Logger} from "./middleware/log-to-console";
 import {userRouter, protectedUserRouter} from './routes/user';
 import {tokenRouter} from "./routes/token";
 import {protectedProductRouter} from "./routes/product";
 import {handleErrors} from "./middleware/error-handler";
+import {menuRouter} from "./routes/menu";
 
 const app = express();
 const HTTP_PORT = 8000;
@@ -23,6 +24,7 @@ app.use('/token', tokenRouter);
 // Protected endpoints
 app.use('/protected/user',verifyToken, protectedUserRouter);
 app.use('/protected/product',verifyToken, protectedProductRouter);
+app.use('/protected/',verifyToken,menuRouter);
 
 app.listen(HTTP_PORT, () => {
     console.log("Server is listening on port " + HTTP_PORT);

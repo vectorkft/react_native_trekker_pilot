@@ -16,10 +16,9 @@ userRouter.post('/login', async (req: Request, res: Response, next : NextFunctio
 
     try {
         const validData= await zParse(UserLoginDTOInput,req.body);
+
         const body=await userService.loginUser(validData);
-        if("errorMessage" in body){
-            return res.status(401).json(body);
-        }
+
         return res.status(200).json(body);
     } catch (err) {
         next(err);
@@ -45,20 +44,6 @@ protectedUserRouter.post('/profile',async (_req: Request, res: Response)=>{
 
 
 });
-
-protectedUserRouter.post('/menu', async(_req: Request, res: Response, _next : NextFunction)=>{
-    return res.status(200).json('Menu endpoint works');
-})
-
-
-
-
-
-
-
-
-
-
 
 //// FOR TESTING PURPOSE ONLY
 userRouter.post('/teszt', async(req: Request, res : Response) => {
