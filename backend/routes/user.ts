@@ -6,6 +6,7 @@ import {UserLoginDTOInput} from "../../shared/dto/user-login";
 import {HTTP_STATUS_OK} from "../constants/http-status-codes";
 
 
+
 // Public endpoints
 const userRouter = express.Router();
 // Protected endpoints
@@ -44,3 +45,4 @@ protectedUserRouter.post('/profile',async (_req: Request, res: Response)=>{
 });
 
 export { userRouter, protectedUserRouter };
+
