@@ -21,7 +21,7 @@ export async function handleErrors(err: Error, _req: Request, res: Response, _ne
     };
 
     const statusMessage = statusMessageMapping[err.constructor.name];
-    if (!statusMessage) { return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).json({message: 'Unexpected error'}); }
+    if (!statusMessage) { return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).json({message: 'Unexpected error : ' +err}); }
 
     if (err instanceof ZodError){
         //return res.status(statusMessage.status).json({error: ZodDTO.fromZodError(err)});
