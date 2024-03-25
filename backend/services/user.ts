@@ -10,8 +10,8 @@ import {
     ZUserLoginDTOInput,
 } from "../../shared/dto/user-login";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
-import {errorMessageDTO} from "../../shared/dto/error-message";
 import {UserNotFound} from "../errors/user-not-found";
+import {TREKKER_DEVICES} from "../constants/trekker_devices";
 
 
 
@@ -52,9 +52,9 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
 }
 
 
-//TODO: Itt a Zebrát is enumból kéne vagy ilyesmi
 async function deviceInfoHelper(deviceData: string){
-        if(deviceData.includes('Zebra')){
+    const lowerCaseDeviceData= deviceData.toLowerCase();
+        if(TREKKER_DEVICES.some(device => lowerCaseDeviceData.includes(device))){
             return DeviceInfoEnum.trekker;
         }
         return DeviceInfoEnum.mobile;
