@@ -36,7 +36,7 @@ export function Logger(req: Request, res: Response, next: NextFunction){
             ${timestamp}
             ${method} ${url}
             ${ip}
-            ${JSON.stringify(parsedBody, null, 2)}
+            ${JSON.stringify(parsedBody)}
             ${logDivider}`));
 
         // Call the original send method

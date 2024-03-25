@@ -1,11 +1,8 @@
 import express, {NextFunction, Request, Response} from 'express';
 import {zParse} from "../../shared/services/zod";
-import {ZodDTO} from "../dto/zodDTO";
 import * as tokenService from "../services/token";
-import * as tokenServiceNew from "../services/servicesNew/tokenServiceNew"
-import {PrismaClientInitializationError} from '@prisma/client/runtime/library';
 import {TokenDTOInput} from "../../shared/dto/token";
-import {JsonWebTokenError} from "jsonwebtoken";
+import {HTTP_STATUS_OK} from "../constants/http-status-codes";
 
 export const tokenRouter = express.Router();
 
@@ -14,24 +11,8 @@ tokenRouter.post('/refresh', async (req : Request, res : Response, next : NextFu
     try {
         const validData = await zParse(TokenDTOInput, req.body);
         const body = await tokenService.refreshToken({ refreshToken: validData.refreshToken });
-        return res.status(200).json(body);
+        return res.status(HTTP_STATUS_OK).json(body);
     } catch (e) {
         next(e);
     }
 });
-//// FOR TESTING PURPOSE ONLY
-tokenRouter.post('/refreshTeszt', async (req:Request, res : Response)=>{
-    try {
-        const validData = await zParse(TokenDTOInput, req.body);
-        const body = await tokenServiceNew.refreshToken_new({ refreshToken: validData.refreshToken });
-        if('errorMessage' in body){
-            //Ha van errorMessage akkor rossz a token amit kaptunk
-            return res.status(403).json(body);
-        }
-        return res.status(200).json(body);
-    } catch (e) {
-
-        return res.status(400).json(e);
-
-    }
-})
