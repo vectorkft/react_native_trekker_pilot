@@ -24,8 +24,9 @@ export async function handleErrors(err: Error, _req: Request, res: Response, _ne
     if (!statusMessage) { return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).json({message: 'Unexpected error : ' +err}); }
 
     if (err instanceof ZodError){
+        const message=await parseZodError_backend(err)
         //return res.status(statusMessage.status).json({error: ZodDTO.fromZodError(err)});
-        return res.status(statusMessage.status).json(await parseZodError_backend(err));
+        return res.status(statusMessage.status).json({message});
     }
 
     return res.status(statusMessage.status).json({message: statusMessage.message || err.message});
