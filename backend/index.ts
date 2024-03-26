@@ -11,6 +11,7 @@ import {menuRouter} from "./routes/menu";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import {options} from "./swagger/options";
+import {HTTP_STATUS_OK} from "./constants/http-status-codes";
 
 const app = express();
 const HTTP_PORT = 8000;
@@ -40,15 +41,15 @@ app.listen(HTTP_PORT, () => {
 });
 
 app.get('/', (_req: Request, res: Response) => {
-    return res.status(200).json('Check postman for guidance');
+    return res.status(HTTP_STATUS_OK).json('Check postman for guidance');
 });
 app.use(handleErrors);
-cron.schedule("*/6 * * * * *", deleteExpiredTokens_new);
+cron.schedule(" * * * * *", deleteExpiredTokens_new);
 
 // Státusz ellenőrzések, nem fontos
 
 app.all('/check', (_req: Request,res: Response) => {
-    return res.status(200).json({
+    return res.status(HTTP_STATUS_OK).json({
         message: 'Server is running'
     })
 })
