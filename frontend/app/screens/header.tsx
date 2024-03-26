@@ -15,9 +15,11 @@ import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 import {AlertTypes} from '../enums/types';
 import {colors} from '../enums/colors';
+import {ErrorContext} from '../providers/error';
 
 const Header = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
+  const {setError} = useContext(ErrorContext);
   const {isConnected, setIsLoggedIn} = useStore.getState();
   const {loading, setLoadingState} = useContext(LoadingContext);
   const {errorMessage, setErrorMessage} = useAlert();
@@ -26,6 +28,18 @@ const Header = ({navigation}: AppNavigation) => {
   const hideButton =
     routeHomeScreen.params.hidebutton || routeProfile.params.hidebutton;
   const hideButtonProfile = routeProfile.params.hideButtonProfile;
+
+  const handleLogoutSuccess = () => {
+    setIsLoggedIn(false);
+    setLoadingState(false);
+    navigation.navigate('login');
+  };
+
+  const handleLogoutError = () => {
+    setLoadingState(false);
+    setErrorMessage('Sikertelen kijelentkezés');
+    return;
+  };
 
   if (loading) {
     return <LoadingScreen />;
@@ -65,15 +79,11 @@ const Header = ({navigation}: AppNavigation) => {
             disabled={!isConnected}
             onPress={async () => {
               setLoadingState(true);
-              const logoutSuccess = await LoginService.handleLogout();
-              if (logoutSuccess) {
-                setIsLoggedIn(false);
-                setLoadingState(false);
-                return navigation.navigate('login');
-              } else {
-                setLoadingState(false);
-                return setErrorMessage('Sikertelen kijelentkezés');
-              }
+              await LoginService.handleLogout(
+                handleLogoutSuccess,
+                handleLogoutError,
+                setError,
+              );
             }}>
             <Icon
               name="exit-to-app"

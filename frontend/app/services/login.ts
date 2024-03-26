@@ -7,8 +7,7 @@ import {
 } from '../../../shared/dto/user-login';
 import {LocalStorageService} from './local-storage';
 import * as Sentry from '@sentry/react-native';
-import {ZApiError} from '../../../shared/dto/api-error';
-
+import {RESPONSE_SUCCESS, RESPONSE_UNAUTHORIZED} from '../constants/response-status';
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
     username: string | undefined;
@@ -24,40 +23,60 @@ export const LoginService = {
 
   handleSubmit: async (
     input: ZUserLoginDTOInput,
-  ): Promise<ZUserLoginDTOOutput | ZApiError> => {
+    rememberMe: boolean,
+    handleError: (error: string) => void,
+    handleSubmit: (response: ZUserLoginDTOOutput, rememberMe: boolean) => void,
+    setError: (error: any, changeValue?: boolean | undefined) => void,
+  ): Promise<void> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(input),
     };
 
-    try {
-      return await ApiService.doRequest(
-        '/user/login',
-        options,
-        UserLoginDTOOutput,
-      );
-    } catch (error: any) {
-      Sentry.captureException(error);
-      throw error;
-    }
+    ApiService.doRequest('/user/login', options, UserLoginDTOOutput)
+      .then(response => {
+        if ('error' in response && response.status === RESPONSE_UNAUTHORIZED) {
+          handleError('Hibás felhasználónév vagy jelszó!');
+        } else {
+          if (rememberMe) {
+            LocalStorageService.storeData({
+              username: input.name,
+              rememberMe: true,
+            });
+          } else {
+            LocalStorageService.deleteData(['username']);
+            LocalStorageService.storeData({rememberMe: false});
+          }
+          handleSubmit(response, rememberMe);
+        }
+      })
+      .catch(error => {
+        setError(error);
+        Sentry.captureException(error);
+      });
   },
 
-  handleLogout: async (): Promise<boolean | undefined> => {
+  handleLogout: async (
+    handleSuccess: () => void,
+    handleError: () => void,
+    setError: (error: any, changeValue?: boolean | undefined) => void,
+  ): Promise<void> => {
     const options = {
       method: 'GET',
-      accessToken: await TokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(setError),
     };
 
-    try {
-      const result = await ApiService.doRequest(
-        '/protected/user/logout',
-        options,
-      );
-
-      return result.status === 200;
-    } catch (error: any) {
-      Sentry.captureException(error);
-      throw error;
-    }
+    ApiService.doRequest('/protected/user/logout', options)
+      .then(response => {
+        if (response.status === RESPONSE_SUCCESS) {
+          handleSuccess();
+        } else {
+          handleError();
+        }
+      })
+      .catch(error => {
+        setError(error);
+        Sentry.captureException(error);
+      });
   },
 };

@@ -2,10 +2,7 @@ import {useStore} from '../states/zustand';
 import jwtDecode from 'jwt-decode';
 import {ExpInterface} from '../interfaces/decoded-token';
 import {ApiService} from './api';
-import {
-  parseZodError,
-  validateZDTOForm,
-} from '../../../shared/services/zod';
+import {parseZodError, validateZDTOForm} from '../../../shared/services/zod';
 import {
   TokenDTOInput,
   TokenDTOOutput,
@@ -14,6 +11,7 @@ import {
 } from '../../../shared/dto/token';
 import {ZodError} from 'zod';
 import * as Sentry from '@sentry/react-native';
+import {NavigationService} from './navigation';
 
 const isTokenExpired = (token: string): boolean => {
   const MILLISECONDS_PER_SECOND = 1000;
@@ -51,8 +49,16 @@ const refreshAccessToken = async (
   }
 };
 
+const handleZodError = async (error: ZodError) => {
+  const msg = await parseZodError(error);
+  Sentry.setTag('Invalid token', msg);
+  return;
+};
+
 export const TokenHandlingService = {
-  getTokenIfValid: async (): Promise<string | undefined> => {
+  getTokenIfValid: async (
+    setError: (error: any, changeValue?: boolean | undefined) => void,
+  ): Promise<string | undefined> => {
     const {accessToken, refreshToken, setAccessToken} = useStore.getState();
 
     if (isTokenExpired(accessToken)) {
@@ -60,26 +66,27 @@ export const TokenHandlingService = {
     }
 
     if (isTokenExpired(refreshToken)) {
-      const {isValid, error} = (await validateZDTOForm(TokenDTOInput, {
-        refreshToken,
-      })) as {isValid: boolean; error: ZodError};
+      await validateZDTOForm(
+        TokenDTOInput,
+        {
+          refreshToken,
+        },
+        handleZodError,
+      );
 
-      if (isValid) {
-        try {
-          const newToken = await refreshAccessToken({refreshToken});
+      try {
+        const response = await refreshAccessToken({refreshToken});
 
-          if (newToken) {
-            setAccessToken(newToken.newAccessToken);
-            return newToken.newAccessToken;
-          }
-        } catch (e) {
-          Sentry.captureException(e);
-          return;
+        if (response) {
+          setAccessToken(response.newAccessToken);
+          return response.newAccessToken;
         }
-      } else {
-        const msg = await parseZodError(error);
-        Sentry.setTag('Invalid token', msg);
+      } catch (e) {
+        setError(e);
+        Sentry.captureException(e);
       }
+    } else {
+      NavigationService.redirectToLogin();
     }
   },
 };

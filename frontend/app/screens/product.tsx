@@ -23,7 +23,6 @@ import {Icon} from 'react-native-elements';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
 import {DarkModeContext} from '../providers/dark-mode';
 import {DeviceInfoEnum} from '../../../shared/enums/device-info';
-import {TIMEOUT_DELAY} from '../constants/time';
 import HamburgerMenu from '../components/Vhamburger-menu';
 import {productStyles} from '../styles/product-screen';
 import {
@@ -33,60 +32,61 @@ import {
 import {AlertTypes, ToastTypes} from '../enums/types';
 import {ValidTypes} from '../../../shared/enums/types';
 import {useAlert} from '../states/use-alert';
-import * as Sentry from '@sentry/react';
 import {CameraService, useCamera} from '../services/camera';
 import {colors} from '../enums/colors';
 import {ZodError} from 'zod';
 import {ValidatedValue} from '../interfaces/types';
+import {ErrorContext} from '../providers/error';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
+  const TIMEOUT_DELAY = 100;
   const {isDarkMode} = useContext(DarkModeContext);
+  const {setError} = useContext(ErrorContext);
   const {errorMessage, setErrorMessage} = useAlert();
   const {isCameraActive, setIsCameraActive, handleOnClose, clickCamera} =
     useCamera(setErrorMessage);
   const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [searchQueryVal, setSearchQueryVal] = useState('');
+  const [searchValue, setSearchValue] = React.useState('');
+  const [searchValueSave, setSearchValueSave] = useState('');
   const [changeHandlerResult, setChangeHandlerResult] = useState<
     ZProductListOutput | Response | undefined
   >(undefined);
   const [keyboardActive, setKeyboardActive] = useState(false);
-  const {inputRef} = useInputChange(searchQuery);
+  const {inputRef} = useInputChange(searchValue);
 
   const handleError = async (error: ZodError) => {
-    const msg = await parseZodError(error);
-    setErrorMessage(msg);
-    setSearchQuery('');
+    parseZodError(error).then(resp => {
+      setErrorMessage(resp);
+      setSearchValue('');
+    });
   };
 
   const handleSuccess = async (formData: ValidatedValue) => {
-    const res = await ProductService.getProduct(formData);
-    setChangeHandlerResult(res);
-    setSearchQuery('');
+    ProductService.getProduct(formData, setError).then(res => {
+      setChangeHandlerResult(res);
+      setSearchValue('');
+    });
   };
 
   const getProduct = async (value: string) => {
-    try {
-      setErrorMessage(null);
-      await validateFormArray(
-        value,
-        {
-          propList: [
-            {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
-            {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
-          ],
-        },
-        handleError,
-        handleSuccess,
-      );
+    const checkedValue = value.replace(/[\x00-\x20\x7F-\x9F]/g, '');
+    setErrorMessage(null);
 
-      setSearchQueryVal(value);
-    } catch (e) {
-      Sentry.captureException(e);
-      setErrorMessage('Hiba történt próbálja újra!');
-    }
+    await validateFormArray(
+      checkedValue,
+      {
+        propList: [
+          {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
+          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
+        ],
+      },
+      handleError,
+      handleSuccess,
+    );
+
+    setSearchValueSave(checkedValue);
   };
 
   const {onBarCodeRead} = CameraService.useOnBarCodeRead(
@@ -120,16 +120,22 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
           <VInput
             inputProps={{
               ref: inputRef,
-              value: searchQuery,
+              value: searchValue,
               showSoftInputOnFocus:
                 deviceType === DeviceInfoEnum.mobile || keyboardActive,
               autoFocus: true,
-              onChangeText: setSearchQuery,
+              onChangeText: setSearchValue,
               onSubmitEditing: async () => {
-                const cleanedValue = searchQuery
-                  .replace(/\s+/g, '')
-                  .replace(/\n+/g, '');
-                await getProduct(cleanedValue);
+                if (!searchValue.trim()) {
+                  setTimeout(() => {
+                    if (inputRef.current) {
+                      inputRef.current.focus();
+                    }
+                  }, TIMEOUT_DELAY);
+                  return;
+                } else {
+                  await getProduct(searchValue);
+                }
               },
               placeholder: 'Keresés...',
               keyboardType: 'numeric',
@@ -142,11 +148,11 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     color={
                       isDarkMode ? colors.lightContent : colors.darkContent
                     }
-                    disabled={!searchQuery || !isConnected}
+                    disabled={!searchValue || !isConnected}
                     disabledStyle={productStyles().iconDisabledStyle}
-                    onPress={() => getProduct(searchQuery)}
+                    onPress={() => getProduct(searchValue)}
                   />
-                  {searchQuery && (
+                  {searchValue && (
                     <Icon
                       type="antdesign"
                       name="closecircle"
@@ -156,7 +162,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                         isDarkMode ? colors.lightContent : colors.darkContent
                       }
                       onPress={() => {
-                        setSearchQuery('');
+                        setSearchValue('');
                       }}
                     />
                   )}
@@ -201,7 +207,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
             <View>
               <VCardNotFound
                 title={'Nem található'}
-                value={searchQueryVal as string}
+                value={searchValueSave as string}
               />
             </View>
           )}

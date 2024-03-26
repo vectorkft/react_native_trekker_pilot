@@ -12,62 +12,59 @@ import {ValidatedValue} from '../interfaces/types';
 export const ProductService = {
   getProductByEAN: async (
     ean: ZProductEANSchemaInput,
+    setError: (error: any, changeValue?: boolean | undefined) => void,
   ): Promise<ZProductListOutput | Response | undefined> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(ean),
-      accessToken: await TokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(setError),
     };
 
-    try {
-      return await ApiService.doRequest(
-        '/protected/product/getCikkByEAN',
-        options,
-        ProductListOutput,
-      );
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
+    return await ApiService.doRequest(
+      '/protected/product/getCikkByEAN',
+      options,
+      ProductListOutput,
+    ).catch(error => {
+      setError(error);
+      Sentry.captureException(error);
+    });
   },
   getProductByNumber: async (
     productNumber: ZProductNumberSchemaInput,
+    setError: (error: any, changeValue?: boolean | undefined) => void,
   ): Promise<ZProductListOutput | Response | undefined> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(productNumber),
-      accessToken: await TokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(setError),
     };
 
-    try {
-      return await ApiService.doRequest(
-        '/protected/product/getCikkByETK',
-        options,
-        ProductListOutput,
-      );
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
+    return await ApiService.doRequest(
+      '/protected/product/getCikkByETK',
+      options,
+      ProductListOutput,
+    ).catch(error => {
+      setError(error);
+      Sentry.captureException(error);
+    });
   },
   getProduct: async (
     value: ValidatedValue,
+    setError: (error: any, changeValue?: boolean | undefined) => void,
   ): Promise<ZProductListOutput | Response | undefined> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(value),
-      accessToken: await TokenHandlingService.getTokenIfValid(),
+      accessToken: await TokenHandlingService.getTokenIfValid(setError),
     };
 
-    try {
-      return await ApiService.doRequest(
-        '/protected/product/getCikk',
-        options,
-        ProductListOutput,
-      );
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    }
+    return await ApiService.doRequest(
+      '/protected/product/getCikk',
+      options,
+      ProductListOutput,
+    ).catch(error => {
+      setError(error);
+      Sentry.captureException(error);
+    });
   },
 };

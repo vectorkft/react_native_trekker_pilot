@@ -35,16 +35,21 @@ export async function parseZodError(error: ZodError) : Promise<string> {
 export async function validateZDTOForm<T extends AnyZodObject>(
     schema: T,
     formData: z.infer<T>,
+    handleError?: (error: ZodError) => {},
 ): Promise<ValidationResult> {
     try {
         const body: z.infer<T> = await zParse(schema, formData);
         Sentry.captureMessage("DTO body", body);
-    } catch (error: any) {
+    } catch (error) {
         Sentry.captureException(error);
-        return {
-            isValid: false,
-            error: error,
-        };
+        if (handleError){
+            handleError(error as ZodError);
+        }else {
+            return {
+                error: error as ZodError,
+                isValid: false,
+            };
+        }
     }
 
     return {

@@ -4,10 +4,10 @@ import {ToastProps} from '../interfaces/Vtoast';
 import {Icon} from 'react-native-elements';
 import {internetToastStylesheet} from '../styles/Vinternet-toast';
 import {DarkModeContext} from '../providers/dark-mode';
-import {VTOAST_ANIMATION_DURATION} from '../constants/time';
 import {colors} from '../enums/colors';
 
 const VInternetToast = ({isVisible}: ToastProps) => {
+  const VTOAST_ANIMATION_DURATION = 500;
   const [slideAnim] = useState(
     new Animated.Value(Dimensions.get('window').height),
   );

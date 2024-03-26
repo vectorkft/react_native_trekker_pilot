@@ -3,11 +3,11 @@ import {Animated, Modal, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import {Alert} from '../interfaces/Valert';
 import {alertStylesheet} from '../styles/Valert';
-import {VALERT_ANIMATION_DURATION} from '../constants/time';
 import {AlertTypes} from '../enums/types';
 import {colors} from '../enums/colors';
 
 const VAlert: React.FC<Alert> = ({type, title, message}) => {
+  const VALERT_ANIMATION_DURATION = 100;
   const backgroundColor =
     type === AlertTypes.error
       ? colors.error
