@@ -1,19 +1,19 @@
 import {ApiService} from './api';
 import {
   ProductListOutput,
-  ZProductListOutput,
   ZProductEANSchemaInput,
   ZProductNumberSchemaInput,
 } from '../../../shared/dto/product';
 import {TokenHandlingService} from './token-handling';
 import * as Sentry from '@sentry/react-native';
 import {ValidatedValue} from '../interfaces/types';
+import {ApiResponseOutput} from '../interfaces/api-response';
 
 export const ProductService = {
   getProductByEAN: async (
     ean: ZProductEANSchemaInput,
     setError: (error: any, changeValue?: boolean | undefined) => void,
-  ): Promise<ZProductListOutput | Response | undefined> => {
+  ): Promise<ApiResponseOutput | void> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(ean),
@@ -32,7 +32,7 @@ export const ProductService = {
   getProductByNumber: async (
     productNumber: ZProductNumberSchemaInput,
     setError: (error: any, changeValue?: boolean | undefined) => void,
-  ): Promise<ZProductListOutput | Response | undefined> => {
+  ): Promise<ApiResponseOutput | void> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(productNumber),
@@ -51,7 +51,7 @@ export const ProductService = {
   getProduct: async (
     value: ValidatedValue,
     setError: (error: any, changeValue?: boolean | undefined) => void,
-  ): Promise<ZProductListOutput | Response | undefined> => {
+  ): Promise<ApiResponseOutput | void> => {
     const options = {
       method: 'POST',
       body: JSON.stringify(value),

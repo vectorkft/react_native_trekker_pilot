@@ -13,7 +13,6 @@ import {AppNavigation} from '../interfaces/navigation';
 import {
   ProductEANSchemaInput,
   ProductNumberSchemaInput,
-  ZProductListOutput,
 } from '../../../shared/dto/product';
 import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
@@ -37,6 +36,8 @@ import {colors} from '../enums/colors';
 import {ZodError} from 'zod';
 import {ValidatedValue} from '../interfaces/types';
 import {ErrorContext} from '../providers/error';
+import {ApiResponseOutput} from '../interfaces/api-response';
+import VMenu from '../components/VMenu';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const TIMEOUT_DELAY = 100;
@@ -50,9 +51,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchValue, setSearchValue] = React.useState('');
   const [searchValueSave, setSearchValueSave] = useState('');
-  const [changeHandlerResult, setChangeHandlerResult] = useState<
-    ZProductListOutput | Response | undefined
-  >(undefined);
+  const [changeHandlerResult, setChangeHandlerResult] =
+    useState<ApiResponseOutput | void>();
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchValue);
 
@@ -64,10 +64,9 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   };
 
   const handleSuccess = async (formData: ValidatedValue) => {
-    ProductService.getProduct(formData, setError).then(res => {
-      setChangeHandlerResult(res);
-      setSearchValue('');
-    });
+    const res = await ProductService.getProduct(formData, setError);
+    setChangeHandlerResult(res);
+    setSearchValue('');
   };
 
   const getProduct = async (value: string) => {
@@ -78,8 +77,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       checkedValue,
       {
         propList: [
-          {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
-          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
+          {name: ValidTypes.ean, parseType: ProductEANSchemaInput},
+          {name: ValidTypes.etk, parseType: ProductNumberSchemaInput},
         ],
       },
       handleError,
@@ -173,10 +172,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         </View>
         <View style={productStyles().hamburgerMenuView}>
           <HamburgerMenu>
-            {deviceType === DeviceInfoEnum.mobile && (
+            {deviceType === DeviceInfoEnum.mobile ? (
               <VCameraIconButton toggleCameraIcon={clickCamera} />
-            )}
-            {deviceType === DeviceInfoEnum.trekker && (
+            ) : null}
+            {deviceType === DeviceInfoEnum.trekker ? (
               <VKeyboardIconButton
                 toggleKeyboard={() => {
                   setKeyboardActive(!keyboardActive);
@@ -188,29 +187,30 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                   }, TIMEOUT_DELAY);
                 }}
               />
-            )}
+            ) : null}
+            <VMenu />
           </HamburgerMenu>
         </View>
-        {changeHandlerResult &&
-          'status' in changeHandlerResult &&
-          changeHandlerResult.status === RESPONSE_SUCCESS && (
-            <View>
-              <VDataTable
-                data={changeHandlerResult as unknown as ZProductListOutput}
-              />
-              {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
-            </View>
-          )}
-        {changeHandlerResult &&
-          'status' in changeHandlerResult &&
-          changeHandlerResult.status === RESPONSE_NO_CONTENT && (
-            <View>
-              <VCardNotFound
-                title={'Nem található'}
-                value={searchValueSave as string}
-              />
-            </View>
-          )}
+        {changeHandlerResult?.status === RESPONSE_SUCCESS ? (
+          <View>
+            <VDataTable
+              data={
+                'data' in changeHandlerResult &&
+                changeHandlerResult.data &&
+                changeHandlerResult.data
+              }
+            />
+            {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
+          </View>
+        ) : null}
+        {changeHandlerResult?.status === RESPONSE_NO_CONTENT ? (
+          <View>
+            <VCardNotFound
+              title={'Nem található'}
+              value={searchValueSave as string}
+            />
+          </View>
+        ) : null}
       </View>
     </View>
   );

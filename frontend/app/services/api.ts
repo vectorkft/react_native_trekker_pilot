@@ -1,8 +1,7 @@
 import {API_URL} from '../../config';
 import {zParse} from '../../../shared/services/zod';
-import {AnyZodObject} from 'zod';
+import {AnyZodObject, z, ZodObject} from 'zod';
 import * as Sentry from '@sentry/react-native';
-import {NavigationService} from './navigation';
 import {
   ApiResponse,
   RESPONSE_BAD_GATEWAY,
@@ -11,6 +10,7 @@ import {
   RESPONSE_NO_CONTENT,
   RESPONSE_UNAUTHORIZED,
 } from '../constants/response-status';
+import {ApiResponseOutput} from '../interfaces/api-response';
 
 const createRequestInit = (options: any = {}): RequestInit => {
   const headers = {
@@ -32,15 +32,15 @@ const createRequestInit = (options: any = {}): RequestInit => {
 export const ApiService = {
   doRequest: async (
     endpoint: string,
-    requestOptions: any = {},
+    requestOptions: RequestInit = {},
     schema?: AnyZodObject,
-  ) => {
+  ): Promise<ApiResponseOutput> => {
     const url = `${API_URL}${endpoint}`;
     const response: Response = await fetch(
       url,
       createRequestInit(requestOptions),
     );
-    let data: any;
+    let data: z.infer<ZodObject<any, any, any>>;
 
     switch (response.status) {
       case RESPONSE_INTERNAL_SERVER_ERROR: {
@@ -77,7 +77,7 @@ export const ApiService = {
     }
 
     return {
-      ...data,
+      data: data,
       status: response.status,
     };
   },

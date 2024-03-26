@@ -3,11 +3,14 @@ import {TokenHandlingService} from './token-handling';
 import {
   UserLoginDTOOutput,
   ZUserLoginDTOInput,
-  ZUserLoginDTOOutput,
 } from '../../../shared/dto/user-login';
 import {LocalStorageService} from './local-storage';
 import * as Sentry from '@sentry/react-native';
-import {RESPONSE_SUCCESS, RESPONSE_UNAUTHORIZED} from '../constants/response-status';
+import {
+  RESPONSE_SUCCESS,
+  RESPONSE_UNAUTHORIZED,
+} from '../constants/response-status';
+import {ApiResponseOutput} from '../interfaces/api-response';
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
     username: string | undefined;
@@ -25,7 +28,7 @@ export const LoginService = {
     input: ZUserLoginDTOInput,
     rememberMe: boolean,
     handleError: (error: string) => void,
-    handleSubmit: (response: ZUserLoginDTOOutput, rememberMe: boolean) => void,
+    handleSubmit: (response: ApiResponseOutput, rememberMe: boolean) => void,
     setError: (error: any, changeValue?: boolean | undefined) => void,
   ): Promise<void> => {
     const options = {

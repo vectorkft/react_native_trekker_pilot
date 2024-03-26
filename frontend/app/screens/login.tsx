@@ -13,7 +13,7 @@ import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
 import {
   UserLoginDTOInput,
-  ZUserLoginDTOOutput,
+
 } from '../../../shared/dto/user-login';
 import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
@@ -24,6 +24,7 @@ import {AlertTypes} from '../enums/types';
 import {loginScreenStyles} from '../styles/login-screen';
 import {colors} from '../enums/colors';
 import {ErrorContext} from '../providers/error';
+import {ApiResponseOutput} from '../interfaces/api-response';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const BUTTON_FONT_SIZE = 20;
@@ -71,7 +72,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   };
 
   const handleSubmit = (
-    loginSuccess: ZUserLoginDTOOutput,
+    loginSuccess: ApiResponseOutput,
     rememberMeValue: boolean,
   ) => {
     if (rememberMeValue) {
@@ -81,12 +82,23 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
     }
     setPassword('');
     setAccessToken(
-      'accessToken' in loginSuccess ? loginSuccess.accessToken : '',
+      'data' in loginSuccess &&
+        loginSuccess.data &&
+        'accessToken' in loginSuccess.data &&
+        loginSuccess.data.accessToken,
     );
     setRefreshToken(
-      'refreshToken' in loginSuccess ? loginSuccess.refreshToken : '',
+      'data' in loginSuccess &&
+        loginSuccess.data &&
+        'refreshToken' in loginSuccess.data &&
+        loginSuccess.data.refreshToken,
     );
-    setDeviceType('deviceType' in loginSuccess ? loginSuccess.deviceType : '');
+    setDeviceType(
+      'data' in loginSuccess &&
+        loginSuccess.data &&
+        'deviceType' in loginSuccess.data &&
+        loginSuccess.data.deviceType,
+    );
     setIsLoggedIn(true);
     setLoadingState(false);
     navigation.navigate('homescreen', {hidebutton: true});
