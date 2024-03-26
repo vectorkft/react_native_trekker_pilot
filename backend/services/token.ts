@@ -5,11 +5,10 @@ import Chalk from 'chalk';
 import {zParse} from "../../shared/services/zod";
 import dotenv from "dotenv";
 import {TokenDTOOutput, ZAccessTokenDTOInput, ZTokenDTOInput, ZTokenDTOOutput} from "../../shared/dto/token";
-import {errorMessageDTO} from "../../shared/dto/error-message";
 import {
     userPayLoadInput,
     ZUserLoginDTOInput,
-    ZuserPayloadInput, ZUserSchemaInput
+    ZuserPayloadInput,
 } from "../../shared/dto/user-login";
 import {RefreshError} from "../errors/refresh-error";
 
@@ -48,7 +47,8 @@ export async function addTokenAtLogin(accessToken: ZAccessTokenDTOInput, refresh
 
 
 export async function deleteExpiredTokens_new(){
-    const currentTime = Math.floor(Date.now() / 1000);
+    const milliseconds_in_a_second=1000;
+    const currentTime = Math.floor(Date.now() / milliseconds_in_a_second);
     try{
         const deletedAccessTokens = await prisma.tokens_v2.updateMany({
             where: {
@@ -138,7 +138,7 @@ async function isRefreshTokenInDatabase(refreshToken: ZTokenDTOInput): Promise<b
     }).then(token => !!token);
 }
 
-export async function signTokens(tokenType: string, expiresIn: string, userInput: ZUserSchemaInput, szemelyKod: number){
+export async function signTokens(tokenType: string, expiresIn: string, userInput: ZUserLoginDTOInput, szemelyKod: number){
 
     return jwt.sign(
         {name: userInput.name, szemelykod: szemelyKod, tokenType},

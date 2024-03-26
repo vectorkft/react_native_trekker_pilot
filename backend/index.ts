@@ -8,10 +8,19 @@ import {tokenRouter} from "./routes/token";
 import {protectedProductRouter} from "./routes/product";
 import {handleErrors} from "./middleware/error-handler";
 import {menuRouter} from "./routes/menu";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import {options} from "./swagger/options";
 
 const app = express();
 const HTTP_PORT = 8000;
 
+const specs = swaggerJsdoc(options);
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs)
+);
 
 // Body parsing middleware
 app.use(express.json(), Logger);
@@ -34,7 +43,7 @@ app.get('/', (_req: Request, res: Response) => {
     return res.status(200).json('Check postman for guidance');
 });
 app.use(handleErrors);
-cron.schedule("* * * * *", deleteExpiredTokens_new);
+cron.schedule("*/6 * * * * *", deleteExpiredTokens_new);
 
 // Státusz ellenőrzések, nem fontos
 

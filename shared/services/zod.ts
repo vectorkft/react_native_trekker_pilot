@@ -90,7 +90,17 @@ export const validateFormArray = async (
 
 
 
-
+export async function parseZodError_backend(error: ZodError) : Promise<string> {
+    try {
+        return error.issues.map(issue => `${issue.path.join('.')} - ${issue.message}`).join(', ');
+    } catch (e) {
+        Sentry.withScope(scope => {
+            scope.setContext('parseZodError', { info: 'Hiba az üzenet feldolgozásakor.' });
+            Sentry.captureException(e);
+        });
+        return '';
+    }
+}
 
 
 

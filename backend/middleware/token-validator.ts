@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import * as tokenService from "../services/token"
 import {PrismaClientInitializationError} from "@prisma/client/runtime/library";
 import Chalk from "chalk";
+import {HTTP_STATUS_FORBIDDEN, HTTP_STATUS_INTERNAL_SERVER_ERROR} from "../constants/http-status-codes";
 
 
 dotenv.config()
@@ -16,11 +17,11 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
         try{
             if(!await tokenService.isAccessTokenInDatabase({accessToken: token})){
                 console.log(Chalk.redBright('Invalid token'));
-                return res.sendStatus(403);
+                return res.sendStatus(HTTP_STATUS_FORBIDDEN);
             }
         }catch(err){
             if(err instanceof PrismaClientInitializationError){
-                return res.status(500).json('Cannot connect to the database');
+                return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).json('Cannot connect to the database');
             }
 
         }
@@ -29,7 +30,7 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
         jwt.verify(token, secretKey, (err) => {
             if (err) {
                 console.log(Chalk.redBright('Invalid token :' + err));
-                return res.sendStatus(403);
+                return res.sendStatus(HTTP_STATUS_FORBIDDEN);
             }
             console.log(Chalk.greenBright('Valid token'));
 
@@ -37,6 +38,6 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
             next();
         });
     } else {
-        res.sendStatus(403);
+        res.sendStatus(HTTP_STATUS_FORBIDDEN);
     }
 }

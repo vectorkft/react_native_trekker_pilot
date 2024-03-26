@@ -1,24 +1,32 @@
-import { ZodDTO } from "../dto/zodDTO";
+
 import {ZodError} from "zod";
 import {NextFunction, Request, Response} from 'express';
+import {
+    HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_FORBIDDEN,
+    HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_NOT_FOUND,
+    HTTP_STATUS_UNAUTHORIZED
+} from "../constants/http-status-codes";
+import {parseZodError_backend} from "../../shared/services/zod";
 
 
-export function handleErrors(err: Error, _req: Request, res: Response, _next: NextFunction) {
+export async function handleErrors(err: Error, _req: Request, res: Response, _next: NextFunction) {
     const statusMessageMapping: Record<string, {status: number, message: string}> = {
-        PrismaClientRustPanicError: {status: 401, message: 'Invalid username or password'},
-        PrismaClientInitializationError: {status: 500, message: 'Cannot connect to the database'},
-        ZodError: {status: 400, message: ''},
-        JsonWebTokenError: {status: 403, message: ''},
-        MenuNotFound: {status: 404, message: ''},
-        UserNotFound: {status: 401, message: ''},
-        RefreshError: {status: 403, message: ''}
+        PrismaClientRustPanicError: {status: HTTP_STATUS_UNAUTHORIZED, message: 'Invalid username or password'},
+        PrismaClientInitializationError: {status: HTTP_STATUS_INTERNAL_SERVER_ERROR, message: 'Cannot connect to the database'},
+        ZodError: {status: HTTP_STATUS_BAD_REQUEST, message: ''},
+        JsonWebTokenError: {status: HTTP_STATUS_BAD_REQUEST, message: ''},
+        MenuNotFound: {status: HTTP_STATUS_NOT_FOUND, message: ''},
+        UserNotFound: {status: HTTP_STATUS_UNAUTHORIZED, message: ''},
+        RefreshError: {status: HTTP_STATUS_FORBIDDEN, message: ''}
     };
 
     const statusMessage = statusMessageMapping[err.constructor.name];
-    if (!statusMessage) { return res.status(500).json({message: 'Unexpected error'}); }
+    if (!statusMessage) { return res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).json({message: 'Unexpected error : ' +err}); }
 
     if (err instanceof ZodError){
-        return res.status(statusMessage.status).json({error: ZodDTO.fromZodError(err)});
+        const message=await parseZodError_backend(err)
+        //return res.status(statusMessage.status).json({error: ZodDTO.fromZodError(err)});
+        return res.status(statusMessage.status).json({message});
     }
 
     return res.status(statusMessage.status).json({message: statusMessage.message || err.message});
