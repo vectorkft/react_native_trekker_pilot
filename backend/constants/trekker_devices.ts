@@ -1,1 +1,0 @@
-export const TREKKER_DEVICES: string [] = ['zebra'];

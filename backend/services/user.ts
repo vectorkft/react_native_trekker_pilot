@@ -11,7 +11,7 @@ import {
 } from "../../shared/dto/user-login";
 import {DeviceInfoEnum} from "../../shared/enums/device-info";
 import {UserNotFound} from "../errors/user-not-found";
-import {TREKKER_DEVICES} from "../constants/trekker_devices";
+import {TrekkerDevices} from "../constants/trekker-devices";
 
 
 
@@ -54,7 +54,7 @@ export async function loginUser(userInput: ZUserLoginDTOInput) {
 
 async function deviceInfoHelper(deviceData: string){
     const lowerCaseDeviceData= deviceData.toLowerCase();
-        if(TREKKER_DEVICES.some(device => lowerCaseDeviceData.includes(device))){
+        if(TrekkerDevices.some(device => lowerCaseDeviceData.includes(device))){
             return DeviceInfoEnum.trekker;
         }
         return DeviceInfoEnum.mobile;

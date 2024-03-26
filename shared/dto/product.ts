@@ -1,5 +1,6 @@
 import {z} from '../node_modules/zod';
 import { ean } from 'luhn-validation';
+import {ValidTypes} from "../enums/types";
 
 export const ProductDataOutput = z.object({
     key: z.string(),
@@ -17,59 +18,9 @@ export const ProductNumberSchemaInput = z.object({
 });
 
 
-const coerceTypeSchema = z.object({
-    _def: z.object({
-        schema: z.object({
-            _def: z.object({
-                checks: z.array(z.object({
-                    kind: z.string(),
-                    value: z.number(),
-                    message: z.string()
-                })).optional(),
-                typeName: z.string(),
-                coerce: z.boolean().optional()
-            }),
-            typeName: z.string().optional(),
-            effect: z.object({
-                type: z.string()
-            }).optional()
-        }).optional(),
-        typeName: z.string(),
-        coerce: z.boolean().optional()
-    }),
-    typeName: z.string().optional(),
-    effect: z.object({
-        type: z.string()
-    }).optional()
-}).optional();
-
-const parseTypeSchema = z.object({
-    _def: z.object({
-        unknownKeys: z.string(),
-        catchall: z.object({
-            _def: z.object({
-                typeName: z.string()
-            })
-        }),
-        typeName: z.string()
-    }),
-    _cached: z.object({
-        shape: z.object({
-            value: coerceTypeSchema
-        }),
-        keys: z.array(z.string())
-    })
-});
-
-
 export const ProductGeneralSchema = z.object({
     value: z.string(),
-    validTypesArray: z.object({
-        propList: z.array(z.object({
-            type: z.string(),
-            parseType: parseTypeSchema
-        }))
-    })
+    validTypesArray: z.array(z.enum([ValidTypes.ean,ValidTypes.etk])).describe('Array of valid EAN types'),
 });
 
 export const ProductListOutput = z.object({
