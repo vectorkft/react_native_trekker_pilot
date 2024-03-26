@@ -68,19 +68,14 @@ const processProducts = (products: Product[]) => {
 }
 
 export async function getCikkHelper(input: ZProductGeneralSchema) {
-    const validType = input.validTypesArray.propList[0].type;
+    if(input.validTypesArray.includes(ValidTypes.ean)){
+        return getCikkByEanKod(await zParse(ProductEANSchemaInput,input));
 
-    switch (validType) {
-        case ValidTypes.ean:
-
-            return getCikkByEanKod(await zParse(ProductEANSchemaInput, input));
-
-        case ValidTypes.etk:
-
-            return getCikkByCikkszam(await zParse(ProductNumberSchemaInput, input));
-
-        default:
-
-            return 'Invalid validType';
     }
+    if(input.validTypesArray.includes(ValidTypes.etk)){
+
+        return getCikkByCikkszam(await zParse(ProductNumberSchemaInput,input));
+    }
+    return 'Invalid validType';
+
 }
