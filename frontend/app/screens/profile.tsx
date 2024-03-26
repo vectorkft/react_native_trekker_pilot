@@ -11,6 +11,7 @@ import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 import {ToastTypes} from '../enums/types';
 import {profileScreen} from '../styles/profile-screen';
+import {ErrorContext} from '../providers/error';
 
 const Profile = ({navigation}: AppNavigation): JSX.Element => {
   const {setWasDisconnected} = useStore.getState();
@@ -18,17 +19,16 @@ const Profile = ({navigation}: AppNavigation): JSX.Element => {
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const {loading, setLoadingState} = useContext(LoadingContext);
   const {isDarkMode} = useContext(DarkModeContext);
+  const {setError} = useContext(ErrorContext);
 
   useEffect(() => {
     let cancelled = false;
     setLoadingState(true);
-    ProfileService.handleUserProfileRequest()
-      .then(() => {
-        if (!cancelled) {
-          setLoadingState(false);
-        }
-      })
-      .catch(console.error);
+    ProfileService.handleUserProfileRequest(setError).then(() => {
+      if (!cancelled) {
+        setLoadingState(false);
+      }
+    });
 
     return () => {
       cancelled = true;

@@ -4,13 +4,11 @@ import {ToastProps} from '../interfaces/Vtoast';
 import {Icon} from 'react-native-elements';
 import {toastStylesheet} from '../styles/Vtoast';
 import {DarkModeContext} from '../providers/dark-mode';
-import {
-  TIMEOUT_DELAY_TOAST,
-  VTOAST_ANIMATION_DURATION,
-} from '../constants/time';
 import {colors} from '../enums/colors';
 
 const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
+  const TIMEOUT_DELAY_TOAST = 2000;
+  const VTOAST_ANIMATION_DURATION = 500;
   const [slideAnim] = useState(
     new Animated.Value(-Dimensions.get('window').height),
   );

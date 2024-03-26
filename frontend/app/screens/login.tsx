@@ -2,10 +2,7 @@ import React, {JSX, useContext, useRef, useState} from 'react';
 import {LoginService} from '../services/login';
 import {AppNavigation} from '../interfaces/navigation';
 import {useStore} from '../states/zustand';
-import {
-  parseZodError,
-  validateZDTOForm,
-} from '../../../shared/services/zod';
+import {parseZodError, validateZDTOForm} from '../../../shared/services/zod';
 import {ZodError} from 'zod';
 import {Dimensions, Image, TextInput, View} from 'react-native';
 import {useLoginState} from '../states/use-login';
@@ -14,23 +11,26 @@ import {useAlert} from '../states/use-alert';
 import {CheckBox, Icon, Switch, Text} from 'react-native-elements';
 import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
-import {UserLoginDTOInput} from '../../../shared/dto/user-login';
+import {
+  UserLoginDTOInput,
+  ZUserLoginDTOOutput,
+} from '../../../shared/dto/user-login';
 import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
-import {LocalStorageService} from '../services/local-storage';
-import * as Sentry from '@sentry/react-native';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 import {deviceData} from '../constants/device-data';
 import {AlertTypes} from '../enums/types';
 import {loginScreenStyles} from '../styles/login-screen';
 import {colors} from '../enums/colors';
+import {ErrorContext} from '../providers/error';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const BUTTON_FONT_SIZE = 20;
   const BUTTON_HEIGHT = 50;
   const BUTTON_BORDER_RADIUS = 10;
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
+  const {setError} = useContext(ErrorContext);
   const {loading, setLoadingState} = useContext(LoadingContext);
   const passwordInput = useRef<TextInput | null>(null);
   const {
@@ -57,62 +57,71 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
     setIsPasswordVisible(previousState => !previousState);
   };
 
-  const handleFormSubmit = async () => {
-    try {
-      setLoadingState(true);
+  const handleError = (error: string) => {
+    setErrorMessage(error);
+    setLoadingState(false);
+    return;
+  };
 
-      if (!mountConnection) {
-        return setErrorMessage('Ellenőrizd az internetkapcsolatodat!');
-      }
+  const handleZodError = async (error: ZodError) => {
+    const msg = await parseZodError(error);
+    setErrorMessage(msg);
+    setLoadingState(false);
+    return;
+  };
 
-      const {isValid, error} = (await validateZDTOForm(UserLoginDTOInput, {
-        name: username,
-        pw: password,
-        deviceData: deviceData,
-      })) as {isValid: boolean; error: ZodError};
-
-      if (!isValid) {
-        const msg = await parseZodError(error);
-        return setErrorMessage(msg);
-      }
-
-      const loginSuccess = await LoginService.handleSubmit({
-        name: username,
-        pw: password,
-        deviceData: deviceData,
-      });
-
-      if ('error' in loginSuccess && loginSuccess.error === 'Unauthorized') {
-        return setErrorMessage('Hibás felhasználónév vagy jelszó!');
-      }
-
-      if (rememberMe) {
-        LocalStorageService.storeData({username: username, rememberMe: true});
-        setUsername(username);
-      } else {
-        LocalStorageService.deleteData(['username']);
-        LocalStorageService.storeData({rememberMe: false});
-        setUsername('');
-      }
-      setPassword('');
-      setAccessToken(
-        'accessToken' in loginSuccess ? loginSuccess.accessToken : '',
-      );
-      setRefreshToken(
-        'refreshToken' in loginSuccess ? loginSuccess.refreshToken : '',
-      );
-      setDeviceType(
-        'deviceType' in loginSuccess ? loginSuccess.deviceType : '',
-      );
-      setIsLoggedIn(true);
-      setErrorMessage(null);
-      return navigation.navigate('homescreen', {hidebutton: true});
-    } catch (e) {
-      Sentry.captureException(e);
-      throw e;
-    } finally {
-      setLoadingState(false);
+  const handleSubmit = (
+    loginSuccess: ZUserLoginDTOOutput,
+    rememberMeValue: boolean,
+  ) => {
+    if (rememberMeValue) {
+      setUsername(username);
+    } else {
+      setUsername('');
     }
+    setPassword('');
+    setAccessToken(
+      'accessToken' in loginSuccess ? loginSuccess.accessToken : '',
+    );
+    setRefreshToken(
+      'refreshToken' in loginSuccess ? loginSuccess.refreshToken : '',
+    );
+    setDeviceType('deviceType' in loginSuccess ? loginSuccess.deviceType : '');
+    setIsLoggedIn(true);
+    setLoadingState(false);
+    navigation.navigate('homescreen', {hidebutton: true});
+  };
+
+  const handleFormSubmit = async () => {
+    if (!mountConnection) {
+      setErrorMessage('Ellenőrizd az internetkapcsolatodat!');
+      return;
+    }
+
+    await validateZDTOForm(
+      UserLoginDTOInput,
+      {
+        name: username,
+        pw: password,
+        deviceData: deviceData,
+      },
+      handleZodError,
+    );
+
+    setLoadingState(true);
+    LoginService.handleSubmit(
+      {
+        name: username,
+        pw: password,
+        deviceData: deviceData,
+      },
+      rememberMe,
+      handleError,
+      handleSubmit,
+      setError,
+    ).then(() => {
+      setErrorMessage(null);
+    });
   };
 
   if (loading) {
@@ -156,6 +165,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
               autoFocus: isLoggedIn ? false : !!username,
               placeholder: 'Jelszó',
               onSubmitEditing: handleFormSubmit,
+              blurOnSubmit: true,
               rightIcon: (
                 <>
                   <Icon

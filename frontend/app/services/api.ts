@@ -4,6 +4,9 @@ import {AnyZodObject} from 'zod';
 import * as Sentry from '@sentry/react-native';
 import {NavigationService} from './navigation';
 import {
+  ApiResponse,
+  RESPONSE_BAD_GATEWAY,
+  RESPONSE_INTERNAL_SERVER_ERROR,
   RESPONSE_NO_AUTH,
   RESPONSE_NO_CONTENT,
   RESPONSE_UNAUTHORIZED,
@@ -38,28 +41,41 @@ export const ApiService = {
       createRequestInit(requestOptions),
     );
     let data: any;
-    if (
-      response.status !== RESPONSE_NO_CONTENT &&
-      response.status !== RESPONSE_NO_AUTH &&
-      response.status !== RESPONSE_UNAUTHORIZED
-    ) {
-      data = await response.json();
-      if (schema && response.ok) {
-        try {
-          data = await zParse(schema, data);
-        } catch (error) {
-          Sentry.captureException(error);
-          throw error;
-        }
+
+    switch (response.status) {
+      case RESPONSE_INTERNAL_SERVER_ERROR: {
+        const error = new Error(RESPONSE_INTERNAL_SERVER_ERROR.toString());
+        Sentry.captureException(error);
+        throw error;
       }
-    } else if (response.status === RESPONSE_NO_AUTH) {
-      NavigationService.redirectToLogin();
-      return {status: RESPONSE_NO_AUTH, error: 'Forbidden', data: null};
-    } else if (response.status === RESPONSE_NO_CONTENT) {
-      return {status: RESPONSE_NO_CONTENT, data: null};
-    } else if (response.status === RESPONSE_UNAUTHORIZED) {
-      return {status: RESPONSE_UNAUTHORIZED, error: 'Unauthorized', data: null};
+
+      case RESPONSE_BAD_GATEWAY: {
+        const error = new Error(RESPONSE_BAD_GATEWAY.toString());
+        Sentry.captureException(error);
+        throw error;
+      }
+
+      case RESPONSE_NO_CONTENT:
+        return ApiResponse.NO_CONTENT;
+
+      case RESPONSE_NO_AUTH:
+        return ApiResponse.NO_AUTH;
+
+      case RESPONSE_UNAUTHORIZED:
+        return ApiResponse.UNAUTHORIZED;
+
+      default:
+        data = await response.json();
+        if (schema && response.ok) {
+          try {
+            data = await zParse(schema, data);
+          } catch (error) {
+            Sentry.captureException(error);
+            throw error;
+          }
+        }
     }
+
     return {
       ...data,
       status: response.status,
