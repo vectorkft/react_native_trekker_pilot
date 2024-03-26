@@ -9,8 +9,8 @@ const VCardSuccess: React.FC<CardContent> = ({title, content}: CardContent) => {
   const {isDarkMode} = useContext(DarkModeContext);
 
   const groupedData = [];
-  for (let i = 0; i < content.data.length; i += NUMBER_OF_ITEMS_PER_ROW) {
-    groupedData.push(content.data.slice(i, i + NUMBER_OF_ITEMS_PER_ROW));
+  for (let i = 0; i < content?.data.length; i += NUMBER_OF_ITEMS_PER_ROW) {
+    groupedData.push(content?.data.slice(i, i + NUMBER_OF_ITEMS_PER_ROW));
   }
 
   return (
@@ -20,18 +20,24 @@ const VCardSuccess: React.FC<CardContent> = ({title, content}: CardContent) => {
       {groupedData.map((group, index) => (
         <View key={index} style={cardStylesheet(isDarkMode).cardContainer}>
           <Text style={cardStylesheet(isDarkMode).cardTitle}>{title}</Text>
-          {group.map((item, indexGroup) => (
-            <View
-              key={indexGroup}
-              style={cardStylesheet().itemContainer}>
-              <Text style={cardStylesheet(isDarkMode).itemTitle}>
-                {item.title}
-              </Text>
-              <Text style={cardStylesheet(isDarkMode).itemValue}>
-                {item.value}
-              </Text>
-            </View>
-          ))}
+          {group.map(
+            (
+              item: {
+                title: string;
+                value: number;
+              },
+              indexGroup: React.Key | null | undefined,
+            ) => (
+              <View key={indexGroup} style={cardStylesheet().itemContainer}>
+                <Text style={cardStylesheet(isDarkMode).itemTitle}>
+                  {item.title}
+                </Text>
+                <Text style={cardStylesheet(isDarkMode).itemValue}>
+                  {item.value}
+                </Text>
+              </View>
+            ),
+          )}
         </View>
       ))}
     </ScrollView>

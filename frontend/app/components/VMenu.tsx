@@ -1,12 +1,22 @@
 import React, {useState, useContext} from 'react';
-import {TouchableOpacity, Modal, View, Text, StyleSheet} from 'react-native';
+import {
+  TouchableOpacity,
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
 import {DarkModeContext} from '../providers/dark-mode';
 import {Button, Icon} from 'react-native-elements';
 import {colors} from '../enums/colors';
+import menu from '../../../shared/menu/menu.json';
 
 const VMenu = () => {
   const {isDarkMode} = useContext(DarkModeContext);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const data = menu.data;
 
   return (
     <>
@@ -30,7 +40,16 @@ const VMenu = () => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text>Modal tartalma</Text>
+            <FlatList
+              data={data}
+              renderItem={({item}) => (
+                <View style={styles.item}>
+                  <Text>{item.hotkey}</Text>
+                  <Text>{item.title}</Text>
+                </View>
+              )}
+              keyExtractor={item => item.id}
+            />
             <Button title="Bezárás" onPress={() => setModalVisible(false)} />
           </View>
         </View>
@@ -44,7 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white', // Átfedő réteg színe
+    backgroundColor: '#fff',
   },
   modalView: {
     backgroundColor: '#fff',
@@ -52,6 +71,12 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     elevation: 5,
+  },
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
 });
 

@@ -17,6 +17,7 @@ import {
 import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
@@ -31,13 +32,15 @@ import {
 import {AlertTypes, ToastTypes} from '../enums/types';
 import {ValidTypes} from '../../../shared/enums/types';
 import {useAlert} from '../states/use-alert';
-import {CameraService, useCamera} from '../services/camera';
+import {CameraService, useBeepSound, useCamera} from '../services/camera';
 import {colors} from '../enums/colors';
 import {ZodError} from 'zod';
 import {ValidatedValue} from '../interfaces/types';
 import {ErrorContext} from '../providers/error';
 import {ApiResponseOutput} from '../interfaces/api-response';
 import VMenu from '../components/VMenu';
+import * as Sentry from '@sentry/react-native';
+import VCardSuccess from '../components/Vcard-succes';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const TIMEOUT_DELAY = 100;
@@ -46,6 +49,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {errorMessage, setErrorMessage} = useAlert();
   const {isCameraActive, setIsCameraActive, handleOnClose, clickCamera} =
     useCamera(setErrorMessage);
+  const beep = useBeepSound();
   const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
@@ -57,10 +61,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {inputRef} = useInputChange(searchValue);
 
   const handleError = async (error: ZodError) => {
-    parseZodError(error).then(resp => {
-      setErrorMessage(resp);
-      setSearchValue('');
-    });
+    const msg = await parseZodError(error);
+    setErrorMessage(msg);
+    setSearchValue('');
+    setChangeHandlerResult(undefined);
   };
 
   const handleSuccess = async (formData: ValidatedValue) => {
@@ -88,10 +92,27 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     setSearchValueSave(checkedValue);
   };
 
-  const {onBarCodeRead} = CameraService.useOnBarCodeRead(
-    getProduct,
-    setIsCameraActive,
-  );
+  const handleCameraSuccess = async (value: string) => {
+    try {
+      await getProduct(value);
+      if (beep) {
+        beep.play(success => {
+          if (!success) {
+            Sentry.captureMessage('A hang nem játszódott le!', 'warning');
+          }
+        });
+      } else {
+        Sentry.captureMessage(
+          'A beep hang inicializálása nem volt megfelelő!',
+          'warning',
+        );
+      }
+    } finally {
+      setIsCameraActive(false);
+    }
+  };
+
+  const {onBarCodeRead} = CameraService.useOnBarCodeRead(handleCameraSuccess);
 
   if (isCameraActive) {
     return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
@@ -193,14 +214,11 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         </View>
         {changeHandlerResult?.status === RESPONSE_SUCCESS ? (
           <View>
-            <VDataTable
-              data={
-                'data' in changeHandlerResult &&
-                changeHandlerResult.data &&
-                changeHandlerResult.data
-              }
+            {/*<VDataTable data={changeHandlerResult.data} />*/}
+            <VCardSuccess
+              title={'Találatok'}
+              content={changeHandlerResult.data}
             />
-            {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
           </View>
         ) : null}
         {changeHandlerResult?.status === RESPONSE_NO_CONTENT ? (

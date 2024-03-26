@@ -26,13 +26,12 @@ export const useCamera = (
   };
 };
 
-const useBeepSound = () => {
+export const useBeepSound = () => {
   let beep: Sound | null = null;
 
   try {
     beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
       if (error) {
-        Sentry.captureException(error);
         throw error;
       }
     });
@@ -44,31 +43,11 @@ const useBeepSound = () => {
 };
 
 export const CameraService = {
-  useOnBarCodeRead: (
-    getProduct: (value: string) => Promise<void>,
-    setIsCameraActive: React.Dispatch<React.SetStateAction<boolean>>,
-  ) => {
-    const beep = useBeepSound();
+  useOnBarCodeRead: (handleSubmit: (value: string) => void) => {
     return {
       onBarCodeRead: async (event: BarCodeReadEvent) => {
         if (event.data) {
-          try {
-            await getProduct(event.data);
-            if (beep) {
-              beep.play(success => {
-                if (!success) {
-                  Sentry.captureMessage('A hang nem játszódott le!', 'warning');
-                }
-              });
-            } else {
-              Sentry.captureMessage(
-                'A beep hang inicializálása nem volt megfelelő!',
-                'warning',
-              );
-            }
-          } finally {
-            setIsCameraActive(false);
-          }
+          handleSubmit(event.data);
         }
       },
     };
