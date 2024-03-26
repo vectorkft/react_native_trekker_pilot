@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Product:
+ *     Product Input:
  *       type: object
  *       required:
  *         - value

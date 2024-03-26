@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Successful login output:
+ *     User Output:
  *       type: object
  *       required:
  *         - message

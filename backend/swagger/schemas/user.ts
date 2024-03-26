@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     User:
+ *     User Input:
  *       type: object
  *       required:
  *         - name

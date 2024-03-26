@@ -12,33 +12,33 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             $ref: '#/components/schemas/User Input'
  *     responses:
  *       200:
  *         description: Sikeres bejelentkezés.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Successful login output'
+ *               $ref: '#/components/schemas/User Output'
  *
  *       400:
  *         description: Zod error, nem jó body-t kapott
  *         content:
  *              application/json:
- *                schema:
- *                   $ref: '#/components/schemas/Zod Error'
+ *                example:
+ *                   message: 'name - Expected string, received number'
  *       401:
  *         description: Hibás név vagy jelszó
  *         content:
  *            application/json:
- *               schema:
- *                  $ref: '#/components/schemas/Invalid Credentials'
+ *               example:
+ *                  message: 'Invalid username or password'
  *       500:
  *         description: Nem megy az adatbázis vagy valami unexpected hiba jött
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Database connection failed'
+ *             example:
+ *               message: 'Cannot connect to the database'
  *
  *
  */

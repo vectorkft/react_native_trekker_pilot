@@ -2,13 +2,13 @@
  * @swagger
  * components:
  *   schemas:
- *     Access Token:
+ *     Access Token new:
  *       type: object
  *       required:
- *         - accessToken
+ *         - newAccessToken
  *       properties:
  *
- *         accessToken:
+ *         newAccessToken:
  *              type: string
  *
  *       example:
