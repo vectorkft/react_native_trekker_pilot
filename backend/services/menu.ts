@@ -1,4 +1,4 @@
-import menu from '../menu/menu.json';
+import menu from '../../shared/menu/menu.json';
 import {MenuData, MenuListOutput, ZMenuInput} from "../../shared/dto/menu";
 import {MenuElement} from "../interface/menu";
 import {MenuNotFound} from "../errors/menu-not-found";
