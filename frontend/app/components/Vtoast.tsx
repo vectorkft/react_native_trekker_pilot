@@ -4,7 +4,7 @@ import {ToastProps} from '../interfaces/Vtoast';
 import {Icon} from 'react-native-elements';
 import {toastStylesheet} from '../styles/Vtoast';
 import {DarkModeContext} from '../providers/dark-mode';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
   const TIMEOUT_DELAY_TOAST = 2000;
@@ -48,7 +48,7 @@ const VToast = ({isVisible, label, type, handleEvent}: ToastProps) => {
       <Icon
         name={type as string}
         type="material"
-        color={isDarkMode ? colors.lightContent : colors.darkContent}
+        color={isDarkMode ? Color.lightContent : Color.darkContent}
       />
     </Animated.View>
   );

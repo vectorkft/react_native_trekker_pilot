@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const MARGIN = 20;
 const MARGIN_TOP = 15;
@@ -21,11 +21,11 @@ export const alertStylesheet = StyleSheet.create({
   },
   alertTitle: {
     fontWeight: 'bold',
-    color: colors.lightContent,
+    color: Color.lightContent,
   },
   alertMessage: {
     marginTop: MARGIN_TOP,
-    color: colors.lightContent,
+    color: Color.lightContent,
     textAlign: 'center',
   },
 });

@@ -1,8 +1,7 @@
 import {AnyZodObject, z, ZodArray, ZodError, ZodObject} from "../node_modules/zod";
-import {ValidationResult} from "../interfaces/validation-result"
+import {ValidatedValue, ValidationResult} from "../interfaces/validation-result"
 import * as Sentry from '../node_modules/@sentry/react';
 import {ValidatorProps} from "../interfaces/validator";
-import {ValidatedValue} from "../../frontend/app/interfaces/types";
 
 export async function zParse<T extends AnyZodObject | ZodArray<ZodObject<any>>>(
     schema: T,

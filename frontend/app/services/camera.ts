@@ -1,7 +1,6 @@
-import Sound from 'react-native-sound';
-import * as Sentry from '@sentry/react-native/dist/js';
 import {BarCodeReadEvent} from 'react-native-camera';
 import React, {useState} from 'react';
+import RNSystemSounds from '@dashdoc/react-native-system-sounds';
 
 export const useCamera = (
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>,
@@ -26,28 +25,15 @@ export const useCamera = (
   };
 };
 
-export const useBeepSound = () => {
-  let beep: Sound | null = null;
-
-  try {
-    beep = new Sound('scanner_beep.mp3', Sound.MAIN_BUNDLE, error => {
-      if (error) {
-        throw error;
-      }
-    });
-  } catch (error) {
-    Sentry.captureException(error);
-  }
-
-  return beep;
-};
-
 export const CameraService = {
   useOnBarCodeRead: (handleSubmit: (value: string) => void) => {
+    let lastBarCode: string;
     return {
       onBarCodeRead: async (event: BarCodeReadEvent) => {
-        if (event.data) {
-          handleSubmit(event.data);
+        if (event.data && event.data !== lastBarCode) {
+          lastBarCode = event.data;
+          handleSubmit(lastBarCode);
+          RNSystemSounds.beep(RNSystemSounds.Beeps.Positive);
         }
       },
     };

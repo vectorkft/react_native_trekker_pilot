@@ -1,4 +1,4 @@
-export interface LoadingState {
+export interface LoadingProps {
   loading: boolean;
   setLoadingState: (isLoading: boolean) => void;
 }

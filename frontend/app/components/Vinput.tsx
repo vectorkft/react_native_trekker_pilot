@@ -3,7 +3,7 @@ import {InputProps} from '../interfaces/Vinput';
 import {Input} from 'react-native-elements';
 import {inputStylesheet} from '../styles/Vinput';
 import {DarkModeContext} from '../providers/dark-mode';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const VInput = ({inputProps}: InputProps) => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -17,7 +17,7 @@ const VInput = ({inputProps}: InputProps) => {
       onChangeText={inputProps.onChangeText}
       value={inputProps.value}
       placeholderTextColor={
-        isDarkMode ? colors.placeholderDark : colors.placeholderLight
+        isDarkMode ? Color.placeholderDark : Color.placeholderLight
       }
       placeholder={inputProps.placeholder}
       keyboardType={inputProps.keyboardType}
@@ -26,7 +26,7 @@ const VInput = ({inputProps}: InputProps) => {
       containerStyle={inputStylesheet(isDarkMode).containerStyle}
       rightIcon={inputProps.rightIcon}
       inputContainerStyle={inputStylesheet().inputContainerStyle}
-      selectionColor={isDarkMode ? colors.lightContent : colors.darkContent}
+      selectionColor={isDarkMode ? Color.lightContent : Color.darkContent}
       inputStyle={inputStylesheet(isDarkMode).inputStyle}
       onSubmitEditing={inputProps.onSubmitEditing}
     />

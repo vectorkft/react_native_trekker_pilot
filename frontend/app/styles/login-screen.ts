@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors, darkModeBgColor, lightModeBgColor} from '../enums/colors';
+import {Color, darkModeBgColor, lightModeBgColor} from '../enums/color';
 
 const FONT_SIZE = 16;
 const FONT_SIZE_TITLE = 30;
@@ -29,7 +29,7 @@ export const loginScreenStyles = (isDarkMode?: boolean, height?: number) =>
       fontFamily: 'Roboto',
       fontSize: FONT_SIZE_TITLE,
       fontWeight: 'bold',
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
     },
     inputView: {
       width: '90%',
@@ -45,7 +45,7 @@ export const loginScreenStyles = (isDarkMode?: boolean, height?: number) =>
       marginLeft: MARGIN_LEFT,
     },
     checkBoxTextStyle: {
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
       fontSize: FONT_SIZE,
     },
     switchMode: {
@@ -57,6 +57,6 @@ export const loginScreenStyles = (isDarkMode?: boolean, height?: number) =>
     switchModeText: {
       fontSize: FONT_SIZE,
       fontWeight: 'bold',
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
     },
   });

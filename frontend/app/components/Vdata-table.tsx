@@ -1,13 +1,13 @@
 import React, {useContext, useState} from 'react';
 import {View, Text, FlatList} from 'react-native';
-import {DataTableInterface} from '../interfaces/Vdata-table';
+import {DataTableProp} from '../interfaces/Vdata-table';
 import {Button} from 'react-native-elements';
 import {dataTableStylesheet} from '../styles/Vdata-table';
 import {DarkModeContext} from '../providers/dark-mode';
 
-const VDataTable: React.FC<DataTableInterface> = ({
+const VDataTable: React.FC<DataTableProp> = ({
   data,
-}: DataTableInterface) => {
+}: DataTableProp) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const dataArray = data?.data;
   const ITEMS_PER_PAGE = 10;

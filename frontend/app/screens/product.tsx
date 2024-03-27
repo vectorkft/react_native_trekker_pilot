@@ -29,18 +29,18 @@ import {
   RESPONSE_NO_CONTENT,
   RESPONSE_SUCCESS,
 } from '../constants/response-status';
-import {AlertTypes, ToastTypes} from '../enums/types';
-import {ValidTypes} from '../../../shared/enums/types';
+import {AlertType, ToastType} from '../enums/type';
+import {ValidTypes} from '../../../shared/enums/type';
 import {useAlert} from '../states/use-alert';
-import {CameraService, useBeepSound, useCamera} from '../services/camera';
-import {colors} from '../enums/colors';
+import {CameraService, useCamera} from '../services/camera';
+import {Color} from '../enums/color';
 import {ZodError} from 'zod';
-import {ValidatedValue} from '../interfaces/types';
 import {ErrorContext} from '../providers/error';
-import {ApiResponseOutput} from '../interfaces/api-response';
+import {ApiResponseOutput} from '../types/api-response';
 import VMenu from '../components/VMenu';
 import * as Sentry from '@sentry/react-native';
 import VCardSuccess from '../components/Vcard-succes';
+import {ValidatedValue} from '../../../shared/interfaces/validation-result';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const TIMEOUT_DELAY = 100;
@@ -49,14 +49,13 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {errorMessage, setErrorMessage} = useAlert();
   const {isCameraActive, setIsCameraActive, handleOnClose, clickCamera} =
     useCamera(setErrorMessage);
-  const beep = useBeepSound();
   const {setWasDisconnected, deviceType} = useStore.getState();
   const isConnected = useStore(state => state.isConnected);
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchValue, setSearchValue] = React.useState('');
   const [searchValueSave, setSearchValueSave] = useState('');
   const [changeHandlerResult, setChangeHandlerResult] =
-    useState<ApiResponseOutput | void>();
+    useState<ApiResponseOutput>();
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchValue);
 
@@ -95,18 +94,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const handleCameraSuccess = async (value: string) => {
     try {
       await getProduct(value);
-      if (beep) {
-        beep.play(success => {
-          if (!success) {
-            Sentry.captureMessage('A hang nem játszódott le!', 'warning');
-          }
-        });
-      } else {
-        Sentry.captureMessage(
-          'A beep hang inicializálása nem volt megfelelő!',
-          'warning',
-        );
-      }
+    } catch (error) {
+      Sentry.captureMessage('A hang nem játszódott le!', 'warning');
     } finally {
       setIsCameraActive(false);
     }
@@ -124,12 +113,12 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
-        type={ToastTypes.success}
+        type={ToastType.success}
         handleEvent={() => setWasDisconnected(false)}
       />
       {errorMessage && (
         <VAlert
-          type={AlertTypes.error}
+          type={AlertType.error}
           title={'Hibás eankód!'}
           message={errorMessage}
         />
@@ -166,7 +155,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     name="search1"
                     size={25}
                     color={
-                      isDarkMode ? colors.lightContent : colors.darkContent
+                      isDarkMode ? Color.lightContent : Color.darkContent
                     }
                     disabled={!searchValue || !isConnected}
                     disabledStyle={productStyles().iconDisabledStyle}
@@ -179,7 +168,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                       size={25}
                       containerStyle={productStyles().iconContainerStyle}
                       color={
-                        isDarkMode ? colors.lightContent : colors.darkContent
+                        isDarkMode ? Color.lightContent : Color.darkContent
                       }
                       onPress={() => {
                         setSearchValue('');
@@ -193,10 +182,10 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
         </View>
         <View style={productStyles().hamburgerMenuView}>
           <HamburgerMenu>
-            {deviceType === DeviceInfoEnum.mobile ? (
+            {deviceType === DeviceInfoEnum.mobile && (
               <VCameraIconButton toggleCameraIcon={clickCamera} />
-            ) : null}
-            {deviceType === DeviceInfoEnum.trekker ? (
+            )}
+            {deviceType === DeviceInfoEnum.trekker && (
               <VKeyboardIconButton
                 toggleKeyboard={() => {
                   setKeyboardActive(!keyboardActive);
@@ -208,11 +197,11 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                   }, TIMEOUT_DELAY);
                 }}
               />
-            ) : null}
+            )}
             <VMenu />
           </HamburgerMenu>
         </View>
-        {changeHandlerResult?.status === RESPONSE_SUCCESS ? (
+        {changeHandlerResult?.status === RESPONSE_SUCCESS && (
           <View>
             {/*<VDataTable data={changeHandlerResult.data} />*/}
             <VCardSuccess
@@ -220,15 +209,15 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
               content={changeHandlerResult.data}
             />
           </View>
-        ) : null}
-        {changeHandlerResult?.status === RESPONSE_NO_CONTENT ? (
+        )}
+        {changeHandlerResult?.status === RESPONSE_NO_CONTENT && (
           <View>
             <VCardNotFound
               title={'Nem található'}
               value={searchValueSave as string}
             />
           </View>
-        ) : null}
+        )}
       </View>
     </View>
   );

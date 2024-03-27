@@ -7,7 +7,7 @@ import {DarkModeProvider} from './providers/dark-mode';
 import Profile from './screens/profile';
 import Product from './screens/product';
 import {LoadingProvider} from './providers/loading';
-import {UIConfig} from './interfaces/u-i-config';
+import {UIConfig} from './types/u-i-config';
 import {navigationRef} from './services/navigation';
 import * as Sentry from '@sentry/react-native';
 import {ErrorContext, ErrorProvider} from './providers/error';

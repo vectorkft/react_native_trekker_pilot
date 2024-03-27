@@ -4,7 +4,7 @@ import {ToastProps} from '../interfaces/Vtoast';
 import {Icon} from 'react-native-elements';
 import {internetToastStylesheet} from '../styles/Vinternet-toast';
 import {DarkModeContext} from '../providers/dark-mode';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const VInternetToast = ({isVisible}: ToastProps) => {
   const VTOAST_ANIMATION_DURATION = 500;
@@ -31,14 +31,14 @@ const VInternetToast = ({isVisible}: ToastProps) => {
         type="antdesign"
         name="exclamationcircleo"
         size={25}
-        color={isDarkMode ? colors.lightContent : colors.darkContent}
+        color={isDarkMode ? Color.lightContent : Color.darkContent}
       />
       <Text style={internetToastStylesheet(isDarkMode).textStyle}>
         Nincs internetkapcsolat
       </Text>
       <ActivityIndicator
         size={30}
-        color={isDarkMode ? colors.lightContent : colors.darkContent}
+        color={isDarkMode ? Color.lightContent : Color.darkContent}
         style={internetToastStylesheet().activityIndicatorStyle}
       />
     </Animated.View>

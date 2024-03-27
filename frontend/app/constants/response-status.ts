@@ -1,10 +1,4 @@
-export type ApiResponseType = {
-  status: number;
-  data: null;
-  error?: string;
-};
-
-export type ApiResponseDict = Record<string, ApiResponseType>;
+import {ApiResponseDict} from '../types/api-response';
 
 export const RESPONSE_SUCCESS = 200;
 export const RESPONSE_NO_CONTENT = 204;

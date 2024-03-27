@@ -5,7 +5,7 @@ import {TouchableOpacity} from 'react-native';
 import {useContext} from 'react';
 import {DarkModeContext} from '../providers/dark-mode';
 import {CameraControl} from '../interfaces/Vcamera-button';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const VCameraIconButton = ({toggleCameraIcon}: CameraControl) => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -20,7 +20,7 @@ const VCameraIconButton = ({toggleCameraIcon}: CameraControl) => {
           type="antdesign"
           name="camera"
           size={50}
-          color={isDarkMode ? colors.lightContent : colors.darkContent}
+          color={isDarkMode ? Color.lightContent : Color.darkContent}
         />
       }
       onPress={toggleCameraIcon}

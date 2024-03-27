@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const SHADOW_OFFSET_HEIGHT = 2;
 const SHADOW_OPACITY = 0.25;
@@ -24,14 +24,14 @@ export const inputStylesheet = (isDarkMode?: boolean) =>
       shadowRadius: SHADOW_RADIUS,
       elevation: ELEVATION,
       backgroundColor: isDarkMode
-        ? colors.bgColorComponentsDark
-        : colors.bgColorComponentsLight,
+        ? Color.bgColorComponentsDark
+        : Color.bgColorComponentsLight,
     },
     inputContainerStyle: {
       borderBottomWidth: 0,
     },
     inputStyle: {
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
       textAlignVertical: 'center',
     },
   });

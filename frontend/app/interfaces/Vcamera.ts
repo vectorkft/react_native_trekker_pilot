@@ -1,6 +1,6 @@
 import {BarCodeReadEvent} from 'react-native-camera';
 
-export interface ScannerInterface {
+export interface ScannerProps {
   onScan: (e: BarCodeReadEvent) => void;
   onClose: () => void;
 }

@@ -1,3 +1,3 @@
-export interface DataTableInterface {
+export interface DataTableProp {
   data: {[x: string]: any} | null;
 }

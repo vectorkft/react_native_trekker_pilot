@@ -1,6 +1,6 @@
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-export const enum colors {
+export const enum Color {
   primary = '#00EDAE',
   error = '#ff4d4d',
   warning = '#ffcc00',

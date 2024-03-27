@@ -1,5 +1,12 @@
 import {z, ZodObject} from 'zod';
-import {ApiResponseType} from '../constants/response-status';
+
+export type ApiResponseType = {
+  status: number;
+  data: null;
+  error?: string;
+};
+
+export type ApiResponseDict = Record<string, ApiResponseType>;
 
 export type ApiResponseOutput =
   | {

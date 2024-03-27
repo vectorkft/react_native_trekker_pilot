@@ -10,7 +10,7 @@ import {
   RESPONSE_SUCCESS,
   RESPONSE_UNAUTHORIZED,
 } from '../constants/response-status';
-import {ApiResponseOutput} from '../interfaces/api-response';
+import {ApiResponseOutput} from '../types/api-response';
 export const LoginService = {
   loadUsernameAndRememberMe: (): {
     username: string | undefined;

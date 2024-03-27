@@ -1,6 +1,6 @@
 import {useStore} from '../states/zustand';
 import jwtDecode from 'jwt-decode';
-import {ExpInterface} from '../interfaces/decoded-token';
+import {DecodedTokenProp} from '../interfaces/decoded-token';
 import {ApiService} from './api';
 import {parseZodError, validateZDTOForm} from '../../../shared/services/zod';
 import {
@@ -11,7 +11,7 @@ import {
 import {ZodError} from 'zod';
 import * as Sentry from '@sentry/react-native';
 import {NavigationService} from './navigation';
-import {ApiResponseOutput} from '../interfaces/api-response';
+import {ApiResponseOutput} from '../types/api-response';
 
 const isTokenExpired = (token: string): boolean => {
   const MILLISECONDS_PER_SECOND = 1000;
@@ -20,7 +20,7 @@ const isTokenExpired = (token: string): boolean => {
   }
 
   try {
-    const decoded: ExpInterface = jwtDecode(token);
+    const decoded: DecodedTokenProp = jwtDecode(token);
     const currentTime = Date.now() / MILLISECONDS_PER_SECOND;
 
     return decoded.exp >= currentTime;

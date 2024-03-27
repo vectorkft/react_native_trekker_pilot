@@ -4,11 +4,11 @@ import {AppNavigation} from '../interfaces/navigation';
 import {TouchableOpacity} from 'react-native';
 import {useStore} from '../states/zustand';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {UIConfig} from '../interfaces/u-i-config';
+import {UIConfig} from '../types/u-i-config';
 import {useContext} from 'react';
 import {DarkModeContext} from '../providers/dark-mode';
 import {vbackButton} from '../styles/Vback-button';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const VBackButton = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -25,7 +25,7 @@ const VBackButton = ({navigation}: AppNavigation) => {
         name="left"
         type="antdesign"
         size={35}
-        color={isDarkMode ? colors.lightContent : colors.darkContent}
+        color={isDarkMode ? Color.lightContent : Color.darkContent}
       />
     </TouchableOpacity>
   );

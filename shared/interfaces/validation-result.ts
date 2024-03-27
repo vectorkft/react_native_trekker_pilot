@@ -5,3 +5,8 @@ export interface ValidationResult {
   isValid: boolean;
   validType?: string[];
 }
+
+export interface ValidatedValue {
+  value: string;
+  validTypesArray: string[];
+}

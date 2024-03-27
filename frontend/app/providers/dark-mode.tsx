@@ -1,9 +1,9 @@
 import React, {createContext, useState, useEffect, ReactNode} from 'react';
 import {useColorScheme} from 'react-native';
-import {DarkModeInterface} from '../interfaces/dark-mode';
+import {DarkModeProps} from '../interfaces/dark-mode';
 import {LocalStorageService} from '../services/local-storage';
 
-export const DarkModeContext = createContext<DarkModeInterface>({
+export const DarkModeContext = createContext<DarkModeProps>({
   isDarkMode: false,
 });
 
