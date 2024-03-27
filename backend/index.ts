@@ -13,6 +13,7 @@ import swaggerUi from "swagger-ui-express";
 import {options} from "./swagger/options";
 import {HTTP_STATUS_OK} from "./constants/http-status-codes";
 
+
 const app = express();
 const HTTP_PORT = 8000;
 
@@ -48,9 +49,7 @@ cron.schedule(" * * * * *", deleteExpiredTokens_new);
 
 // Státusz ellenőrzések, nem fontos
 
-app.all('/check', (_req: Request,res: Response) => {
-    return res.status(HTTP_STATUS_OK).json({
-        message: 'Server is running'
-    })
+app.get('/check', async (_req: Request,res: Response) => {
+    return res.status(HTTP_STATUS_OK).json('API is running');
 })
 
