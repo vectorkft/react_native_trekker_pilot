@@ -8,7 +8,7 @@ import {
     ZProductNumberSchemaInput,
 } from "../../shared/dto/product";
 import {zParse} from "../../shared/services/zod";
-import {ValidTypes} from "../../shared/enums/types";
+import {ValidTypes} from "../../shared/enums/type";
 import {Product} from "../interface/product";
 
 const prisma = new PrismaClient()

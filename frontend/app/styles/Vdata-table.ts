@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const FONT_SIZE = 15;
 const MARGIN_TOP = 15;
@@ -16,19 +16,19 @@ export const dataTableStylesheet = (
       width: '100%',
       marginTop: MARGIN_TOP,
       borderRadius: BORDER_RADIUS,
-      backgroundColor: isDarkMode ? colors.lightContent : colors.darkContent,
+      backgroundColor: isDarkMode ? Color.lightContent : Color.darkContent,
     },
     titleContainer: {
       flexDirection: 'row',
       width: '100%',
-      backgroundColor: colors.bgColorComponentsLight,
+      backgroundColor: Color.bgColorComponentsLight,
       borderTopLeftRadius: BORDER_RADIUS,
       borderTopRightRadius: BORDER_RADIUS,
-      borderColor: isDarkMode ? colors.lightContent : colors.darkContent,
+      borderColor: isDarkMode ? Color.lightContent : Color.darkContent,
     },
     tableContainer: {
       flexDirection: 'row',
-      borderColor: isDarkMode ? colors.lightContent : colors.darkContent,
+      borderColor: isDarkMode ? Color.lightContent : Color.darkContent,
     },
     textStyle: {
       flex: 1,
@@ -36,7 +36,7 @@ export const dataTableStylesheet = (
       textAlign: 'center',
       textAlignVertical: 'center',
       fontSize: FONT_SIZE,
-      color: isDarkMode ? colors.darkContent : colors.lightContent,
+      color: isDarkMode ? Color.darkContent : Color.lightContent,
       borderRightWidth:
         typeof index !== 'undefined' &&
         typeof row !== 'undefined' &&
@@ -44,7 +44,7 @@ export const dataTableStylesheet = (
           ? 1
           : 0,
       borderBottomWidth: 1,
-      borderColor: isDarkMode ? colors.darkContent : colors.lightContent,
+      borderColor: isDarkMode ? Color.darkContent : Color.lightContent,
     },
     titleStyle: {
       flex: 1,
@@ -53,19 +53,19 @@ export const dataTableStylesheet = (
       textAlignVertical: 'center',
       fontSize: FONT_SIZE,
       borderBottomWidth: 1,
-      color: isDarkMode ? colors.darkContent : colors.lightContent,
+      color: isDarkMode ? Color.darkContent : Color.lightContent,
       borderRightWidth:
         typeof index !== 'undefined' && index < MAX_INDEX_FOR_BORDER ? 1 : 0,
-      borderColor: isDarkMode ? colors.darkContent : colors.lightContent,
+      borderColor: isDarkMode ? Color.darkContent : Color.lightContent,
     },
     navigationView: {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
     buttonStyle: {
-      backgroundColor: colors.primary,
+      backgroundColor: Color.primary,
     },
     buttonTitleStyle: {
-      color: isDarkMode ? colors.darkContent : colors.lightContent,
+      color: isDarkMode ? Color.darkContent : Color.lightContent,
     },
   });

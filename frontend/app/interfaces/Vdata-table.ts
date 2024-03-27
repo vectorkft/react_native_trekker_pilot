@@ -1,5 +1,3 @@
-import {ZProductListOutput} from '../../../shared/dto/product';
-
-export interface ZProductOutput {
-  data: ZProductListOutput;
+export interface DataTableProp {
+  data: {[x: string]: any} | null;
 }

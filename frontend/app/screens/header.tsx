@@ -5,7 +5,7 @@ import {AppNavigation} from '../interfaces/navigation';
 import {useStore} from '../states/zustand';
 import VBackButton from '../components/Vback-button';
 import {RouteProp, useRoute} from '@react-navigation/native';
-import {UIConfig} from '../interfaces/u-i-config';
+import {UIConfig} from '../types/u-i-config';
 import {LoginService} from '../services/login';
 import LoadingScreen from './loading-screen';
 import {useAlert} from '../states/use-alert';
@@ -13,8 +13,8 @@ import VAlert from '../components/Valert';
 import {headerStylesheet} from '../styles/header';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
-import {AlertTypes} from '../enums/types';
-import {colors} from '../enums/colors';
+import {AlertType} from '../enums/type';
+import {Color} from '../enums/color';
 import {ErrorContext} from '../providers/error';
 
 const Header = ({navigation}: AppNavigation) => {
@@ -49,7 +49,7 @@ const Header = ({navigation}: AppNavigation) => {
     <View style={headerStylesheet(isDarkMode).header}>
       {errorMessage && (
         <VAlert
-          type={AlertTypes.error}
+          type={AlertType.error}
           title={'Hiba!'}
           message={errorMessage}
         />
@@ -68,7 +68,7 @@ const Header = ({navigation}: AppNavigation) => {
             <Icon
               name="user"
               type="font-awesome"
-              color={isDarkMode ? colors.lightContent : colors.darkContent}
+              color={isDarkMode ? Color.lightContent : Color.darkContent}
               size={35}
             />
           </TouchableOpacity>
@@ -88,7 +88,7 @@ const Header = ({navigation}: AppNavigation) => {
             <Icon
               name="exit-to-app"
               type="material"
-              color={isDarkMode ? colors.lightContent : colors.darkContent}
+              color={isDarkMode ? Color.lightContent : Color.darkContent}
               size={35}
             />
           </TouchableOpacity>

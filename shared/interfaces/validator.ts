@@ -1,6 +1,6 @@
 import {TypeOf, ZodType} from "zod/lib/types";
 export interface ValidatorProp<T extends ZodType<any, any, any>>{
-    type: string;
+    name: string;
     parseType: TypeOf<T>;
 }
 

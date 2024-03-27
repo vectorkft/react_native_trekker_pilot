@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {Animated, Modal, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
-import {Alert} from '../interfaces/Valert';
+import {Alert} from '../types/Valert';
 import {alertStylesheet} from '../styles/Valert';
-import {AlertTypes} from '../enums/types';
-import {colors} from '../enums/colors';
+import {AlertType} from '../enums/type';
+import {Color} from '../enums/color';
 
 const VAlert: React.FC<Alert> = ({type, title, message}) => {
   const VALERT_ANIMATION_DURATION = 100;
   const backgroundColor =
-    type === AlertTypes.error
-      ? colors.error
-      : type === AlertTypes.warning
-      ? colors.warning
-      : colors.message;
+    type === AlertType.error
+      ? Color.error
+      : type === AlertType.warning
+      ? Color.warning
+      : Color.message;
   const [visible, setVisible] = useState(true);
   const [fadeAnim] = useState(new Animated.Value(0));
 

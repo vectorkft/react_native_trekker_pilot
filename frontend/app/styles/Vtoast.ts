@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const PADDING_VERTICAL = 10;
 const PADDING_HORIZONTAL = 20;
@@ -25,7 +25,7 @@ export const toastStylesheet = (isDarkMode?: boolean) =>
       alignItems: 'center',
       alignSelf: 'center',
       justifyContent: 'space-between',
-      shadowColor: colors.darkContent,
+      shadowColor: Color.darkContent,
       shadowOffset: {
         width: 0,
         height: SHADOW_OFFSET_HEIGHT,
@@ -34,12 +34,12 @@ export const toastStylesheet = (isDarkMode?: boolean) =>
       shadowRadius: SHADOW_RADIUS,
       elevation: SHADOW_ELEVATION,
       backgroundColor: isDarkMode
-        ? colors.bgColorComponentsDark
-        : colors.placeholderLight,
+        ? Color.bgColorComponentsDark
+        : Color.placeholderLight,
     },
     vtoastLabel: {
       fontSize: FONT_SIZE,
       fontWeight: 'bold',
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
     },
   });

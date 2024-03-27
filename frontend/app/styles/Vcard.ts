@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const SCROLL_VIEW_PADDING_BOTTOM = 80;
 const CARD_CONTAINER_MARGIN_TOP = 15;
@@ -21,17 +21,17 @@ export const cardStylesheet = (isDarkMode?: boolean) =>
       padding: PADDING,
       width: '100%',
       alignSelf: 'center',
-      backgroundColor: isDarkMode ? colors.lightContent : colors.darkContent,
+      backgroundColor: isDarkMode ? Color.lightContent : Color.darkContent,
     },
     cardTitle: {
       fontSize: CARD_TITLE_FONT_SIZE,
       fontWeight: 'bold',
-      color: isDarkMode ? colors.darkContent : colors.lightContent,
+      color: isDarkMode ? Color.darkContent : Color.lightContent,
     },
     cardTitleNotFound: {
       fontSize: CARD_TITLE_FONT_SIZE,
       fontWeight: 'bold',
-      color: colors.error,
+      color: Color.error,
     },
     itemContainer: {
       marginTop: ITEM_CONTAINER_MARGIN_TOP,
@@ -39,10 +39,10 @@ export const cardStylesheet = (isDarkMode?: boolean) =>
     itemTitle: {
       fontSize: ITEM_TITLE_FONT_SIZE,
       fontWeight: 'bold',
-      color: isDarkMode ? colors.darkContent : colors.lightContent,
+      color: isDarkMode ? Color.darkContent : Color.lightContent,
     },
     itemValue: {
       fontSize: ITEM_VALUE_FONT_SIZE,
-      color: isDarkMode ? colors.darkContent : colors.lightContent,
+      color: isDarkMode ? Color.darkContent : Color.lightContent,
     },
   });

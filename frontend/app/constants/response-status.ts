@@ -1,3 +1,5 @@
+import {ApiResponseDict} from '../types/api-response';
+
 export const RESPONSE_SUCCESS = 200;
 export const RESPONSE_NO_CONTENT = 204;
 export const RESPONSE_NO_AUTH = 403;
@@ -5,7 +7,7 @@ export const RESPONSE_UNAUTHORIZED = 401;
 export const RESPONSE_INTERNAL_SERVER_ERROR = 500;
 export const RESPONSE_BAD_GATEWAY = 502;
 
-export const ApiResponse = {
+export const ApiResponse: ApiResponseDict = {
   SUCCESS: {status: RESPONSE_SUCCESS, data: null},
   NO_CONTENT: {status: RESPONSE_NO_CONTENT, data: null},
   NO_AUTH: {status: RESPONSE_NO_AUTH, error: 'No Authorization', data: null},

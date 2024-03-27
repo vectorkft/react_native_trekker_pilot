@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const TILE_WIDTH = 120;
 const TILE_HEIGHT = 110;
@@ -20,7 +20,7 @@ export const tileStylesheet = (isDarkMode?: boolean) =>
       backgroundColor: isDarkMode ? '#2d2d2d' : '#d2cfcf',
     },
     title: {
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
       fontSize: FONT_SIZE,
       fontWeight: 'bold',
     },

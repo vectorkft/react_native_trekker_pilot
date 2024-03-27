@@ -2,11 +2,11 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {Icon, Button} from 'react-native-elements';
-import {ScannerInterface} from '../interfaces/Vcamera';
+import {ScannerProps} from '../interfaces/Vcamera';
 import {vcamera} from '../styles/Vcamera';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
-const VCamera = ({onScan, onClose}: ScannerInterface) => {
+const VCamera = ({onScan, onClose}: ScannerProps) => {
   return (
     <View style={StyleSheet.absoluteFillObject}>
       <RNCamera
@@ -24,7 +24,7 @@ const VCamera = ({onScan, onClose}: ScannerInterface) => {
             type="antdesign"
             name="close"
             size={40}
-            color={colors.lightContent}
+            color={Color.lightContent}
           />
         }
         buttonStyle={vcamera.buttonStyle}

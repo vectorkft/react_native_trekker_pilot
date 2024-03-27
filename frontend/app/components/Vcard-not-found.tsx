@@ -13,7 +13,7 @@ const VCardNotFound: React.FC<CardNotFound> = ({
   return (
     <View style={cardStylesheet(isDarkMode).cardContainer}>
       <Text style={cardStylesheet().cardTitleNotFound}>{title}</Text>
-      <Text style={cardStylesheet().cardTitleNotFound}>EAN kód: {value}</Text>
+      <Text style={cardStylesheet().cardTitleNotFound}>Kód: {value}</Text>
     </View>
   );
 };

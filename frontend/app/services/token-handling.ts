@@ -1,17 +1,17 @@
 import {useStore} from '../states/zustand';
 import jwtDecode from 'jwt-decode';
-import {ExpInterface} from '../interfaces/decoded-token';
+import {DecodedTokenProp} from '../interfaces/decoded-token';
 import {ApiService} from './api';
 import {parseZodError, validateZDTOForm} from '../../../shared/services/zod';
 import {
   TokenDTOInput,
   TokenDTOOutput,
   ZTokenDTOInput,
-  ZTokenDTOOutput,
 } from '../../../shared/dto/token';
 import {ZodError} from 'zod';
 import * as Sentry from '@sentry/react-native';
 import {NavigationService} from './navigation';
+import {ApiResponseOutput} from '../types/api-response';
 
 const isTokenExpired = (token: string): boolean => {
   const MILLISECONDS_PER_SECOND = 1000;
@@ -20,7 +20,7 @@ const isTokenExpired = (token: string): boolean => {
   }
 
   try {
-    const decoded: ExpInterface = jwtDecode(token);
+    const decoded: DecodedTokenProp = jwtDecode(token);
     const currentTime = Date.now() / MILLISECONDS_PER_SECOND;
 
     return decoded.exp >= currentTime;
@@ -32,7 +32,7 @@ const isTokenExpired = (token: string): boolean => {
 
 const refreshAccessToken = async (
   input: ZTokenDTOInput,
-): Promise<ZTokenDTOOutput | undefined> => {
+): Promise<ApiResponseOutput> => {
   const options = {
     method: 'POST',
     body: JSON.stringify(input),
@@ -77,16 +77,24 @@ export const TokenHandlingService = {
       try {
         const response = await refreshAccessToken({refreshToken});
 
-        if (response) {
-          setAccessToken(response.newAccessToken);
-          return response.newAccessToken;
+        if (
+          'data' in response &&
+          response.data &&
+          'newAccessToken' in response.data
+        ) {
+          const newToken = response.data.newAccessToken;
+
+          setAccessToken(newToken as string);
+          return newToken as string;
         }
       } catch (e) {
         setError(e);
         Sentry.captureException(e);
+        return;
       }
     } else {
       NavigationService.redirectToLogin();
+      return;
     }
   },
 };

@@ -1,8 +1,6 @@
 import {API_URL} from '../../config';
 import {zParse} from '../../../shared/services/zod';
-import {AnyZodObject} from 'zod';
-import * as Sentry from '@sentry/react-native';
-import {NavigationService} from './navigation';
+import {AnyZodObject, z, ZodObject} from 'zod';
 import {
   ApiResponse,
   RESPONSE_BAD_GATEWAY,
@@ -11,8 +9,10 @@ import {
   RESPONSE_NO_CONTENT,
   RESPONSE_UNAUTHORIZED,
 } from '../constants/response-status';
+import {ApiResponseOutput} from '../types/api-response';
+import {RequestOptions} from '../interfaces/request-option';
 
-const createRequestInit = (options: any = {}): RequestInit => {
+const createRequestInit = (options: RequestOptions = {}): RequestInit => {
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -32,27 +32,23 @@ const createRequestInit = (options: any = {}): RequestInit => {
 export const ApiService = {
   doRequest: async (
     endpoint: string,
-    requestOptions: any = {},
+    requestOptions: RequestOptions = {},
     schema?: AnyZodObject,
-  ) => {
+  ): Promise<ApiResponseOutput> => {
     const url = `${API_URL}${endpoint}`;
     const response: Response = await fetch(
       url,
       createRequestInit(requestOptions),
     );
-    let data: any;
+    let data: z.infer<ZodObject<any, any, any>>;
 
     switch (response.status) {
       case RESPONSE_INTERNAL_SERVER_ERROR: {
-        const error = new Error(RESPONSE_INTERNAL_SERVER_ERROR.toString());
-        Sentry.captureException(error);
-        throw error;
+        throw new Error(RESPONSE_INTERNAL_SERVER_ERROR.toString());
       }
 
       case RESPONSE_BAD_GATEWAY: {
-        const error = new Error(RESPONSE_BAD_GATEWAY.toString());
-        Sentry.captureException(error);
-        throw error;
+        throw new Error(RESPONSE_BAD_GATEWAY.toString());
       }
 
       case RESPONSE_NO_CONTENT:
@@ -67,17 +63,12 @@ export const ApiService = {
       default:
         data = await response.json();
         if (schema && response.ok) {
-          try {
-            data = await zParse(schema, data);
-          } catch (error) {
-            Sentry.captureException(error);
-            throw error;
-          }
+          data = await zParse(schema, data);
         }
     }
 
     return {
-      ...data,
+      data: data,
       status: response.status,
     };
   },

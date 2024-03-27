@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors, darkModeBgColor, lightModeBgColor} from '../enums/colors';
+import {Color, darkModeBgColor, lightModeBgColor} from '../enums/color';
 
 const BORDER_RADIUS = 10;
 const PADDING = 20;
@@ -18,21 +18,21 @@ export const errorScreen = (isDarkMode?: boolean) =>
     },
     modalView: {
       backgroundColor: isDarkMode
-        ? colors.bgColorComponentsDark
-        : colors.bgColorComponentsLight,
+        ? Color.bgColorComponentsDark
+        : Color.bgColorComponentsLight,
       borderRadius: BORDER_RADIUS,
       padding: PADDING,
       alignItems: 'center',
       elevation: ELEVATION,
     },
     title: {
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
       fontSize: FONT_SIZE_TITLE,
       fontWeight: 'bold',
       marginBottom: MARGIN_BOTTOM,
     },
     text: {
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
       fontSize: FONT_SIZE_LABEL,
       marginBottom: MARGIN_BOTTOM,
     },

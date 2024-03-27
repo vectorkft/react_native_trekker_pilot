@@ -13,11 +13,11 @@ import {AppNavigation} from '../interfaces/navigation';
 import {
   ProductEANSchemaInput,
   ProductNumberSchemaInput,
-  ZProductListOutput,
 } from '../../../shared/dto/product';
 import {useStore} from '../states/zustand';
 import VInternetToast from '../components/Vinternet-toast';
 import VToast from '../components/Vtoast';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
 import VKeyboardIconButton from '../components/Vkeyboard-icon-button';
@@ -29,14 +29,18 @@ import {
   RESPONSE_NO_CONTENT,
   RESPONSE_SUCCESS,
 } from '../constants/response-status';
-import {AlertTypes, ToastTypes} from '../enums/types';
-import {ValidTypes} from '../../../shared/enums/types';
+import {AlertType, ToastType} from '../enums/type';
+import {ValidTypes} from '../../../shared/enums/type';
 import {useAlert} from '../states/use-alert';
 import {CameraService, useCamera} from '../services/camera';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 import {ZodError} from 'zod';
-import {ValidatedValue} from '../interfaces/types';
 import {ErrorContext} from '../providers/error';
+import {ApiResponseOutput} from '../types/api-response';
+import VMenu from '../components/VMenu';
+import * as Sentry from '@sentry/react-native';
+import VCardSuccess from '../components/Vcard-succes';
+import {ValidatedValue} from '../../../shared/interfaces/validation-result';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const TIMEOUT_DELAY = 100;
@@ -50,24 +54,22 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const wasDisconnected = useStore(state => state.wasDisconnected);
   const [searchValue, setSearchValue] = React.useState('');
   const [searchValueSave, setSearchValueSave] = useState('');
-  const [changeHandlerResult, setChangeHandlerResult] = useState<
-    ZProductListOutput | Response | undefined
-  >(undefined);
+  const [changeHandlerResult, setChangeHandlerResult] =
+    useState<ApiResponseOutput>();
   const [keyboardActive, setKeyboardActive] = useState(false);
   const {inputRef} = useInputChange(searchValue);
 
   const handleError = async (error: ZodError) => {
-    parseZodError(error).then(resp => {
-      setErrorMessage(resp);
-      setSearchValue('');
-    });
+    const msg = await parseZodError(error);
+    setErrorMessage(msg);
+    setSearchValue('');
+    setChangeHandlerResult(undefined);
   };
 
   const handleSuccess = async (formData: ValidatedValue) => {
-    ProductService.getProduct(formData, setError).then(res => {
-      setChangeHandlerResult(res);
-      setSearchValue('');
-    });
+    const res = await ProductService.getProduct(formData, setError);
+    setChangeHandlerResult(res);
+    setSearchValue('');
   };
 
   const getProduct = async (value: string) => {
@@ -78,8 +80,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       checkedValue,
       {
         propList: [
-          {type: ValidTypes.ean, parseType: ProductEANSchemaInput},
-          {type: ValidTypes.etk, parseType: ProductNumberSchemaInput},
+          {name: ValidTypes.ean, parseType: ProductEANSchemaInput},
+          {name: ValidTypes.etk, parseType: ProductNumberSchemaInput},
         ],
       },
       handleError,
@@ -89,10 +91,17 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
     setSearchValueSave(checkedValue);
   };
 
-  const {onBarCodeRead} = CameraService.useOnBarCodeRead(
-    getProduct,
-    setIsCameraActive,
-  );
+  const handleCameraSuccess = async (value: string) => {
+    try {
+      await getProduct(value);
+    } catch (error) {
+      Sentry.captureMessage('A hang nem játszódott le!', 'warning');
+    } finally {
+      setIsCameraActive(false);
+    }
+  };
+
+  const {onBarCodeRead} = CameraService.useOnBarCodeRead(handleCameraSuccess);
 
   if (isCameraActive) {
     return <VCamera onScan={onBarCodeRead} onClose={handleOnClose} />;
@@ -104,12 +113,12 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
       <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
-        type={ToastTypes.success}
+        type={ToastType.success}
         handleEvent={() => setWasDisconnected(false)}
       />
       {errorMessage && (
         <VAlert
-          type={AlertTypes.error}
+          type={AlertType.error}
           title={'Hibás eankód!'}
           message={errorMessage}
         />
@@ -146,7 +155,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     name="search1"
                     size={25}
                     color={
-                      isDarkMode ? colors.lightContent : colors.darkContent
+                      isDarkMode ? Color.lightContent : Color.darkContent
                     }
                     disabled={!searchValue || !isConnected}
                     disabledStyle={productStyles().iconDisabledStyle}
@@ -159,7 +168,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                       size={25}
                       containerStyle={productStyles().iconContainerStyle}
                       color={
-                        isDarkMode ? colors.lightContent : colors.darkContent
+                        isDarkMode ? Color.lightContent : Color.darkContent
                       }
                       onPress={() => {
                         setSearchValue('');
@@ -189,28 +198,26 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                 }}
               />
             )}
+            <VMenu />
           </HamburgerMenu>
         </View>
-        {changeHandlerResult &&
-          'status' in changeHandlerResult &&
-          changeHandlerResult.status === RESPONSE_SUCCESS && (
-            <View>
-              <VDataTable
-                data={changeHandlerResult as unknown as ZProductListOutput}
-              />
-              {/*<VCardSuccess title={'Találatok'} content={changeHandlerResult} />*/}
-            </View>
-          )}
-        {changeHandlerResult &&
-          'status' in changeHandlerResult &&
-          changeHandlerResult.status === RESPONSE_NO_CONTENT && (
-            <View>
-              <VCardNotFound
-                title={'Nem található'}
-                value={searchValueSave as string}
-              />
-            </View>
-          )}
+        {changeHandlerResult?.status === RESPONSE_SUCCESS && (
+          <View>
+            {/*<VDataTable data={changeHandlerResult.data} />*/}
+            <VCardSuccess
+              title={'Találatok'}
+              content={changeHandlerResult.data}
+            />
+          </View>
+        )}
+        {changeHandlerResult?.status === RESPONSE_NO_CONTENT && (
+          <View>
+            <VCardNotFound
+              title={'Nem található'}
+              value={searchValueSave as string}
+            />
+          </View>
+        )}
       </View>
     </View>
   );

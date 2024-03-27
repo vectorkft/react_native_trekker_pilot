@@ -9,7 +9,7 @@ import Header from './header';
 import VTile from '../components/Vtile';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
-import {ToastTypes} from '../enums/types';
+import {ToastType} from '../enums/type';
 import {homeScreenStyles} from '../styles/home-screen';
 
 const HomeScreen = ({navigation}: AppNavigation): JSX.Element => {
@@ -31,7 +31,7 @@ const HomeScreen = ({navigation}: AppNavigation): JSX.Element => {
       <VToast
         isVisible={wasDisconnected && isConnected}
         label={'Sikeres kapcsolat!'}
-        type={ToastTypes.success}
+        type={ToastType.success}
         handleEvent={() => setWasDisconnected(false)}
       />
       <View style={homeScreenStyles().innerView}>

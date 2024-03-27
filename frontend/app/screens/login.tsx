@@ -13,17 +13,18 @@ import VButton from '../components/Vbutton';
 import LoadingScreen from './loading-screen';
 import {
   UserLoginDTOInput,
-  ZUserLoginDTOOutput,
+
 } from '../../../shared/dto/user-login';
 import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
 import {DarkModeContext} from '../providers/dark-mode';
 import {LoadingContext} from '../providers/loading';
 import {deviceData} from '../constants/device-data';
-import {AlertTypes} from '../enums/types';
+import {AlertType} from '../enums/type';
 import {loginScreenStyles} from '../styles/login-screen';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 import {ErrorContext} from '../providers/error';
+import {ApiResponseOutput} from '../types/api-response';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const BUTTON_FONT_SIZE = 20;
@@ -71,7 +72,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   };
 
   const handleSubmit = (
-    loginSuccess: ZUserLoginDTOOutput,
+    loginSuccess: ApiResponseOutput,
     rememberMeValue: boolean,
   ) => {
     if (rememberMeValue) {
@@ -81,12 +82,23 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
     }
     setPassword('');
     setAccessToken(
-      'accessToken' in loginSuccess ? loginSuccess.accessToken : '',
+      'data' in loginSuccess &&
+        loginSuccess.data &&
+        'accessToken' in loginSuccess.data &&
+        loginSuccess.data.accessToken,
     );
     setRefreshToken(
-      'refreshToken' in loginSuccess ? loginSuccess.refreshToken : '',
+      'data' in loginSuccess &&
+        loginSuccess.data &&
+        'refreshToken' in loginSuccess.data &&
+        loginSuccess.data.refreshToken,
     );
-    setDeviceType('deviceType' in loginSuccess ? loginSuccess.deviceType : '');
+    setDeviceType(
+      'data' in loginSuccess &&
+        loginSuccess.data &&
+        'deviceType' in loginSuccess.data &&
+        loginSuccess.data.deviceType,
+    );
     setIsLoggedIn(true);
     setLoadingState(false);
     navigation.navigate('homescreen', {hidebutton: true});
@@ -136,7 +148,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       />
       {errorMessage && (
         <VAlert
-          type={AlertTypes.error}
+          type={AlertType.error}
           title={'Hibás belépés!'}
           message={errorMessage}
         />
@@ -174,7 +186,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                     name={isPasswordVisible ? 'visibility-off' : 'visibility'}
                     size={24}
                     color={
-                      isDarkMode ? colors.lightContent : colors.darkContent
+                      isDarkMode ? Color.lightContent : Color.darkContent
                     }
                   />
                 </>
@@ -186,7 +198,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
               title="Emlékezz rám"
               checkedColor="#00EDAE"
               uncheckedColor={
-                isDarkMode ? colors.lightContent : colors.darkContent
+                isDarkMode ? Color.lightContent : Color.darkContent
               }
               containerStyle={loginScreenStyles().checkBoxContainerStyle}
               textStyle={loginScreenStyles(isDarkMode).checkBoxTextStyle}
@@ -202,7 +214,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                   false: isDarkMode ? '#424242' : '#E0E0E0',
                   true: '#fff',
                 }}
-                thumbColor={isDarkMode ? colors.primary : '#616161'}
+                thumbColor={isDarkMode ? Color.primary : '#616161'}
                 onValueChange={toggleDarkMode}
                 value={isDarkMode}
               />
@@ -215,10 +227,10 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                 fontFamily: 'Roboto',
                 fontSize: BUTTON_FONT_SIZE,
                 fontWeight: '700',
-                color: isDarkMode ? colors.lightContent : colors.darkContent,
+                color: isDarkMode ? Color.lightContent : Color.darkContent,
               },
               buttonStyle: {
-                backgroundColor: colors.primary,
+                backgroundColor: Color.primary,
                 height: BUTTON_HEIGHT,
                 borderRadius: BUTTON_BORDER_RADIUS,
               },

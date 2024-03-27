@@ -1,8 +1,6 @@
-import {ZProductListOutput} from '../../../shared/dto/product';
-
 export interface CardContent {
   title: string;
-  content: ZProductListOutput;
+  content: {[x: string]: any} | null;
 }
 
 export interface CardNotFound {

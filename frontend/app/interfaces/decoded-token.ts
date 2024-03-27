@@ -1,3 +1,3 @@
-export interface ExpInterface {
+export interface DecodedTokenProp {
   exp: number;
 }

@@ -7,7 +7,7 @@ import {
 import {Text, View, Modal} from 'react-native';
 import {LoadingContext} from '../providers/loading';
 import VButton from '../components/Vbutton';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 import {errorScreen} from '../styles/error-screen';
 import {DarkModeContext} from '../providers/dark-mode';
 
@@ -55,10 +55,10 @@ export const ErrorScreen = ({errorCode, onClick}: ErrorBoundaryProps) => {
                 fontFamily: 'Roboto',
                 fontSize: FONT_SIZE,
                 fontWeight: '700',
-                color: isDarkMode ? colors.lightContent : colors.darkContent,
+                color: isDarkMode ? Color.lightContent : Color.darkContent,
               },
               buttonStyle: {
-                backgroundColor: colors.primary,
+                backgroundColor: Color.primary,
                 height: HEIGHT,
                 borderRadius: BORDER_RADIUS,
               },

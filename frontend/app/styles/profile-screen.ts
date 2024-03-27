@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {darkModeBgColor, lightModeBgColor} from '../enums/colors';
+import {darkModeBgColor, lightModeBgColor} from '../enums/color';
 
 export const profileScreen = (isDarkMode?: boolean) =>
   StyleSheet.create({

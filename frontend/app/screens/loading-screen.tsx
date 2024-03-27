@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {View, ActivityIndicator} from 'react-native';
 import {DarkModeContext} from '../providers/dark-mode';
 import {loadingStyles} from '../styles/loading';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const LoadingScreen = () => {
   const {isDarkMode} = useContext(DarkModeContext);
@@ -11,7 +11,7 @@ const LoadingScreen = () => {
     <View style={loadingStyles(isDarkMode).container}>
       <ActivityIndicator
         size="large"
-        color={isDarkMode ? colors.lightContent : colors.darkContent}
+        color={isDarkMode ? Color.lightContent : Color.darkContent}
       />
     </View>
   );

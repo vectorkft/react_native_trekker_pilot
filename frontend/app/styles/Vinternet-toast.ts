@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {colors} from '../enums/colors';
+import {Color} from '../enums/color';
 
 const PADDING_VERTICAL = 10;
 const PADDING_HORIZONTAL = 10;
@@ -34,11 +34,11 @@ export const internetToastStylesheet = (isDarkMode?: boolean) =>
       shadowRadius: SHADOW_RADIUS,
       elevation: SHADOW_ELEVATION,
       backgroundColor: isDarkMode
-        ? colors.bgColorComponentsDark
-        : colors.placeholderLight,
+        ? Color.bgColorComponentsDark
+        : Color.placeholderLight,
     },
     textStyle: {
-      color: isDarkMode ? colors.lightContent : colors.darkContent,
+      color: isDarkMode ? Color.lightContent : Color.darkContent,
       fontSize: FONT_SIZE,
       marginLeft: MARGIN_LEFT,
       fontWeight: 'bold',

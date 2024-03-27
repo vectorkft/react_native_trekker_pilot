@@ -1,8 +1,8 @@
-import {ToastTypes} from '../enums/types';
+import {ToastType} from '../enums/type';
 
 export interface ToastProps {
   isVisible: boolean;
   label?: string;
-  type?: ToastTypes.success | ToastTypes.close | ToastTypes.info;
+  type?: ToastType.success | ToastType.close | ToastType.info;
   handleEvent?: () => void;
 }

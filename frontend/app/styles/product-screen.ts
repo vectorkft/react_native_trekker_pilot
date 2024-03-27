@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {darkModeBgColor, lightModeBgColor} from '../enums/colors';
+import {darkModeBgColor, lightModeBgColor} from '../enums/color';
 
 const ICON_MARGIN_LEFT = 10;
 const HAMBURGER_MENU_TOP_MARGIN = -45;

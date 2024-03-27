@@ -2,9 +2,9 @@ import React, {useContext, useState} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {Icon} from 'react-native-elements';
 import {DarkModeContext} from '../providers/dark-mode';
-import {HamburgerMenuProps} from '../interfaces/hamburger-menu';
+import {HamburgerMenuProp} from '../interfaces/hamburger-menu';
 
-const HamburgerMenu = ({children}: HamburgerMenuProps) => {
+const HamburgerMenu = ({children}: HamburgerMenuProp) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const [isOpen, setIsOpen] = useState(false);
   return (
