@@ -12,6 +12,7 @@ import {navigationRef} from './services/navigation';
 import * as Sentry from '@sentry/react-native';
 import {ErrorContext, ErrorProvider} from './providers/error';
 import {useError} from './states/use-error';
+import {ErrorScreen} from './screens/error-screen';
 
 Sentry.init({
   dsn: 'https://1d625a315d5be4692039604f037797f9@o4506777853493248.ingest.us.sentry.io/4506777855655936',
@@ -35,7 +36,8 @@ const App = () => {
                 }}
                 initialRouteName="login">
                 <Stack.Screen name="login" component={Login} />
-                <Stack.Screen name="homescreen" component={HomeScreen} />
+                <Stack.Screen name="homeScreen" component={HomeScreen} />
+                <Stack.Screen name="errorScreen" component={ErrorScreen} />
                 <Stack.Screen name="profile" component={Profile} />
                 <Stack.Screen name="products" component={Product} />
               </Stack.Navigator>

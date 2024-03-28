@@ -1,26 +1,22 @@
-import React, {ReactNode, createContext, useContext} from 'react';
-import {ErrorScreen} from '../screens/error-screen';
+import React, {ReactNode, createContext, useEffect} from 'react';
+import {navigationRef} from '../services/navigation';
+import {isConnected} from '../services/net-info';
 export const ErrorContext = createContext({
   hasError: false,
   errorCode: 0,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
   setError: (error: any, changeError: boolean | undefined) => {},
 });
 
 export function ErrorProvider({children}: {children: ReactNode}) {
   const {hasError, errorCode} = React.useContext(ErrorContext);
-  const {setError} = useContext(ErrorContext);
 
-  if (hasError) {
-    return (
-      <ErrorScreen
-        errorCode={errorCode}
-        onClick={() => {
-          setError(null, true);
-        }}
-      />
-    );
-  }
+  useEffect(() => {
+    if (hasError && isConnected) {
+      navigationRef.current?.navigate('errorScreen', {
+        errorCodeParam: errorCode,
+      });
+    }
+  }, [hasError, errorCode]);
 
-  return children;
+  return <>{children}</>;
 }

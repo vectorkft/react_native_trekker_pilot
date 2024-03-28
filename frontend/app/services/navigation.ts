@@ -4,7 +4,7 @@ import {NavigationContainerRef} from '@react-navigation/native';
 
 export const navigationRef = React.createRef<NavigationContainerRef>();
 
-const navigate = (routeName: string, params: any = {}) => {
+export const navigate = (routeName: string, params: any = {}) => {
   navigationRef.current?.navigate(routeName, params);
 };
 
@@ -14,5 +14,8 @@ export const NavigationService = {
 
     setIsLoggedIn(false);
     navigate('login', {focus: true});
+  },
+  redirectBack: () => {
+    navigationRef.current?.goBack();
   },
 };

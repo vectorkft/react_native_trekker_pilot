@@ -16,7 +16,7 @@ export const errorScreen = (isDarkMode?: boolean) =>
       alignItems: 'center',
       backgroundColor: isDarkMode ? darkModeBgColor : lightModeBgColor,
     },
-    modalView: {
+    innerView: {
       backgroundColor: isDarkMode
         ? Color.bgColorComponentsDark
         : Color.bgColorComponentsLight,

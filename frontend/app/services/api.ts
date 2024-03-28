@@ -12,7 +12,7 @@ import {
 } from '../constants/response-status';
 import {ApiResponseOutput} from '../types/api-response';
 import {RequestOptions} from '../interfaces/request-option';
-import {NavigationService} from './navigation';
+import {navigate, NavigationService} from './navigation';
 import {isConnected} from './net-info';
 
 const createRequestInit = (options: RequestOptions = {}): RequestInit => {
@@ -39,7 +39,9 @@ export const ApiService = {
     schema?: AnyZodObject,
   ): Promise<ApiResponseOutput> => {
     if (!isConnected) {
-      throw new Error(NO_INTERNET_CONNECTION.toString());
+      navigate('errorScreen', {
+        errorCodeParam: NO_INTERNET_CONNECTION,
+      });
     }
 
     const url = `${API_URL}${endpoint}`;

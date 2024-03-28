@@ -23,10 +23,10 @@ const Header = ({navigation}: AppNavigation) => {
   const {setIsLoggedIn} = useStore.getState();
   const {setLoadingState} = useContext(LoadingContext);
   const {errorMessage, setErrorMessage} = useAlert();
-  const routeHomeScreen = useRoute<RouteProp<UIConfig, 'homescreen'>>();
+  const routeHomeScreen = useRoute<RouteProp<UIConfig, 'homeScreen'>>();
   const routeProfile = useRoute<RouteProp<UIConfig, 'profile'>>();
   const hideButton =
-    routeHomeScreen.params.hidebutton || routeProfile.params.hidebutton;
+    routeHomeScreen.params.hideButton || routeProfile.params.hideButton;
   const hideButtonProfile = routeProfile.params.hideButtonProfile;
 
   const handleLogoutSuccess = () => {
@@ -52,7 +52,7 @@ const Header = ({navigation}: AppNavigation) => {
             style={headerStylesheet().iconButton}
             onPress={() =>
               navigation.navigate('profile', {
-                hidebutton: false,
+                hideButton: false,
                 hideButtonProfile: true,
               })
             }>

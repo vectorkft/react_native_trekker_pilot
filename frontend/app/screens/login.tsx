@@ -101,7 +101,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
     setDeviceType(loginSuccess?.data?.deviceType);
     setIsLoggedIn(true);
     navigation.setParams({focus: false});
-    navigation.navigate('homescreen', {hidebutton: true});
+    navigation.navigate('homeScreen', {hideButton: true});
     setLoadingState(false);
   };
 
