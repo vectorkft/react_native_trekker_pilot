@@ -7,7 +7,6 @@ import VBackButton from '../components/Vback-button';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {UIConfig} from '../types/u-i-config';
 import {LoginService} from '../services/login';
-import LoadingScreen from './loading-screen';
 import {useAlert} from '../states/use-alert';
 import VAlert from '../components/Valert';
 import {headerStylesheet} from '../styles/header';
@@ -16,12 +15,13 @@ import {LoadingContext} from '../providers/loading';
 import {AlertType} from '../enums/type';
 import {Color} from '../enums/color';
 import {ErrorContext} from '../providers/error';
+import withLoader from '../components/with-loader';
 
 const Header = ({navigation}: AppNavigation) => {
   const {isDarkMode} = useContext(DarkModeContext);
   const {setError} = useContext(ErrorContext);
-  const {isConnected, setIsLoggedIn} = useStore.getState();
-  const {loading, setLoadingState} = useContext(LoadingContext);
+  const {setIsLoggedIn} = useStore.getState();
+  const {setLoadingState} = useContext(LoadingContext);
   const {errorMessage, setErrorMessage} = useAlert();
   const routeHomeScreen = useRoute<RouteProp<UIConfig, 'homescreen'>>();
   const routeProfile = useRoute<RouteProp<UIConfig, 'profile'>>();
@@ -31,8 +31,8 @@ const Header = ({navigation}: AppNavigation) => {
 
   const handleLogoutSuccess = () => {
     setIsLoggedIn(false);
-    setLoadingState(false);
     navigation.navigate('login');
+    setLoadingState(false);
   };
 
   const handleLogoutError = () => {
@@ -41,24 +41,15 @@ const Header = ({navigation}: AppNavigation) => {
     return;
   };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <View style={headerStylesheet(isDarkMode).header}>
       {errorMessage && (
-        <VAlert
-          type={AlertType.error}
-          title={'Hiba!'}
-          message={errorMessage}
-        />
+        <VAlert type={AlertType.error} title={'Hiba!'} message={errorMessage} />
       )}
       <View style={headerStylesheet().iconContainer}>
         {!hideButtonProfile && (
           <TouchableOpacity
             style={headerStylesheet().iconButton}
-            disabled={!isConnected}
             onPress={() =>
               navigation.navigate('profile', {
                 hidebutton: false,
@@ -76,7 +67,6 @@ const Header = ({navigation}: AppNavigation) => {
         {!hideButton && (
           <TouchableOpacity
             style={headerStylesheet().iconButton}
-            disabled={!isConnected}
             onPress={async () => {
               setLoadingState(true);
               await LoginService.handleLogout(
@@ -99,4 +89,4 @@ const Header = ({navigation}: AppNavigation) => {
   );
 };
 
-export default Header;
+export default withLoader(Header);

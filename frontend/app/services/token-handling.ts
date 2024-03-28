@@ -10,7 +10,6 @@ import {
 } from '../../../shared/dto/token';
 import {ZodError} from 'zod';
 import * as Sentry from '@sentry/react-native';
-import {NavigationService} from './navigation';
 import {ApiResponseOutput} from '../types/api-response';
 
 const isTokenExpired = (token: string): boolean => {
@@ -92,9 +91,6 @@ export const TokenHandlingService = {
         Sentry.captureException(e);
         return;
       }
-    } else {
-      NavigationService.redirectToLogin();
-      return;
     }
   },
 };

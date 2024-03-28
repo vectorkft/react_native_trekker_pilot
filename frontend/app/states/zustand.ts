@@ -8,12 +8,6 @@ interface Store {
   setRefreshToken: (value: string) => void;
   deviceType: string;
   setDeviceType: (value: string) => void;
-  isConnected: boolean;
-  setIsConnected: (value: boolean) => void;
-  uptoDate: boolean;
-  setUptoDate: (value: boolean) => void;
-  wasDisconnected: boolean;
-  setWasDisconnected: (value: boolean) => void;
 }
 
 export const useStore = create<Store>(set => ({
@@ -25,10 +19,4 @@ export const useStore = create<Store>(set => ({
   setRefreshToken: value => set({refreshToken: value}),
   deviceType: '',
   setDeviceType: value => set({deviceType: value}),
-  isConnected: false,
-  setIsConnected: value => set({isConnected: value}),
-  uptoDate: false,
-  setUptoDate: value => set({uptoDate: value}),
-  wasDisconnected: false,
-  setWasDisconnected: value => set({wasDisconnected: value}),
 }));

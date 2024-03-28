@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {ErrorBoundaryProps} from '../interfaces/error-boundary';
 import {
+  NO_INTERNET_CONNECTION,
   RESPONSE_BAD_GATEWAY,
   RESPONSE_INTERNAL_SERVER_ERROR,
 } from '../constants/response-status';
@@ -33,6 +34,10 @@ export const ErrorScreen = ({errorCode, onClick}: ErrorBoundaryProps) => {
       break;
     case RESPONSE_BAD_GATEWAY:
       errorMessage = 'Sikertelen művelet, a szerver nem elérhető!.';
+      break;
+    case NO_INTERNET_CONNECTION:
+      errorMessage =
+        'Sikertelen művelet, kérjük ellenőrizze internet kapcsolatát!';
       break;
     default:
       errorMessage = 'Ismeretlen hiba történt.';

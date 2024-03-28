@@ -3,6 +3,7 @@ import {zParse} from '../../../shared/services/zod';
 import {AnyZodObject, z, ZodObject} from 'zod';
 import {
   ApiResponse,
+  NO_INTERNET_CONNECTION,
   RESPONSE_BAD_GATEWAY,
   RESPONSE_INTERNAL_SERVER_ERROR,
   RESPONSE_NO_AUTH,
@@ -11,6 +12,8 @@ import {
 } from '../constants/response-status';
 import {ApiResponseOutput} from '../types/api-response';
 import {RequestOptions} from '../interfaces/request-option';
+import {NavigationService} from './navigation';
+import {isConnected} from './net-info';
 
 const createRequestInit = (options: RequestOptions = {}): RequestInit => {
   const headers = {
@@ -35,12 +38,16 @@ export const ApiService = {
     requestOptions: RequestOptions = {},
     schema?: AnyZodObject,
   ): Promise<ApiResponseOutput> => {
+    if (!isConnected) {
+      throw new Error(NO_INTERNET_CONNECTION.toString());
+    }
+
     const url = `${API_URL}${endpoint}`;
     const response: Response = await fetch(
       url,
       createRequestInit(requestOptions),
     );
-    let data: z.infer<ZodObject<any, any, any>>;
+    let data: z.infer<ZodObject<any, any, any>> = {};
 
     switch (response.status) {
       case RESPONSE_INTERNAL_SERVER_ERROR: {
@@ -55,7 +62,8 @@ export const ApiService = {
         return ApiResponse.NO_CONTENT;
 
       case RESPONSE_NO_AUTH:
-        return ApiResponse.NO_AUTH;
+        NavigationService.redirectToLogin();
+        break;
 
       case RESPONSE_UNAUTHORIZED:
         return ApiResponse.UNAUTHORIZED;

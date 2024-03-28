@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './screens/home-screen';
@@ -11,6 +11,7 @@ import {UIConfig} from './types/u-i-config';
 import {navigationRef} from './services/navigation';
 import * as Sentry from '@sentry/react-native';
 import {ErrorContext, ErrorProvider} from './providers/error';
+import {useError} from './states/use-error';
 
 Sentry.init({
   dsn: 'https://1d625a315d5be4692039604f037797f9@o4506777853493248.ingest.us.sentry.io/4506777855655936',
@@ -19,18 +20,7 @@ Sentry.init({
 const Stack = createStackNavigator<UIConfig>();
 
 const App = () => {
-  const [hasError, setHasError] = useState(false);
-  const [errorCode, setErrorCode] = useState(0);
-
-  const setError = (error: any, changeHasError?: boolean) => {
-    if (changeHasError) {
-      setHasError(false);
-      error = null;
-    } else {
-      setHasError(true);
-      setErrorCode(parseInt(error.message, 10));
-    }
-  };
+  const {hasError, errorCode, setError} = useError();
 
   return (
     <DarkModeProvider>

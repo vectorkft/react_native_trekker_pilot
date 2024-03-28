@@ -1,14 +1,5 @@
-import {useStore} from '../states/zustand';
-
-const {setIsConnected, setUptoDate} = useStore.getState();
-
-export function setUptoDateFunc(isUptoDate: boolean) {
-  setUptoDate(isUptoDate);
-}
+export let isConnected = false;
 
 export function networkChange(state: boolean) {
-  setIsConnected(state);
-  if (!state) {
-    setUptoDate(false);
-  }
+  isConnected = state;
 }

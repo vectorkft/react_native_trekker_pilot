@@ -1,4 +1,4 @@
-import React, {JSX, useContext, useRef, useState} from 'react';
+import React, {JSX, useContext, useEffect, useRef, useState} from 'react';
 import {LoginService} from '../services/login';
 import {AppNavigation} from '../interfaces/navigation';
 import {useStore} from '../states/zustand';
@@ -10,11 +10,7 @@ import VAlert from '../components/Valert';
 import {useAlert} from '../states/use-alert';
 import {CheckBox, Icon, Switch, Text} from 'react-native-elements';
 import VButton from '../components/Vbutton';
-import LoadingScreen from './loading-screen';
-import {
-  UserLoginDTOInput,
-
-} from '../../../shared/dto/user-login';
+import {UserLoginDTOInput} from '../../../shared/dto/user-login';
 import VInput from '../components/Vinput';
 import {useNetInfo} from '../states/use-net-info';
 import {DarkModeContext} from '../providers/dark-mode';
@@ -25,6 +21,10 @@ import {loginScreenStyles} from '../styles/login-screen';
 import {Color} from '../enums/color';
 import {ErrorContext} from '../providers/error';
 import {ApiResponseOutput} from '../types/api-response';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {UIConfig} from '../types/u-i-config';
+import withLoader from '../components/with-loader';
+import withNetInfo from '../components/with-net-info';
 
 const Login = ({navigation}: AppNavigation): JSX.Element => {
   const BUTTON_FONT_SIZE = 20;
@@ -32,7 +32,8 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   const BUTTON_BORDER_RADIUS = 10;
   const {isDarkMode, toggleDarkMode} = useContext(DarkModeContext);
   const {setError} = useContext(ErrorContext);
-  const {loading, setLoadingState} = useContext(LoadingContext);
+  const {setLoadingState} = useContext(LoadingContext);
+  const usernameInput = useRef<TextInput | null>(null);
   const passwordInput = useRef<TextInput | null>(null);
   const {
     setRefreshToken,
@@ -51,8 +52,22 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   } = useLoginState();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const {errorMessage, setErrorMessage} = useAlert();
+  const routeFocus = useRoute<RouteProp<UIConfig, 'login'>>();
+  const focus = routeFocus?.params?.focus;
   const {height} = Dimensions.get('window');
-  const {mountConnection} = useNetInfo();
+  const netInfo = useNetInfo();
+
+  useEffect(() => {
+    if (focus) {
+      setTimeout(() => {
+        if (!username) {
+          usernameInput.current?.focus();
+        } else if (username) {
+          passwordInput.current?.focus();
+        }
+      }, 100);
+    }
+  }, [focus]);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(previousState => !previousState);
@@ -81,35 +96,16 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
       setUsername('');
     }
     setPassword('');
-    setAccessToken(
-      'data' in loginSuccess &&
-        loginSuccess.data &&
-        'accessToken' in loginSuccess.data &&
-        loginSuccess.data.accessToken,
-    );
-    setRefreshToken(
-      'data' in loginSuccess &&
-        loginSuccess.data &&
-        'refreshToken' in loginSuccess.data &&
-        loginSuccess.data.refreshToken,
-    );
-    setDeviceType(
-      'data' in loginSuccess &&
-        loginSuccess.data &&
-        'deviceType' in loginSuccess.data &&
-        loginSuccess.data.deviceType,
-    );
+    setAccessToken(loginSuccess?.data?.accessToken);
+    setRefreshToken(loginSuccess?.data?.refreshToken);
+    setDeviceType(loginSuccess?.data?.deviceType);
     setIsLoggedIn(true);
-    setLoadingState(false);
+    navigation.setParams({focus: false});
     navigation.navigate('homescreen', {hidebutton: true});
+    setLoadingState(false);
   };
 
   const handleFormSubmit = async () => {
-    if (!mountConnection) {
-      setErrorMessage('Ellenőrizd az internetkapcsolatodat!');
-      return;
-    }
-
     await validateZDTOForm(
       UserLoginDTOInput,
       {
@@ -136,10 +132,6 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
     });
   };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <View style={loginScreenStyles(isDarkMode).container}>
       <Image
@@ -160,6 +152,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
         <View style={loginScreenStyles().inputView}>
           <VInput
             inputProps={{
+              ref: usernameInput,
               value: username,
               onChangeText: setUsername,
               autoFocus: isLoggedIn ? false : !username,
@@ -185,9 +178,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                     type={'material'}
                     name={isPasswordVisible ? 'visibility-off' : 'visibility'}
                     size={24}
-                    color={
-                      isDarkMode ? Color.lightContent : Color.darkContent
-                    }
+                    color={isDarkMode ? Color.lightContent : Color.darkContent}
                   />
                 </>
               ),
@@ -196,7 +187,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
           <View style={loginScreenStyles().checkBoxView}>
             <CheckBox
               title="Emlékezz rám"
-              checkedColor="#00EDAE"
+              checkedColor={Color.primary}
               uncheckedColor={
                 isDarkMode ? Color.lightContent : Color.darkContent
               }
@@ -235,7 +226,7 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
                 borderRadius: BUTTON_BORDER_RADIUS,
               },
               onPress: handleFormSubmit,
-              disabled: !username || !password,
+              disabled: !username || !password || !netInfo.isConnected,
             }}
           />
         </View>
@@ -244,4 +235,4 @@ const Login = ({navigation}: AppNavigation): JSX.Element => {
   );
 };
 
-export default Login;
+export default withLoader(withNetInfo(Login));

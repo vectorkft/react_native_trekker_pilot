@@ -24,7 +24,7 @@ const VInternetToast = ({isVisible}: ToastProps) => {
   return (
     <Animated.View
       style={{
-        ...internetToastStylesheet().toast,
+        ...internetToastStylesheet(isDarkMode).toast,
         transform: [{translateY: slideAnim}],
       }}>
       <Icon

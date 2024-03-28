@@ -15,8 +15,6 @@ import {
   ProductNumberSchemaInput,
 } from '../../../shared/dto/product';
 import {useStore} from '../states/zustand';
-import VInternetToast from '../components/Vinternet-toast';
-import VToast from '../components/Vtoast';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VDataTable from '../components/Vdata-table';
 import {Icon} from 'react-native-elements';
@@ -29,7 +27,7 @@ import {
   RESPONSE_NO_CONTENT,
   RESPONSE_SUCCESS,
 } from '../constants/response-status';
-import {AlertType, ToastType} from '../enums/type';
+import {AlertType} from '../enums/type';
 import {ValidTypes} from '../../../shared/enums/type';
 import {useAlert} from '../states/use-alert';
 import {CameraService, useCamera} from '../services/camera';
@@ -41,6 +39,7 @@ import VMenu from '../components/VMenu';
 import * as Sentry from '@sentry/react-native';
 import VCardSuccess from '../components/Vcard-succes';
 import {ValidatedValue} from '../../../shared/interfaces/validation-result';
+import withNetInfo from '../components/with-net-info';
 
 const Product = ({navigation}: AppNavigation): JSX.Element => {
   const TIMEOUT_DELAY = 100;
@@ -49,9 +48,7 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   const {errorMessage, setErrorMessage} = useAlert();
   const {isCameraActive, setIsCameraActive, handleOnClose, clickCamera} =
     useCamera(setErrorMessage);
-  const {setWasDisconnected, deviceType} = useStore.getState();
-  const isConnected = useStore(state => state.isConnected);
-  const wasDisconnected = useStore(state => state.wasDisconnected);
+  const {deviceType} = useStore.getState();
   const [searchValue, setSearchValue] = React.useState('');
   const [searchValueSave, setSearchValueSave] = useState('');
   const [changeHandlerResult, setChangeHandlerResult] =
@@ -109,13 +106,6 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
 
   return (
     <View style={productStyles(isDarkMode).mainContainer}>
-      <VInternetToast isVisible={!isConnected} />
-      <VToast
-        isVisible={wasDisconnected && isConnected}
-        label={'Sikeres kapcsolat!'}
-        type={ToastType.success}
-        handleEvent={() => setWasDisconnected(false)}
-      />
       {errorMessage && (
         <VAlert
           type={AlertType.error}
@@ -154,10 +144,8 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
                     type="antdesign"
                     name="search1"
                     size={25}
-                    color={
-                      isDarkMode ? Color.lightContent : Color.darkContent
-                    }
-                    disabled={!searchValue || !isConnected}
+                    color={isDarkMode ? Color.lightContent : Color.darkContent}
+                    disabled={!searchValue}
                     disabledStyle={productStyles().iconDisabledStyle}
                     onPress={() => getProduct(searchValue)}
                   />
@@ -223,4 +211,4 @@ const Product = ({navigation}: AppNavigation): JSX.Element => {
   );
 };
 
-export default Product;
+export default withNetInfo(Product);

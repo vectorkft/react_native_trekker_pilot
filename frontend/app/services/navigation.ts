@@ -13,6 +13,6 @@ export const NavigationService = {
     const {setIsLoggedIn} = useStore.getState();
 
     setIsLoggedIn(false);
-    navigate('login', {hideBackButton: true});
+    navigate('login', {focus: true});
   },
 };

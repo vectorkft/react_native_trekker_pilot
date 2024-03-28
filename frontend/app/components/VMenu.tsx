@@ -64,9 +64,7 @@ const VMenu = () => {
                     fontFamily: 'Roboto',
                     fontSize: 20,
                     fontWeight: '700',
-                    color: isDarkMode
-                      ? Color.lightContent
-                      : Color.darkContent,
+                    color: isDarkMode ? Color.lightContent : Color.darkContent,
                   },
                   buttonStyle: {
                     backgroundColor: Color.primary,
